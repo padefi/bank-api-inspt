@@ -1,4 +1,16 @@
 {
+  "name": "bank-api",
+  "version": "1.0.0",
+  "description": "MERN stack API para final de programación 3 INSPT UTN",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js"
+  },
+  "keywords": [],
+  "author": "Pablo De Filpo",
+  "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
