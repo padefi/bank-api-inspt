@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 import connectDB from "./config/db.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 connectDB();
@@ -10,11 +11,16 @@ connectDB();
 const app = express();
 const port = process.env.PORT || 5000;
 
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 // Route
 app.use('/api/users', userRoutes);
 app.get('/', (req, res) => res.send('API corriendo'));
 
-// Middlewares
+// Middlewares error
 app.use(notFound);
 app.use(errorHandler);
 

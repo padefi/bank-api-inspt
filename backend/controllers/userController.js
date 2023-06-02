@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import User from "../models/userModel.js";
 
 // @desc    Login usuario & get token
 // @route   POST /api/users/auth
@@ -18,7 +19,31 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-    res.send('Registro de usuarios');
+
+    const { email, password, firstName, lastName, phone, governmentId, bornDate } = req.body;
+
+    // Validación
+    if (!email || !password || !firstName || !lastName || !governmentId) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+        res.status(400);
+        throw new Error('Usuario ya registrado.');
+    }
+
+    const user = await User.create({
+        email,
+        password,
+        firstName,
+        lastName,
+        phone,
+        governmentId,
+        bornDate
+    })
 });
 
 // @desc    Datos del usuario
