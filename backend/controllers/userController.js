@@ -43,7 +43,23 @@ const registerUser = asyncHandler(async (req, res) => {
         phone,
         governmentId,
         bornDate
-    })
+    });
+
+    if (user) {
+        res.status(201).json({
+            _id: user._id,
+            email: user.email,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            phone: user.phone,
+            governmentId: user.governmentId,
+            bornDate: user.bornDate
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
 });
 
 // @desc    Datos del usuario

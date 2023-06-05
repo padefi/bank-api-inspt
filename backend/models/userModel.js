@@ -16,12 +16,12 @@ const userSchema = mongoose.Schema({
         minlength: 6,
         required: true
     },
-    /*role: {
+    role: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',
         required: true,
-        default: 'cliente'
-    },*/
+        default: '000000000000000000000001'
+    },
     firstName: {
         type: String,
         lowercase: true,
@@ -36,7 +36,7 @@ const userSchema = mongoose.Schema({
         type: String,
         trim: true
     },
-    /*governmentId: {
+    governmentId: {
         type: {
             type: String,
             enum: governmentIdTypes
@@ -45,7 +45,7 @@ const userSchema = mongoose.Schema({
             type: String,
             trim: true
         }
-    },*/
+    },
     bornDate: {
         type: Date
     },
