@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
     // Si es un error en mongoose, seteo 404
     if (err.name === 'CastError' && err.kind === 'ObjectId') {
         statusCode = 404;
-        message = 'Resource not found';
+        message = 'Resource not found.';
     }
 
     res.status(statusCode).json({

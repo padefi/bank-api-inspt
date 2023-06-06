@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const operationSchema = new mongoose.Schema({
     accountFrom: {
-        type: ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Account',
         required: true
     },

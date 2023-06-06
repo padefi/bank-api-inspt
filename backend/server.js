@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
+import operationRoutes from "./routes/operationRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 // Route
 app.use('/api/users', userRoutes);
+app.use('/api/operations', operationRoutes);
 app.get('/', (req, res) => res.send('API corriendo'));
 
 // Middlewares error

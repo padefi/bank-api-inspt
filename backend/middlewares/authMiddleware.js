@@ -18,11 +18,11 @@ const protect = asyncHandler(async (req, res, next) => {
         } catch (error) {
             console.error(error);
             res.status(401);
-            throw new Error('Sin autorización, token invalido');
+            throw new Error('Sin autorización, token invalido.');
         }
     } else {
         res.status(401);
-        throw new Error('Sin autorización, sin token');
+        throw new Error('Sin autorización, sin token.');
     }
 });
 

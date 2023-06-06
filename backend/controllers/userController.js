@@ -9,17 +9,26 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const { email, password } = req.body;
 
+    // Validación
+    if (!email || !password) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
     const user = await User.findOne({ email });
 
-    if (user && (await user.matchPassword(password))) {
+    if (user.isActive && (await user.matchPassword(password))) {
         generateToken(res, user._id);
         res.status(200).json({
-            message: 'Usuario logueado'
+            message: 'Usuario logueado.'
         });
 
+    } else if (!user.isActive) {
+        res.status(401);
+        throw new Error('Usuario bloqueado. Por favor comuníquese con el banco.');
     } else {
         res.status(401);
-        throw new Error('Usuario y/o contraseña incorrecta');
+        throw new Error('Usuario y/o contraseña incorrecta.');
     }
 });
 
@@ -32,13 +41,13 @@ const logoutUser = asyncHandler(async (req, res) => {
         expires: new Date(0)
     });
     res.status(200).json({
-        message: 'Usuario deslogueado'
+        message: 'Usuario deslogueado.'
     });
 });
 
 // @desc    Registrar un nuevo usuario
 // @route   POST /api/users/register
-// @access  Public
+// @access  Private
 const registerUser = asyncHandler(async (req, res) => {
 
     const { email, password, firstName, lastName, phone, governmentId, bornDate } = req.body;
@@ -80,7 +89,7 @@ const registerUser = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(400);
-        throw new Error('Invalid user data');
+        throw new Error('Información invalida.');
     }
 });
 
@@ -101,7 +110,7 @@ const profileUser = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(400);
-        throw new Error('Usuario no encontrado');
+        throw new Error('Usuario no encontrado.');
     }
 });
 
@@ -111,8 +120,8 @@ const profileUser = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
 
     const user = await User.findById(req.user._id);
-    
-    if(user){
+
+    if (user) {
         user.email = req.body.email || user.email;
         user.role = req.body.role || user.role;
         user.firstName = req.body.firstName || user.firstName;
@@ -121,13 +130,13 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         user.governmentId = req.body.governmentId || user.governmentId;
         user.bornDate = req.body.bornDate || user.bornDate;
 
-        if(req.body.password){
+        if (req.body.password) {
             user.password = req.body.password;
         }
-        
+
         const updateUser = await user.save();
 
-        res.json({           
+        res.json({
             _id: updateUser._id,
             email: updateUser.email,
             role: updateUser.role,
@@ -136,10 +145,10 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             phone: updateUser.phone,
             governmentId: updateUser.governmentId,
             bornDate: updateUser.bornDate
-        });      
+        });
     } else {
         res.status(400);
-        throw new Error('Usuario no encontrado');
+        throw new Error('Usuario no encontrado.');
     }
 });
 
