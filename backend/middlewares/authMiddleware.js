@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
+import Role from "../models/roleModel.js";
 
 const protect = asyncHandler(async (req, res, next) => {
     let token;
@@ -11,7 +12,7 @@ const protect = asyncHandler(async (req, res, next) => {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            req.user = await User.findById(decoded.userId).select('-password');
+            req.user = await User.findById(decoded.userId).select('-password').populate('role');
 
             next();
         } catch (error) {
