@@ -17,15 +17,20 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    if (user.isActive && (await user.matchPassword(password))) {
-        generateToken(res, user._id);
-        res.status(200).json({
-            message: 'Usuario logueado.'
-        });
+    if (user) {
+        if (!user.isActive) {
+            res.status(401);
+            throw new Error('Usuario bloqueado. Por favor comuníquese con el banco.');
+        } else if (await user.matchPassword(password)) {
+            generateToken(res, user._id);
+            res.status(200).json({
+                message: 'Usuario logueado.'
+            });
 
-    } else if (!user.isActive) {
-        res.status(401);
-        throw new Error('Usuario bloqueado. Por favor comuníquese con el banco.');
+        } else {
+            res.status(401);
+            throw new Error('Usuario y/o contraseña incorrecta.');
+        }
     } else {
         res.status(401);
         throw new Error('Usuario y/o contraseña incorrecta.');

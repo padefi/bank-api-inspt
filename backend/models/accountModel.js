@@ -6,8 +6,13 @@ const accountSchema = mongoose.Schema({
         unique: true,
         required: true
     },
+    type: {
+        type: String,
+        required: true
+    },
     alias: {
-        type: String
+        type: String,
+        required: true
     },
     accountHolder: {
         type: mongoose.Schema.Types.ObjectId,
@@ -19,6 +24,10 @@ const accountSchema = mongoose.Schema({
         required: true,
         default: 0
     },
+    operations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Operation'
+    }],
     currency: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Currency',
@@ -26,7 +35,6 @@ const accountSchema = mongoose.Schema({
     },
     isActive: {
         type: Boolean,
-        select: false,
         default: true
     },
 });

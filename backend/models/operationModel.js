@@ -13,12 +13,12 @@ const operationSchema = new mongoose.Schema({
     },
     amountFrom: {
         type: Number,
-        min: 10,
+        min: 1,
         required: true
     },
     amountTo: {
         type: Number,
-        min: 10,
+        min: 1,
         required: true
     },
     operationDate: {
@@ -26,7 +26,8 @@ const operationSchema = new mongoose.Schema({
         default: new Date()
     },
     description: {
-        type: String
+        type: String,
+        required: true
     }
 });
 
