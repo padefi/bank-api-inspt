@@ -1,6 +1,13 @@
 import mongoose from "mongoose";
 
+const operationTypes = ['extraccion', 'deposito', 'transferencia'];
+
 const operationSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        required: true,
+        enum: operationTypes
+    },
     accountFrom: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Account',
@@ -8,8 +15,7 @@ const operationSchema = new mongoose.Schema({
     },
     accountTo: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Account',
-        required: true
+        ref: 'Account'
     },
     amountFrom: {
         type: Number,
@@ -18,16 +24,14 @@ const operationSchema = new mongoose.Schema({
     },
     amountTo: {
         type: Number,
-        min: 1,
-        required: true
+        min: 1
     },
     operationDate: {
         type: Date,
         default: new Date()
     },
     description: {
-        type: String,
-        required: true
+        type: String
     }
 });
 

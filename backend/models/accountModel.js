@@ -25,8 +25,15 @@ const accountSchema = mongoose.Schema({
         default: 0
     },
     operations: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Operation'
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Operation',
+            required: true
+        },
+        balanceSnapshot: {
+            type: Number,
+            required: true
+        }
     }],
     currency: {
         type: mongoose.Schema.Types.ObjectId,
