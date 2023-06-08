@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const accountTypes = ['CA', 'CC'];
+
 const accountSchema = mongoose.Schema({
     accountId: {
         type: String,
@@ -7,7 +9,8 @@ const accountSchema = mongoose.Schema({
         required: true
     },
     type: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     alias: {
