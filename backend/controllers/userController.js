@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
-import generateToken from "../utils/generateToken.js";
+import { generateToken, extendToken } from "../utils/generateToken.js";
 
 // @desc    Login usuario & get token
 // @route   POST /api/users/auth
@@ -81,7 +81,7 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (user) {
-        generateToken(res, user._id);
+        extendToken(req, res);        
         res.status(201).json({
             _id: user._id,
             email: user.email,
@@ -103,6 +103,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access  Private
 const profileUser = asyncHandler(async (req, res) => {
     if (req.user) {
+        extendToken(req, res);
         res.status(201).json({
             _id: req.user._id,
             email: req.user.email,
@@ -141,6 +142,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
         const updateUser = await user.save();
 
+        extendToken(req, res);
         res.json({
             _id: updateUser._id,
             email: updateUser.email,
