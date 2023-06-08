@@ -26,6 +26,16 @@ const protect = asyncHandler(async (req, res, next) => {
     }
 });
 
+const isAdmin = (user) => {
+    return user.role && user.role.name === 'admin';
+};
+
+const isClient = function isClient() {
+    return req.user && req.user.role === 'client'
+}
+
 export {
-    protect
+    protect,
+    isAdmin,
+    isClient
 }
