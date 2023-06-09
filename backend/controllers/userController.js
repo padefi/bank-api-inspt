@@ -115,7 +115,7 @@ const profileUser = asyncHandler(async (req, res) => {
             bornDate: req.user.bornDate
         });
     } else {
-        res.status(400);
+        res.status(404);
         throw new Error('Usuario no encontrado.');
     }
 });
@@ -154,7 +154,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             bornDate: updateUser.bornDate
         });
     } else {
-        res.status(400);
+        res.status(404);
         throw new Error('Usuario no encontrado.');
     }
 });

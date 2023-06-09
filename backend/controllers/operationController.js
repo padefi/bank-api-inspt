@@ -6,7 +6,7 @@ import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
 import { extendToken } from "../utils/generateToken.js";
 
 // @desc    Visualizar operaciones de una cuenta
-// @route   GET /api/operation/transfer
+// @route   GET /api/operations/transfer
 // @access  Private
 const getOperations = asyncHandler(async (req, res) => {
 
@@ -54,7 +54,7 @@ const getOperations = asyncHandler(async (req, res) => {
 });
 
 // @desc    Realizar una extracción de dinero
-// @route   POST /api/operation/withdraw
+// @route   POST /api/operations/withdraw
 // @access  Private
 const withdrawMoney = asyncHandler(async (req, res) => {
     const { accountId, amount } = req.body;
@@ -73,7 +73,7 @@ const withdrawMoney = asyncHandler(async (req, res) => {
     }
 
     if (!accountFrom.isActive) {
-        res.status(403);
+        res.status(400);
         throw new Error(`La cuenta ${accountId} no se encuentra activa.`);
     }
 
@@ -126,7 +126,7 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 });
 
 // @desc    Realizar una extracción de dinero
-// @route   POST /api/operation/withdraw
+// @route   POST /api/operations/withdraw
 // @access  Private
 const depositMoney = asyncHandler(async (req, res) => {
     const { accountId, amount } = req.body;
@@ -150,7 +150,7 @@ const depositMoney = asyncHandler(async (req, res) => {
     }
 
     if (!accountFrom.isActive) {
-        res.status(403);
+        res.status(400);
         throw new Error(`La cuenta ${accountId} no se encuentra activa.`);
     }
 
@@ -198,7 +198,7 @@ const depositMoney = asyncHandler(async (req, res) => {
 });
 
 // @desc    Realizar una transferencia de dinero
-// @route   POST /api/operation/transfer
+// @route   POST /api/operations/transfer
 // @access  Private
 const transferMoney = asyncHandler(async (req, res) => {
 
@@ -224,7 +224,7 @@ const transferMoney = asyncHandler(async (req, res) => {
     }
 
     if (!accountFrom.isActive) {
-        res.status(403);
+        res.status(400);
         throw new Error(`La cuenta ${accountFromId} no se encuentra activa.`);
     }
 
@@ -241,7 +241,7 @@ const transferMoney = asyncHandler(async (req, res) => {
     }
 
     if (!accountTo.isActive) {
-        res.status(403);
+        res.status(400);
         throw new Error(`La cuenta ${accountToId} no se encuentra activa.`);
     }
 

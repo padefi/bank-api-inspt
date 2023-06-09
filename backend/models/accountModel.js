@@ -5,16 +5,20 @@ const accountTypes = ['CA', 'CC'];
 const accountSchema = mongoose.Schema({
     accountId: {
         type: String,
+        minlength: 22,
+        maxlength: 22,
         unique: true,
         required: true
     },
     type: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        type: String,
+        required: true,
+        enum: accountTypes
     },
     alias: {
         type: String,
+        minlength: 6,
+        maxlength: 20,
         required: true
     },
     accountHolder: {
