@@ -3,7 +3,7 @@ import Account from "../models/accountModel.js";
 import Currency from "../models/currencyModel.js";
 import { extendToken } from "../utils/generateToken.js";
 import User from "../models/userModel.js";
-import { generateAlias, generateCBU } from "../utils/generateAccountInfo.js";
+import { generateAlias, generateAccountId } from "../utils/generateAccountInfo.js";
 import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
 
 // @desc    Ver cuentas bancarias
@@ -18,7 +18,7 @@ const getUserAccounts = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const accounts = await Account.find(isAdmin(req.user) ? { accountHolder: userId } : { accountHolder: req.user._id });
+    const accounts = await Account.find(isAdmin(req.user) ? { accountHolder: userId } : { accountHolder: req.user._id }).populate('currency');
 
     if (!accounts) {
         res.status(403);
@@ -30,6 +30,53 @@ const getUserAccounts = asyncHandler(async (req, res) => {
         accounts
     });
 });
+
+const getAccount = asyncHandler(async (req, res) => {
+
+    const { accountId, alias } = req.body;
+
+    // Validación
+    if (!accountId && !alias) {
+        res.status(400);
+        throw new Error('Por favor, complete uno de los campos.');
+    }
+
+    const accounts = await Account.findOne({
+        $or: [
+            { accountId },
+            { alias }
+        ], isActive: true
+    }).select({
+        _id: 0, 
+        accountId: 1, 
+        alias: 1
+    }).populate({
+        path: 'accountHolder',
+        select: {
+            _id: 0,
+            firstName: 1,
+            lastName: 1,
+            governmentId: 1,
+        },
+    }).populate({
+        path: 'currency',
+        select: {
+            _id: 0,
+            initials: 1,
+            name: 1,
+        },
+    });
+
+    if (!accounts) {
+        res.status(404);
+        throw new Error('Cuenta no encontrada.');
+    }
+
+    extendToken(req, res);
+    res.status(201).json({
+        accounts
+    });
+})
 
 // @desc    Crear cuenta bancaria
 // @route   POST /api/accounts/create
@@ -70,18 +117,18 @@ const createAccount = asyncHandler(async (req, res) => {
         throw new Error('El cliente ya posee la cuenta que se le intenta crear.');
     }
 
-    let cbu = generateCBU(accountType);
+    let accountId = generateAccountId(accountType);
     let alias = generateAlias(user.firstName, user.lastName, accountType, currency.acronym);
 
-    let cbuAndAliasExist = await Account.findOne({
+    const cbuAndAliasExist = await Account.findOne({
         $or: [
-            { accountId: cbu },
+            { accountId },
             { alias }
         ]
     });
 
     if (cbuAndAliasExist) {
-        cbu = generateCBU(accountType);
+        cbu = generateAccountId(accountType);
         alias = generateAlias(user.governmentId.number, user.lastName, accountType, currency.acronym);
     }
 
@@ -197,6 +244,7 @@ const activeAccount = asyncHandler(async (req, res) => {
 
 export {
     getUserAccounts,
+    getAccount,
     createAccount,
     closeAccount,
     activeAccount

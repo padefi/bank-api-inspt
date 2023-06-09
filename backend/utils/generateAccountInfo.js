@@ -1,4 +1,4 @@
-const generateCBU = (accountType) => {
+const generateAccountId = (accountType) => {
 
     const bankCode = '999', sucursalCod = '0001', typeCode = (accountType == 'CA') ? '01' : '02', accountNumber = randomNumers(11);
     const { dv1, dv2 } = generateDV((bankCode + sucursalCod), (typeCode, accountNumber));
@@ -56,6 +56,6 @@ const randomNumers = (n) => {
 }
 
 export {
-    generateCBU,
+    generateAccountId,
     generateAlias
 }
