@@ -51,6 +51,8 @@ const accountSchema = mongoose.Schema({
         type: Boolean,
         default: true
     },
+}, {
+    timestamps: true
 });
 
 accountSchema.index({ accountHolder: 1 });
