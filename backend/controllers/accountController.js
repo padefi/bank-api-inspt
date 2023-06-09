@@ -6,9 +6,9 @@ import User from "../models/userModel.js";
 import { generateAlias, generateCBU } from "../utils/generateAccountInfo.js";
 import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
 
-// @desc    Login usuario & get token
-// @route   GET /api/account/create
-// @access  Public
+// @desc    Crear cuenta bancaria
+// @route   POST /api/accounts/create
+// @access  Private
 const createAccount = asyncHandler(async (req, res) => {
 
     const { userId, accountType, currencyId } = req.body;
