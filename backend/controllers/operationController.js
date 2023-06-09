@@ -18,29 +18,28 @@ const getOperations = asyncHandler(async (req, res) => {
             { accountFrom: accountId },
             { accountTo: accountId }
         ]
-    })
-        .populate([
-            {
-                path: 'accountFrom',
-                select: 'accountId',
-                populate: [
-                    {
-                        path: 'accountHolder',
-                        select: 'firstName lastName governmentId',
-                    }
-                ]
-            },
-            {
-                path: 'accountTo',
-                select: 'accountId',
-                populate: [
-                    {
-                        path: 'accountHolder',
-                        select: 'firstName lastName governmentId',
-                    }
-                ]
-            }
-        ]);
+    }).populate([
+        {
+            path: 'accountFrom',
+            select: 'accountId',
+            populate: [
+                {
+                    path: 'accountHolder',
+                    select: 'firstName lastName governmentId',
+                }
+            ]
+        },
+        {
+            path: 'accountTo',
+            select: 'accountId',
+            populate: [
+                {
+                    path: 'accountHolder',
+                    select: 'firstName lastName governmentId',
+                }
+            ]
+        }
+    ]);
 
     if (!operations) {
         res.status(403);
@@ -101,7 +100,7 @@ const withdrawMoney = asyncHandler(async (req, res) => {
         description
     });
 
-    if (operation) {        
+    if (operation) {
 
         const newBalanceFrom = accountFrom.accountBalance - amountFrom;
         const roundedBalanceFrom = Number(newBalanceFrom.toFixed(2));

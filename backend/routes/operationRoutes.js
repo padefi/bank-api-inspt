@@ -4,9 +4,9 @@ import { protect, isAdmin, isClient } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.route('/operations').get(protect, getOperations);
-router.route('/withdraw').post(protect, withdrawMoney);
-router.route('/deposit').post(protect, depositMoney);
-router.route('/transfer').post(protect, transferMoney);
+router.get('/operations', protect, getOperations);
+router.post('/withdraw', protect, withdrawMoney);
+router.post('/deposit', protect, depositMoney);
+router.post('/transfer', protect, transferMoney);
 
 export default router;
