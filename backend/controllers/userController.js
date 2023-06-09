@@ -83,6 +83,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (user) {
         extendToken(req, res);        
         res.status(201).json({
+            message: 'Usuario creado con exito.',
             _id: user._id,
             email: user.email,
             role: user.role,
