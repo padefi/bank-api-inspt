@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import { generateToken, extendToken } from "../utils/generateToken.js";
+import { isAdmin, loginIsClient } from "../middlewares/authMiddleware.js";
 
 // @desc    Login usuario & get token
 // @route   POST /api/users/auth
@@ -15,7 +16,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate('role');
 
     if (user) {
         if (!user.isActive) {
@@ -23,11 +24,19 @@ const loginUser = asyncHandler(async (req, res) => {
             throw new Error('Usuario bloqueado. Por favor comuníquese con el banco.');
         } else if (await user.matchPassword(password)) {
             generateToken(res, user._id);
+
+            user.loginAttempts = 0;
+            await user.save();
+
             res.status(200).json({
                 message: 'Usuario logueado.'
             });
 
         } else {
+            if (user.loginAttempts >= 2 && loginIsClient(user.role.name)) user.isActive = false;
+            user.loginAttempts += 1;
+            await user.save();
+
             res.status(401);
             throw new Error('Usuario y/o contraseña incorrecta.');
         }
@@ -165,10 +174,47 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Activa usuario bloqueado
+// @route   POST /api/users/active
+// @access  Private
+const activeUser = asyncHandler(async (req, res) => {
+
+    const { userId } = req.body;
+
+    // Validación
+    if (!isAdmin(req.user)) {
+        res.status(403);
+        throw new Error('Sin autorización.');
+    }
+
+    if (!userId) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const user = await User.findById(userId);
+
+    if (user) {
+        user.isActive = true;
+        user.loginAttempts = 0;
+
+        const updateUser = await user.save();
+
+        extendToken(req, res);
+        res.json({
+            message: 'Usuario activado con éxito.'
+        });
+    } else {
+        res.status(404);
+        throw new Error('Usuario no encontrado.');
+    }
+});
+
 export {
     loginUser,
     logoutUser,
     registerUser,
     profileUser,
-    updateUserProfile
+    updateUserProfile,
+    activeUser
 }

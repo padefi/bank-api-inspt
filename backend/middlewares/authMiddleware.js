@@ -30,12 +30,17 @@ const isAdmin = (user) => {
     return user.role && user.role.name === 'admin';
 };
 
-const isClient = function isClient() {
-    return req.user && req.user.role === 'client'
+const isClient = (user) => {
+    return req.user && req.user.role === 'cliente'
+}
+
+const loginIsClient = (user) => {
+    return user === 'cliente';
 }
 
 export {
     protect,
     isAdmin,
-    isClient
+    isClient,
+    loginIsClient
 }

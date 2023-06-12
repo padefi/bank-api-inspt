@@ -49,6 +49,10 @@ const userSchema = mongoose.Schema({
     bornDate: {
         type: Date
     },
+    loginAttempts: {
+        type: Number,
+        default: 0
+    },
     isActive: {
         type: Boolean,
         default: true

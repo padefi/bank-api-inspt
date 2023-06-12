@@ -1,6 +1,6 @@
 import express from "express";
 import { activeAccount, changeAlias, closeAccount, createAccount, getAccount, getUserAccounts } from "../controllers/accountController.js";
-import { protect, isAdmin, isClient } from "../middlewares/authMiddleware.js";
+import { protect} from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
