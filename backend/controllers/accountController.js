@@ -177,7 +177,7 @@ const changeAlias = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    if (alias.length < 6 || alias.length > 20 || !alias.match(/^[0-9a-zA-Z.]+$/)) {
+    if (!alias.match(/^[0-9a-zA-Z.]{6,20}$/)) {
         res.status(400);
         throw new Error('El Alias debe tener entre 6 y 20 caracteres alfanuméricos.');
     }    
