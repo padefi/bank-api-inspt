@@ -63,6 +63,11 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
+    if (password.length < 6) {
+        res.status(400);
+        throw new Error('La contraseña debe contener al menos 6 caracteres.');
+    }
+
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -81,7 +86,7 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (user) {
-        extendToken(req, res);        
+        extendToken(req, res);
         res.status(201).json({
             message: 'Usuario creado con exito.',
             _id: user._id,

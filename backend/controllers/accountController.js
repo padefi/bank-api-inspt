@@ -7,7 +7,7 @@ import { generateAlias, generateAccountId } from "../utils/generateAccountInfo.j
 import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
 
 // @desc    Ver cuentas bancarias
-// @route   GET /api/accounts/show
+// @route   GET /api/accounts/
 // @access  Private
 const getUserAccounts = asyncHandler(async (req, res) => {
 
@@ -164,6 +164,59 @@ const createAccount = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Cambiar Alias cuenta bancaria
+// @route   PUT /api/accounts/changeAlias
+// @access  Private
+const changeAlias = asyncHandler(async (req, res) => {
+
+    const { accountId, alias } = req.body;
+
+    // Validación
+    if (!accountId || !alias) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    if (alias.length < 6 || alias.length > 20 || !alias.match(/^[0-9a-zA-Z.]+$/)) {
+        res.status(400);
+        throw new Error('El Alias debe tener entre 6 y 20 caracteres alfanuméricos.');
+    }    
+
+    const account = await Account.findOne({ _id: accountId, accountHolder: req.user._id });
+
+    if (!account) {
+        res.status(403);
+        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+    }
+
+    if (!account.isActive) {
+        res.status(400);
+        throw new Error(`La cuenta ${accountId} no se encuentra activa.`);
+    }
+
+    let aliasExist = await Account.findOne({ alias });
+    if (aliasExist) {
+        res.status(400);
+        throw new Error('El Alias ya existe.');
+    }
+
+    account.alias = alias;
+
+    const updateAccount = await account.save();
+
+    if (updateAccount) {
+        extendToken(req, res);
+        res.status(201).json({
+            message: 'Alias modificado con exito.',
+            _id: updateAccount._id
+
+        });
+    } else {
+        res.status(404);
+        throw new Error('Cuenta no encontrada.');
+    }
+});
+
 // @desc    Cerrar cuenta bancaria
 // @route   POST /api/accounts/close
 // @access  Private
@@ -257,6 +310,7 @@ export {
     getUserAccounts,
     getAccount,
     createAccount,
+    changeAlias,
     closeAccount,
     activeAccount
 }
