@@ -47,8 +47,8 @@ const getAccount = asyncHandler(async (req, res) => {
             { alias }
         ], isActive: true
     }).select({
-        _id: 0, 
-        accountId: 1, 
+        _id: 0,
+        accountId: 1,
         alias: 1
     }).populate({
         path: 'accountHolder',
@@ -120,20 +120,31 @@ const createAccount = asyncHandler(async (req, res) => {
     let accountId = generateAccountId(accountType);
     let alias = generateAlias(user.firstName, user.lastName, accountType, currency.acronym);
 
-    const cbuAndAliasExist = await Account.findOne({
+    let accountIdAndAliasExist = await Account.findOne({
         $or: [
             { accountId },
             { alias }
         ]
     });
 
-    if (cbuAndAliasExist) {
-        cbu = generateAccountId(accountType);
-        alias = generateAlias(user.governmentId.number, user.lastName, accountType, currency.acronym);
-    }
+    do {
+
+        if (accountIdAndAliasExist) {
+            accountId = generateAccountId(accountType);
+            alias = generateAlias(user.governmentId.number, user.lastName, accountType, currency.acronym);
+        }
+
+        accountIdAndAliasExist = await Account.findOne({
+            $or: [
+                { accountId },
+                { alias }
+            ]
+        });
+
+    } while (accountIdAndAliasExist);
 
     const account = await Account.create({
-        accountId: cbu,
+        accountId,
         type: accountType,
         alias,
         accountHolder: userId,

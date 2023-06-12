@@ -56,7 +56,6 @@ const accountSchema = mongoose.Schema({
 });
 
 accountSchema.index({ accountHolder: 1 });
-accountSchema.index({ accountHolder: 1, currency: 1 }, { unique: true });
 /*accountSchema.index({
     alias: 1
 }, {
