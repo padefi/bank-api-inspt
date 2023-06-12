@@ -6,6 +6,7 @@ import accountRoutes from "./routes/accountRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 
 dotenv.config();
 connectDB();
@@ -14,6 +15,16 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middlewares
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: {
+        maxAge: 1000 * 60 * 10,
+        secure: process.env.NODE_ENV !== 'development',
+    }
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

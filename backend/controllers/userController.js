@@ -20,11 +20,19 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (user) {
         if (!user.isActive) {
-            res.status(401);
+            res.status(403);
             throw new Error('Usuario bloqueado. Por favor comuníquese con el banco.');
         } else if (await user.matchPassword(password)) {
+
+            if (user.activeSession) {
+                res.status(403);
+                throw new Error('El usuario ya se encuentra logueado.');
+            }
+
             generateToken(res, user._id);
 
+            req.session.userId = user._id;
+            user.activeSession = req.sessionID;
             user.loginAttempts = 0;
             await user.save();
 
@@ -50,6 +58,17 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/logout
 // @access  Public
 const logoutUser = asyncHandler(async (req, res) => {
+
+    const userId = req.session.userId;
+
+    if (userId) {
+        const user = await User.findById(userId);
+        user.activeSession = null;
+        await user.save();
+    }
+
+    req.session.destroy();
+
     res.cookie('jwt', '', {
         httpOnly: true,
         expires: new Date(0)
@@ -117,6 +136,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const profileUser = asyncHandler(async (req, res) => {
+
     if (req.user) {
         extendToken(req, res);
         res.status(201).json({
