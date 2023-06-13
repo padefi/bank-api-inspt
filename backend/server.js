@@ -27,7 +27,7 @@ app.use(session({
     saveUninitialized: false,
     rolling: true,
     cookie: {
-        maxAge: 100 * 60 * 10,
+        maxAge: 1000 * 60 * 10,
         secure: process.env.NODE_ENV !== 'development',
     }
 }));

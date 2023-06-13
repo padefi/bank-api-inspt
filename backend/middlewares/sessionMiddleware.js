@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import UserSession from "../models/userSessionModel.js";
 
-const INACTIVITY_TIMEOUT = 10 * 60 * 100;
+const INACTIVITY_TIMEOUT = 1000 * 60 * 10;
 
 const initialUserExpiration = asyncHandler(async (userId, sessionID) => {
     const currentTime = Date.now();
