@@ -7,6 +7,7 @@ import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import { extendUserExpiration } from "./middlewares/sessionMiddleware.js";
 
 dotenv.config();
 connectDB();
@@ -15,19 +16,28 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Middlewares session
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     rolling: true,
     cookie: {
-        maxAge: 1000 * 60 * 10,
+        maxAge: 100 * 60 * 10,
         secure: process.env.NODE_ENV !== 'development',
     }
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(async (req, res, next) => {
+    if (req.session.userId) {
+        await extendUserExpiration(req.session.userId, req.sessionID);
+    }
+
+    next();
+});
 
 // Route
 app.use('/api/users', userRoutes);

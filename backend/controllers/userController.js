@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import { generateToken, extendToken } from "../utils/generateToken.js";
 import { isAdmin, loginIsClient } from "../middlewares/authMiddleware.js";
+import { endUserExpiration, initialUserExpiration } from "../middlewares/sessionMiddleware.js";
+import UserSession from "../models/userSessionModel.js";
 
 // @desc    Login usuario & get token
 // @route   POST /api/users/auth
@@ -24,17 +26,18 @@ const loginUser = asyncHandler(async (req, res) => {
             throw new Error('Usuario bloqueado. Por favor comuníquese con el banco.');
         } else if (await user.matchPassword(password)) {
 
-            if (user.activeSession) {
+            const userSession = await UserSession.findOne({ userId: user._id });
+
+            if (userSession) {
                 res.status(403);
                 throw new Error('El usuario ya se encuentra logueado.');
             }
-
-            generateToken(res, user._id);
-
+            
             req.session.userId = user._id;
-            user.activeSession = req.sessionID;
             user.loginAttempts = 0;
             await user.save();
+            initialUserExpiration(user._id, req.sessionID);
+            generateToken(res, user._id);
 
             res.status(200).json({
                 message: 'Usuario logueado.'
@@ -59,16 +62,13 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access  Public
 const logoutUser = asyncHandler(async (req, res) => {
 
-    const userId = req.session.userId;
-
-    if (userId) {
-        const user = await User.findById(userId);
-        user.activeSession = null;
-        await user.save();
-    }
+    endUserExpiration(req.session.userId,req.sessionID);
 
     req.session.destroy();
-
+    res.cookie('connect.sid', '', {
+        httpOnly: true,
+        expires: new Date(0)
+    });
     res.cookie('jwt', '', {
         httpOnly: true,
         expires: new Date(0)
