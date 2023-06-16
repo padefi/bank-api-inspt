@@ -1,15 +1,12 @@
-import Layout from "./components/Layout";
-import Main from "./components/Main";
-import SideBar from "./components/Sidebar";
+import { Container } from 'react-bootstrap';
+import { Outlet } from "react-router-dom";
 import "./styles.scss";
 
 const App = () => {
   return (
-    <Layout>
-      <SideBar />
-      <Main>        
-      </Main>
-    </Layout>
+    <>
+      <Outlet />
+    </>
   );
 };
 

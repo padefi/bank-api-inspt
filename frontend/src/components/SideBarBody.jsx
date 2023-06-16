@@ -1,14 +1,15 @@
 import Sidebar from "react-bootstrap-sidebar-menu";
+import { LinkContainer } from 'react-router-bootstrap';
 import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaRegListAlt, FaShareSquare, FaWallet } from "react-icons/fa";
 
 const SideBarBody = () => {
     return (
         <Sidebar.Body>
             <Sidebar.Nav>
-                <Sidebar.Nav.Link href='/'>
+                <LinkContainer to='/'>
                     <FaHome />
                     <Sidebar.Nav.Title>Principal</Sidebar.Nav.Title>
-                </Sidebar.Nav.Link>
+                </LinkContainer>
                 <Sidebar.Sub>
                     <Sidebar.Sub.Toggle>
                         <FaHotel />
@@ -16,18 +17,18 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <Sidebar.Nav.Link href='/'>
+                            <LinkContainer to='/'>
                                 <FaDollarSign />
                                 <Sidebar.Nav.Title>Saldos</Sidebar.Nav.Title>
-                            </Sidebar.Nav.Link>
-                            <Sidebar.Nav.Link href='/'>
+                            </LinkContainer>
+                            <LinkContainer to='/'>
                                 <FaRegListAlt />
                                 <Sidebar.Nav.Title>Movimientos</Sidebar.Nav.Title>
-                            </Sidebar.Nav.Link>
-                            <Sidebar.Nav.Link href='/'>
+                            </LinkContainer>
+                            <LinkContainer to='/'>
                                 <FaRegChartBar />
                                 <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>
-                            </Sidebar.Nav.Link>
+                            </LinkContainer>
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
                 </Sidebar.Sub>
@@ -38,18 +39,18 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <Sidebar.Nav.Link href='/'>
+                            <LinkContainer to='/'>
                                 <FaArrowCircleDown />
                                 <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
-                            </Sidebar.Nav.Link>
-                            <Sidebar.Nav.Link href='/'>
+                            </LinkContainer>
+                            <LinkContainer to='/'>
                                 <FaArrowCircleUp />
                                 <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
-                            </Sidebar.Nav.Link>
-                            <Sidebar.Nav.Link href='/'>
+                            </LinkContainer>
+                            <LinkContainer to='/'>
                                 <FaShareSquare />
                                 <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>
-                            </Sidebar.Nav.Link>
+                            </LinkContainer>
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
                 </Sidebar.Sub>
