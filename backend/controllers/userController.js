@@ -32,7 +32,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 res.status(403);
                 throw new Error('El usuario ya se encuentra logueado.');
             }
-            
+
             req.session.userId = user._id;
             user.loginAttempts = 0;
             await user.save();
@@ -40,7 +40,11 @@ const loginUser = asyncHandler(async (req, res) => {
             generateToken(res, user._id);
 
             res.status(200).json({
-                message: 'Usuario logueado.'
+                message: 'Usuario logueado.',
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email
             });
 
         } else {
@@ -62,7 +66,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access  Public
 const logoutUser = asyncHandler(async (req, res) => {
 
-    endUserExpiration(req.session.userId,req.sessionID);
+    endUserExpiration(req.session.userId, req.sessionID);
 
     req.session.destroy();
     res.cookie('connect.sid', '', {
