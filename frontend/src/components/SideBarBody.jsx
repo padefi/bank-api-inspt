@@ -19,19 +19,19 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to='/'>
+                            <LinkContainer to='/saldos'>
                                 <Sidebar.Nav.Link>
                                     <FaDollarSign />
                                     <Sidebar.Nav.Title>Saldos</Sidebar.Nav.Title>
                                 </Sidebar.Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to='/'>
+                            <LinkContainer to='/movimientos'>
                                 <Sidebar.Nav.Link>
                                     <FaRegListAlt />
                                     <Sidebar.Nav.Title>Movimientos</Sidebar.Nav.Title>
                                 </Sidebar.Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to='/'>
+                            <LinkContainer to='/resumen'>
                                 <Sidebar.Nav.Link>
                                     <FaRegChartBar />
                                     <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>
@@ -47,19 +47,19 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to='/'>
+                            <LinkContainer to='/deposito'>
                                 <Sidebar.Nav.Link>
                                     <FaArrowCircleDown />
                                     <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
                                 </Sidebar.Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to='/'>
+                            <LinkContainer to='/extraccion'>
                                 <Sidebar.Nav.Link>
                                     <FaArrowCircleUp />
                                     <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
                                 </Sidebar.Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to='/'>
+                            <LinkContainer to='/transferencia'>
                                 <Sidebar.Nav.Link>
                                     <FaShareSquare />
                                     <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>

@@ -7,7 +7,7 @@ import Loader from '../components/Loader';
 import { useUpdateUserMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 
-const ProfileScreen = () => {
+const Profile = () => {
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -83,4 +83,4 @@ const ProfileScreen = () => {
     );
 };
 
-export default ProfileScreen;
+export default Profile;

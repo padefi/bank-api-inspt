@@ -1,7 +1,7 @@
 import { Dropdown } from "react-bootstrap";
 import Sidebar from "react-bootstrap-sidebar-menu";
 import { FaUserCircle } from "react-icons/fa";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';

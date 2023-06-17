@@ -2,14 +2,11 @@ import Layout from '../components/Layout';
 import Main from '../components/Main';
 import SideBar from '../components/Sidebar';
 
-const HomeView = () => {
+const Home = () => {
     return (
-        <Layout>
-            <SideBar />
-            <Main>
-            </Main>
-        </Layout>
+        <>
+        </>
     );
 };
 
-export default HomeView;
+export default Home;

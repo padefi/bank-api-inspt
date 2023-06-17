@@ -38,17 +38,17 @@ const LoginScreen = () => {
 
   return (
     <FormContainer>
-      <h1>Sign In</h1>
+      <h1>Bienvenidos al banco</h1>
 
       <Form onSubmit={submitHandler}>
         <Form.Group className='my-2' controlId='email'>
-          <Form.Label>Email Address</Form.Label>
-          <Form.Control type='email' placeholder='Enter email' value={email} onChange={(e) => setEmail(e.target.value)}></Form.Control>
+          <Form.Label>Mail</Form.Label>
+          <Form.Control type='email' placeholder='Ingrese mail' value={email} onChange={(e) => setEmail(e.target.value)}></Form.Control>
         </Form.Group>
 
         <Form.Group className='my-2' controlId='password'>
-          <Form.Label>Password</Form.Label>
-          <Form.Control type='password' placeholder='Enter password' value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
+          <Form.Label>Contraseña</Form.Label>
+          <Form.Control type='password' placeholder='Ingrese contraseña' value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
         </Form.Group>
 
         <Button type='submit' variant='primary' className='mt-3'>
