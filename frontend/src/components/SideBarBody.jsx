@@ -7,8 +7,10 @@ const SideBarBody = () => {
         <Sidebar.Body>
             <Sidebar.Nav>
                 <LinkContainer to='/'>
-                    <FaHome />
-                    <Sidebar.Nav.Title>Principal</Sidebar.Nav.Title>
+                    <Sidebar.Nav.Link>
+                        <FaHome />
+                        <Sidebar.Nav.Title>Principal</Sidebar.Nav.Title>
+                    </Sidebar.Nav.Link>
                 </LinkContainer>
                 <Sidebar.Sub>
                     <Sidebar.Sub.Toggle>
@@ -18,16 +20,22 @@ const SideBarBody = () => {
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
                             <LinkContainer to='/'>
-                                <FaDollarSign />
-                                <Sidebar.Nav.Title>Saldos</Sidebar.Nav.Title>
+                                <Sidebar.Nav.Link>
+                                    <FaDollarSign />
+                                    <Sidebar.Nav.Title>Saldos</Sidebar.Nav.Title>
+                                </Sidebar.Nav.Link>
                             </LinkContainer>
                             <LinkContainer to='/'>
-                                <FaRegListAlt />
-                                <Sidebar.Nav.Title>Movimientos</Sidebar.Nav.Title>
+                                <Sidebar.Nav.Link>
+                                    <FaRegListAlt />
+                                    <Sidebar.Nav.Title>Movimientos</Sidebar.Nav.Title>
+                                </Sidebar.Nav.Link>
                             </LinkContainer>
                             <LinkContainer to='/'>
-                                <FaRegChartBar />
-                                <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>
+                                <Sidebar.Nav.Link>
+                                    <FaRegChartBar />
+                                    <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>
+                                </Sidebar.Nav.Link>
                             </LinkContainer>
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
@@ -40,16 +48,22 @@ const SideBarBody = () => {
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
                             <LinkContainer to='/'>
-                                <FaArrowCircleDown />
-                                <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
+                                <Sidebar.Nav.Link>
+                                    <FaArrowCircleDown />
+                                    <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
+                                </Sidebar.Nav.Link>
                             </LinkContainer>
                             <LinkContainer to='/'>
-                                <FaArrowCircleUp />
-                                <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
+                                <Sidebar.Nav.Link>
+                                    <FaArrowCircleUp />
+                                    <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
+                                </Sidebar.Nav.Link>
                             </LinkContainer>
                             <LinkContainer to='/'>
-                                <FaShareSquare />
-                                <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>
+                                <Sidebar.Nav.Link>
+                                    <FaShareSquare />
+                                    <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>
+                                </Sidebar.Nav.Link>
                             </LinkContainer>
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
