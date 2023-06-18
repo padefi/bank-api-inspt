@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Layout from "./components/Layout";
 import Main from "./components/Main";
@@ -11,23 +11,24 @@ import "./styles.scss";
 
 const App = () => {
 
-  const [checkCookiesCompleted, setCheckCookiesCompleted] = useState(false);
-  const { data, isError, isSuccess } = useCheckCookiesQuery();
+  if (localStorage.getItem('userInfo')) {
+    const [checkCookiesCompleted, setCheckCookiesCompleted] = useState(false);
+    const { data, isError } = useCheckCookiesQuery();
 
-  useEffect(() => {
-    if (isError && isSuccess) {
-      // Ocurrió un error en la solicitud de las cookies
-      localStorage.removeItem('userInfo');
-    } else if (isError && !isSuccess) {
-      // Las cookies expirarion
-      localStorage.removeItem('userInfo');
-    } else {
-      setCheckCookiesCompleted(true);
+    useEffect(() => {
+      if (isError && !data) {
+        // Ocurrió un error en la solicitud de las cookies
+        localStorage.removeItem('userInfo');
+        toast.error('Sesion expirada');
+        window.location.href = "/login";
+      } else {
+        setCheckCookiesCompleted(true);
+      }
+    }, [data, isError]);
+
+    if (!checkCookiesCompleted) {
+      return null;
     }
-  }, [data, isError]);
-
-  if (!checkCookiesCompleted) {
-    return null;
   }
 
   return (

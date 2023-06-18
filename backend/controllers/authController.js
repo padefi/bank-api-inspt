@@ -1,6 +1,4 @@
 import asyncHandler from "express-async-handler";
-import { endUserExpiration, initialUserExpiration } from "../middlewares/sessionMiddleware.js";
-import { protect } from "../middlewares/authMiddleware.js";
 import { extendToken } from "../utils/generateToken.js";
 
 // @desc    Comprueba que existan las cookies
