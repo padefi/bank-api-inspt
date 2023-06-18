@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import operationRoutes from "./routes/operationRoutes.js";
 import accountRoutes from "./routes/accountRoutes.js";
@@ -40,6 +41,7 @@ app.use(async (req, res, next) => {
 });
 
 // Route
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/operations', operationRoutes);
 app.use('/api/accounts', accountRoutes);

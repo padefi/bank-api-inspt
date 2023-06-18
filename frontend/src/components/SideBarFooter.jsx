@@ -33,7 +33,7 @@ const SideBarFooter = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                     <Dropdown.Item href="/profile">Perfil</Dropdown.Item>
-                    <Dropdown.Item onClick={logoutHandler}>Logout</Dropdown.Item>
+                    <Dropdown.Item onClick={logoutHandler}>Cerrar sesion</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
         </Sidebar.Footer>

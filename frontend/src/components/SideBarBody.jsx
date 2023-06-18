@@ -6,7 +6,7 @@ const SideBarBody = () => {
     return (
         <Sidebar.Body>
             <Sidebar.Nav>
-                <LinkContainer to='/'>
+                <LinkContainer to='/home'>
                     <Sidebar.Nav.Link>
                         <FaHome />
                         <Sidebar.Nav.Title>Principal</Sidebar.Nav.Title>
