@@ -9,8 +9,14 @@ import { extendToken } from "../utils/generateToken.js";
 // @route   GET /api/operations/transfer
 // @access  Private
 const getOperations = asyncHandler(async (req, res) => {
+    
+    const { accountId } = req.query;
 
-    const { accountId } = req.body;
+    // Validación
+    if (!accountId) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
 
     //const accountFrom = await Account.findOne(isAdmin(req.user) ? { _id: accountId } : { _id: accountId, accountHolder: req.user._id }).populate('operations');
     const operations = await Operation.find({

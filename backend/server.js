@@ -24,7 +24,7 @@ app.use(cookieParser());
 // Middlewares session
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     rolling: true,
     cookie: {
