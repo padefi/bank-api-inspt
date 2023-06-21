@@ -6,10 +6,57 @@ import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
 import { extendToken } from "../utils/generateToken.js";
 
 // @desc    Visualizar operaciones de una cuenta
-// @route   GET /api/operations/transfer
+// @route   GET /api/operations/allOperations
+// @access  Private
+const getAllOperations = asyncHandler(async (req, res) => {
+
+    const { id } = req.query;
+
+    // Validación
+    if (!id) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const operations = await Operation.findOne({ _id: id }).populate([
+        {
+            path: 'accountFrom',
+            select: 'accountId',
+            populate: [
+                {
+                    path: 'accountHolder',
+                    select: 'firstName lastName governmentId',
+                }
+            ]
+        },
+        {
+            path: 'accountTo',
+            select: 'accountId',
+            populate: [
+                {
+                    path: 'accountHolder',
+                    select: 'firstName lastName governmentId',
+                }
+            ]
+        }
+    ]);
+
+    if (!operations) {
+        res.status(403);
+        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+    }
+
+    extendToken(req, res);
+    res.status(201).json({
+        operations
+    });
+});
+
+// @desc    Visualizar operaciones de una cuenta
+// @route   GET /api/operations/operations
 // @access  Private
 const getOperations = asyncHandler(async (req, res) => {
-    
+
     const { accountId } = req.query;
 
     // Validación
@@ -307,6 +354,7 @@ const transferMoney = asyncHandler(async (req, res) => {
 });
 
 export {
+    getAllOperations,
     getOperations,
     withdrawMoney,
     depositMoney,

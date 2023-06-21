@@ -2,15 +2,15 @@ import React from 'react';
 import Table from 'react-bootstrap/Table';
 import FormContainer from '../components/FormContainer';
 import { useShowAccountsQuery } from '../slices/accountApiSlice';
-import { useShowOperationsQuery } from '../slices/operationApiSlice';
+import { useShowAllOperationsQuery } from '../slices/operationApiSlice';
 
-const AccountOperations = ({ accountId, _id, currency }) => {
-  const { data: dataOperation, error: errorOperation, isLoading: isLoadingOperation } = useShowOperationsQuery({ accountId: _id });
+const AccountOperations = ({ _id, currency }) => {
+  const { data: dataOperation, error: errorOperation, isLoading: isLoadingOperation } = useShowAllOperationsQuery({ id: _id });
 
   if (isLoadingOperation) {
     return (
       <div>
-        <h3>Cuenta: {accountId}</h3>
+        <h3>Operación: {_id}</h3>
         <div>Cargando operaciones...</div>
       </div>
     );
@@ -19,7 +19,7 @@ const AccountOperations = ({ accountId, _id, currency }) => {
   if (errorOperation) {
     return (
       <div>
-        <h3>Cuenta: {accountId}</h3>
+        <h3>Operación: {_id}</h3>
         <div>Error al cargar las operaciones</div>
       </div>
     );
@@ -28,32 +28,11 @@ const AccountOperations = ({ accountId, _id, currency }) => {
   const { operations } = dataOperation;
 
   return (
-    <div>
-      <h3>Cuenta: {accountId}</h3>
-
-      {operations.length > 0 ? (
-        <Table striped responsive>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Tipo</th>
-              <th>Importe</th>
-            </tr>
-          </thead>
-          <tbody>
-            {operations.map((operation) => (
-              <tr key={operation.operationId}>
-                <td>{operation.operationDate}</td>
-                <td>{operation.type}</td>
-                <td>{operation.amountFrom.toLocaleString("es-AR", { style: "currency", currency: currency })}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      ) : (
-        <h5>No existen operaciones para esta cuenta</h5>
-      )}
-    </div>
+    <tr>
+      <td>{new Intl.DateTimeFormat("es-ES", { dateStyle: "short", timeStyle: "short" }).format(new Date(operations.operationDate)).replace(/,/g, " -")}</td>
+      <td>{operations.type}</td>
+      <td>{operations.amountFrom.toLocaleString("es-AR", { style: "currency", currency: currency })}</td>
+    </tr>
   );
 };
 
@@ -64,16 +43,14 @@ const Home = () => {
   const error = errorAccount;
 
   if (isLoading) return <div>Cargando...</div>;
-  if (error) return <div>Error al cargar los datos</div>;
+  if (error) return <div>Error al cargar las cuentas</div>;
 
   const { accounts } = dataAccount;
-  console.log(accounts);
 
   return (
     <div>
       <FormContainer>
         <h2>Cuentas</h2>
-
         {accounts.length > 0 ? (
           <Table striped responsive>
             <thead>
@@ -87,7 +64,7 @@ const Home = () => {
             </thead>
             <tbody>
               {accounts.map((account) => (
-                <tr key={account.accountId}>
+                <tr key={account._id}>
                   <td>{account.type}</td>
                   <td>{account.currency.acronym}</td>
                   <td>{account.accountId}</td>
@@ -103,11 +80,32 @@ const Home = () => {
       </FormContainer>
 
       <FormContainer>
-        <h2>Operaciones</h2>
-
-        {accounts.map((account) => (
-          <AccountOperations key={account.accountId} accountId={account._id} _id={account._id} currency={account.currency.acronym} />
-        ))}
+        <h2>Últimas operaciones</h2>
+          {accounts.map((account) => (
+            <div key={account.accountId}>
+              <h5>Cuenta: {account.accountId}</h5>
+              <Table striped responsive>
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Importe</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {account.operations.length > 0 ? (
+                    account.operations.slice(0, 2).map((operation) => (
+                      <AccountOperations key={operation._id} _id={operation._id} currency={account.currency.acronym} />
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3}><h6>No existen operaciones para esta cuenta</h6></td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          ))}
       </FormContainer>
     </div>
   );
