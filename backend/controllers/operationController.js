@@ -48,7 +48,10 @@ const getAllOperations = asyncHandler(async (req, res) => {
 
     extendToken(req, res);
     res.status(201).json({
-        operations
+        idOperation: operations._id,
+        operationDate: operations.operationDate,
+        type: operations.type,
+        amountFrom: (operations.type === 'deposito') ? operations.amountFrom : operations.amountFrom*-1,
     });
 });
 

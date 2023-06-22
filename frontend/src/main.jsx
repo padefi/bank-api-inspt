@@ -7,6 +7,7 @@ import App from './App.jsx';
 import Login from './views/Login.jsx';
 import Home from './views/Home.jsx';
 import Profile from './views/Profile.jsx';
+import AccountOperations from './views/AccountOperations.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
@@ -18,6 +19,7 @@ const router = createBrowserRouter(
       <Route path='' element={<PrivateRoute />}>
         <Route index={true} path='/home' element={<Home />} />
         <Route path='/profile' element={<Profile />} />
+        <Route path='/accountOperations' element={<AccountOperations />} />
       </Route>
     </Route>
   )
