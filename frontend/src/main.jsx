@@ -19,7 +19,7 @@ const router = createBrowserRouter(
       <Route path='' element={<PrivateRoute />}>
         <Route index={true} path='/home' element={<Home />} />
         <Route path='/profile' element={<Profile />} />
-        <Route path='/accountOperations' element={<AccountOperations />} />
+        <Route path='/accountOperations/:id' element={<AccountOperations />} />
       </Route>
     </Route>
   )
@@ -27,7 +27,7 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <React.StrictMode>
+    <React.StrictMode>{/* SE DEBE ELIMINAR EN PRODUCCION YA QUE DUPLICA EL RENDERIZADO */}
       <RouterProvider router={router} />
     </React.StrictMode>
   </Provider>

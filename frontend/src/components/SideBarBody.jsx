@@ -1,6 +1,6 @@
 import Sidebar from "react-bootstrap-sidebar-menu";
 import { LinkContainer } from 'react-router-bootstrap';
-import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaRegListAlt, FaShareSquare, FaWallet } from "react-icons/fa";
+import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaRegListAlt, FaShareSquare } from "react-icons/fa";
 
 const SideBarBody = () => {
     return (
@@ -19,12 +19,6 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to='/saldos'>
-                                <Sidebar.Nav.Link>
-                                    <FaDollarSign />
-                                    <Sidebar.Nav.Title>Saldos</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
-                            </LinkContainer>
                             <LinkContainer to='/movimientos'>
                                 <Sidebar.Nav.Link>
                                     <FaRegListAlt />
@@ -42,7 +36,7 @@ const SideBarBody = () => {
                 </Sidebar.Sub>
                 <Sidebar.Sub>
                     <Sidebar.Sub.Toggle>
-                        <FaWallet />
+                        <FaDollarSign />
                         <Sidebar.Nav.Title>Operaciones</Sidebar.Nav.Title>
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>

@@ -4,6 +4,7 @@ import Currency from "../models/currencyModel.js";
 import Operation from "../models/operationModel.js"
 import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
 import { extendToken } from "../utils/generateToken.js";
+import { decrypt } from "../utils/crypter.js";
 
 // @desc    Visualizar operaciones de una cuenta
 // @route   GET /api/operations/allOperations
@@ -52,59 +53,6 @@ const getAllOperations = asyncHandler(async (req, res) => {
         operationDate: operations.operationDate,
         type: operations.type,
         amountFrom: (operations.type === 'deposito') ? operations.amountFrom : operations.amountFrom*-1,
-    });
-});
-
-// @desc    Visualizar operaciones de una cuenta
-// @route   GET /api/operations/operations
-// @access  Private
-const getOperations = asyncHandler(async (req, res) => {
-
-    const { accountId } = req.query;
-
-    // Validación
-    if (!accountId) {
-        res.status(400);
-        throw new Error('Por favor, complete todos los campos.');
-    }
-
-    //const accountFrom = await Account.findOne(isAdmin(req.user) ? { _id: accountId } : { _id: accountId, accountHolder: req.user._id }).populate('operations');
-    const operations = await Operation.find({
-        $or: [
-            { accountFrom: accountId },
-            { accountTo: accountId }
-        ]
-    }).populate([
-        {
-            path: 'accountFrom',
-            select: 'accountId',
-            populate: [
-                {
-                    path: 'accountHolder',
-                    select: 'firstName lastName governmentId',
-                }
-            ]
-        },
-        {
-            path: 'accountTo',
-            select: 'accountId',
-            populate: [
-                {
-                    path: 'accountHolder',
-                    select: 'firstName lastName governmentId',
-                }
-            ]
-        }
-    ]);
-
-    if (!operations) {
-        res.status(403);
-        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
-    }
-
-    extendToken(req, res);
-    res.status(201).json({
-        operations
     });
 });
 
@@ -358,7 +306,6 @@ const transferMoney = asyncHandler(async (req, res) => {
 
 export {
     getAllOperations,
-    getOperations,
     withdrawMoney,
     depositMoney,
     transferMoney

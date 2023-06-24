@@ -6,6 +6,11 @@
     background-color: #f2f2f2;
 }
 
+.div-center {
+    display: flex;
+    justify-content: center;
+}
+
 .h-striped {
     margin: 0;
 }

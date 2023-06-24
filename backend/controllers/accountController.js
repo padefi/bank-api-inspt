@@ -5,6 +5,7 @@ import { extendToken } from "../utils/generateToken.js";
 import User from "../models/userModel.js";
 import { generateAlias, generateAccountId } from "../utils/generateAccountInfo.js";
 import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
+import { decrypt, encrypt } from "../utils/crypter.js";
 
 // @desc    Ver cuentas bancarias
 // @route   GET /api/accounts/
@@ -18,16 +19,49 @@ const getUserAccounts = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const accounts = await Account.find(isAdmin(req.user) ? { accountHolder: userId } : { accountHolder: req.user._id }).populate('currency');
+    let accounts = await Account.find(isAdmin(req.user) ? { accountHolder: userId } : { accountHolder: req.user._id }).populate('currency');
 
     if (!accounts) {
         res.status(403);
         throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
+    accounts = await Promise.all(accounts.map(async (account) => {
+        const encryptedId = await encrypt(account._id.toHexString());
+        return { ...account.toObject(), _id: encryptedId };
+    }));
+
     extendToken(req, res);
     res.status(201).json({
         accounts
+    });
+});
+
+// @desc    Ver cuenta bancaria determinada
+// @route   GET /api/accounts/
+// @access  Private
+const getUserAccount = asyncHandler(async (req, res) => {
+
+    const { id } = req.query;
+
+    if (isAdmin(req.user) && !id) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const dencryptedId = await decrypt(id);
+
+    const account = await Account.findOne(isAdmin(req.user) ? { _id: id } : { _id: dencryptedId, accountHolder: req.user._id }).populate('currency');
+
+    if (!account) {
+        res.status(403);
+        throw new Error('Sin autorización.');
+        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+    }
+
+    extendToken(req, res);
+    res.status(201).json({
+        account
     });
 });
 
@@ -180,7 +214,7 @@ const changeAlias = asyncHandler(async (req, res) => {
     if (!alias.match(/^[0-9a-zA-Z.]{6,20}$/)) {
         res.status(400);
         throw new Error('El Alias debe tener entre 6 y 20 caracteres alfanuméricos.');
-    }    
+    }
 
     const account = await Account.findOne({ _id: accountId, accountHolder: req.user._id });
 
@@ -308,6 +342,7 @@ const activeAccount = asyncHandler(async (req, res) => {
 
 export {
     getUserAccounts,
+    getUserAccount,
     getAccount,
     createAccount,
     changeAlias,

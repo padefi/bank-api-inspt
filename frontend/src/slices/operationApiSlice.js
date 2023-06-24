@@ -10,8 +10,8 @@ export const operationApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     showOperations: builder.query({
-      query: ({ accountId }) => ({
-        url: `${OPERATIONS_URL}/operations?accountId=${accountId}`,
+      query: ({ id }) => ({
+        url: `${OPERATIONS_URL}/accountOperations?id=${id}`,
         method: 'GET',
       }),
     }),
