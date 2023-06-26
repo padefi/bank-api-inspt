@@ -1,3 +1,87 @@
+* {
+    font-family: sans-serif;
+}
+
+.carousel {
+    width: 100%;
+    height: auto;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel,
+.carousel-inner {
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+@media (max-width: 1440px) {
+    .carousel-inner {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-inner {
+        max-height: 100px;
+    }
+}
+
+.carousel-item img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+#FirstImg {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -10%);
+}
+
+#SecondImg {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -25%);
+}
+
+#ThirdImg {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -45%);
+}
+
+#CardContainer {
+    top: 0px;
+    left: 0px;
+    width: calc(50% - 12px);
+}
+
+.card-title {
+    margin-bottom: 0;
+    font-size: 20px;
+}
+
+.btn-title {
+    margin-bottom: 0;
+    font-size: 18px;
+}
+
+.button-container {
+    position: relative;
+    z-index: 1;
+}
+
+.box-text {
+    line-height: 1.25rem;
+}
+
 .div-striped {
     display: flex;
     align-items: center;
