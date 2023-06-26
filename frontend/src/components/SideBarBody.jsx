@@ -19,7 +19,7 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to='/cuentas'>
+                            <LinkContainer to='/accounts'>
                                 <Sidebar.Nav.Link>
                                     <FaWallet />
                                     <Sidebar.Nav.Title>Mis cuentas</Sidebar.Nav.Title>

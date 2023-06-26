@@ -71,7 +71,7 @@ const Home = () => {
               <>
                 <div className='box d-flex flex-column'>
                   {accounts.map((account) => (
-                    <>
+                    <React.Fragment key={account._id}>
                       <div className='box button-container py-0 d-flex justify-content-between'>
                         <div className='box'>
                           <p className='d-inline fw-bold mb-0 box-text'>
@@ -93,11 +93,11 @@ const Home = () => {
                         </div>
                       </div>
                       <hr />
-                    </>
+                    </React.Fragment>
                   ))}
                 </div>
                 <div className="box mt-0 d-flex justify-content-center">
-                  <Button as={Link} to="/ruta" variant="primary" className="btn col col-md-8 btn">
+                  <Button as={Link} to="/accounts" variant="primary" className="btn col col-md-8 btn">
                     <p className='my-0 py-0 btn-title'>Ver cuentas</p>
                   </Button>
                 </div>
@@ -116,7 +116,7 @@ const Home = () => {
           </div>
           <ContentBox>
             {accounts.map((account) => (
-              <>
+              <React.Fragment key={account._id}>
                 <div className='box'>
                   <p className='d-inline fw-bold mb-0 box-text'>
                     {account.type}
@@ -143,7 +143,7 @@ const Home = () => {
                   )}
                 </div>
                 <hr />
-              </>
+              </React.Fragment>
             ))}
           </ContentBox>
         </CardContainer>

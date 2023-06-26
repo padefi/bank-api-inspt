@@ -6,6 +6,7 @@ import store from './store';
 import App from './App.jsx';
 import Login from './views/Login.jsx';
 import Home from './views/Home.jsx';
+import Accounts from './views/Accounts.jsx';
 import Profile from './views/Profile.jsx';
 import AccountOperations from './views/AccountOperations.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
@@ -18,6 +19,7 @@ const router = createBrowserRouter(
       <Route path='/login' element={<Login />} />
       <Route path='' element={<PrivateRoute />}>
         <Route index={true} path='/home' element={<Home />} />
+        <Route path='/accounts' element={<Accounts />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/accountOperations/:id' element={<AccountOperations />} />
       </Route>
