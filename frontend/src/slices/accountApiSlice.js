@@ -4,9 +4,7 @@ const ACCOUNTS_URL = '/api/accounts';
 export const accountApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     showAccounts: builder.query({
-      query: (data) => ({
-        url: `${ACCOUNTS_URL}/`
-      }),
+      query: () => `${ACCOUNTS_URL}/`,
     }),
     showAccount: builder.query({
       query: ({ id }) => ({
@@ -18,6 +16,6 @@ export const accountApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-    useShowAccountsQuery,
-    useShowAccountQuery
+  useShowAccountsQuery,
+  useShowAccountQuery
 } = accountApiSlice;

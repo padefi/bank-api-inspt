@@ -8,11 +8,9 @@ import { toast } from 'react-toastify';
 import ContentBox from '../components/ContentBox';
 import { FaChevronCircleRight } from "react-icons/fa";
 
-const Home = () => {
-  const { data: dataAccount, error: errorAccount, isLoading: isLoadingAccount } = useShowAccountsQuery();
+const Accounts = () => {
+  const { data, error, isLoading, isFetching } = useShowAccountsQuery({ id: '' }, { refetchOnMountOrArgChange: true });
 
-  const isLoading = isLoadingAccount;
-  const error = errorAccount;
 
   if (isLoading) return <Loader />;
   if (error) {
@@ -20,7 +18,7 @@ const Home = () => {
     return <div>Error al cargar las cuentas</div>;
   }
 
-  const { accounts } = dataAccount;
+  const accounts = data?.accounts || [];
 
   return (
     <div className='box'>
@@ -28,6 +26,7 @@ const Home = () => {
         <div className='box bg-dark text-white p-2 px-4 rounded-top-2'>
           <h2 className='card-title'>Cuentas</h2>
         </div>
+        {isLoading || isFetching && <Loader />}
         <ContentBox>
           {accounts.length > 0 ? (
             <div className='box d-flex flex-column'>
@@ -74,4 +73,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Accounts;

@@ -53,24 +53,24 @@ const Profile = () => {
             <Form onSubmit={submitHandler}>
                 <Form.Group className='my-2' controlId='firstName'>
                     <Form.Label>Nombre</Form.Label>
-                    <Form.Control type='text' placeholder='Ingrese Nombre' value={firstName} onChange={(e) => setFirstName(e.target.value)}></Form.Control>
+                    <Form.Control type='text' placeholder='Ingrese Nombre' autoComplete='off' value={firstName} onChange={(e) => setFirstName(e.target.value)}></Form.Control>
                 </Form.Group>
                 <Form.Group className='my-2' controlId='lastName'>
                     <Form.Label>Apellido</Form.Label>
-                    <Form.Control type='text' placeholder='Ingrese Apellido' value={lastName} onChange={(e) => setLastName(e.target.value)}></Form.Control>
+                    <Form.Control type='text' placeholder='Ingrese Apellido' autoComplete='off' value={lastName} onChange={(e) => setLastName(e.target.value)}></Form.Control>
                 </Form.Group>
                 <Form.Group className='my-2' controlId='email'>
                     <Form.Label>Email Address</Form.Label>
-                    <Form.Control type='email' placeholder='Enter email' value={email} onChange={(e) => setEmail(e.target.value)}></Form.Control>
+                    <Form.Control type='email' placeholder='Enter email' autoComplete='off' value={email} onChange={(e) => setEmail(e.target.value)}></Form.Control>
                 </Form.Group>
                 <Form.Group className='my-2' controlId='password'>
                     <Form.Label>Password</Form.Label>
-                    <Form.Control type='password' placeholder='Enter password' value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
+                    <Form.Control type='password' placeholder='Enter password' autoComplete='off' value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
                 </Form.Group>
 
                 <Form.Group className='my-2' controlId='confirmPassword'>
                     <Form.Label>Confirm Password</Form.Label>
-                    <Form.Control type='password' placeholder='Confirm password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}></Form.Control>
+                    <Form.Control type='password' placeholder='Confirm password' autoComplete='off' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}></Form.Control>
                 </Form.Group>
 
                 <Button type='submit' variant='primary' className='mt-3'>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CardContainer from '../components/CardContainer';
 import { useShowAccountsQuery } from '../slices/accountApiSlice';
 import { useShowAllOperationsQuery } from '../slices/operationApiSlice';
@@ -12,9 +12,9 @@ import { FaChevronCircleRight } from "react-icons/fa";
 import ImageContainer from '../components/ImageContainer';
 
 const AccountOperations = ({ _id, currency }) => {
-  const { data: dataOperation, error: errorOperation, isLoading: isLoadingOperation } = useShowAllOperationsQuery({ id: _id });
+  const { data = [], error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id }, { refetchOnMountOrArgChange: true });
 
-  if (isLoadingOperation) {
+  if (isLoading || isFetching) {
     return (
       <div className='box button-container py-0 d-flex justify-content-between'>
         <Loader />
@@ -22,8 +22,8 @@ const AccountOperations = ({ _id, currency }) => {
     );
   }
 
-  if (errorOperation) {
-    toast.error(errorOperation.data?.message || errorOperation.error);
+  if (error) {
+    toast.error(error.data?.message || error.error);
     return (
       <div className='box button-container py-0 d-flex justify-content-between'>
         <h3>Operación: {_id}</h3>
@@ -32,7 +32,7 @@ const AccountOperations = ({ _id, currency }) => {
     );
   }
 
-  const { idOperation, operationDate, type, amountFrom } = dataOperation;
+  const { idOperation, operationDate, type, amountFrom } = data;
   const isNegative = amountFrom < 0;
 
   return (
@@ -45,18 +45,16 @@ const AccountOperations = ({ _id, currency }) => {
 };
 
 const Home = () => {
-  const { data: dataAccount, error: errorAccount, isLoading: isLoadingAccount } = useShowAccountsQuery();
 
-  const isLoading = isLoadingAccount;
-  const error = errorAccount;
+  const { data = [], error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
 
-  if (isLoading) return <Loader />;
-  if (error) {
-    toast.error(error.data?.message || error.error);
-    return <div>Error al cargar las cuentas</div>;
-  }
+  useEffect(() => {
+    if (error) {
+      toast.error(error.data?.message || error.error);
+    }
+  }, [error]);
 
-  const { accounts } = dataAccount;
+  let accounts = data?.accounts || [];
 
   return (
     <div className='box'>
@@ -66,6 +64,7 @@ const Home = () => {
           <div className='box bg-dark text-white p-2 px-4 rounded-top-2'>
             <h2 className='card-title'>Cuentas</h2>
           </div>
+          {isLoading || isFetching && <Loader />}
           <ContentBox>
             {accounts.length > 0 ? (
               <>

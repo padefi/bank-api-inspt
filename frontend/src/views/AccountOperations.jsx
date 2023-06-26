@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 
 const Operations = ({ _id, currency }) => {
-  const { data: dataOperation, error: errorOperation, isLoading: isLoadingOperation } = useShowAllOperationsQuery({ id: _id });
+  const { data: dataOperation, error: errorOperation, isLoading: isLoadingOperation } = useShowAllOperationsQuery({ id: _id }, { refetchOnMountOrArgChange: true });
 
   if (isLoadingOperation) {
     return (
@@ -52,7 +52,7 @@ const AccountOperations = () => {
 
   const { id } = useParams();
 
-  const { data: dataAccount, error: errorAccount, isLoading: isLoadingAccount } = useShowAccountQuery({ id });
+  const { data: dataAccount, error: errorAccount, isLoading: isLoadingAccount } = useShowAccountQuery({ id }, { refetchOnMountOrArgChange: true });
 
   const isLoading = isLoadingAccount;
   const error = errorAccount;

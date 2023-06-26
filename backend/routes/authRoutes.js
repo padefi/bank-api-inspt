@@ -4,6 +4,6 @@ import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get('/check-cookies', protect, userIsLog);
+router.get('/check-cookies', userIsLog);
 
 export default router;

@@ -12,8 +12,8 @@ const App = () => {
 
   if (localStorage.getItem('userInfo')) {
     const [checkCookiesCompleted, setCheckCookiesCompleted] = useState(false);
-    const { data, isError } = useCheckCookiesQuery();
-
+    const { data, isError } = useCheckCookiesQuery({ id: '' }, { refetchOnMountOrArgChange: true });
+    
     useEffect(() => {
       if (isError && !data) {
         // Ocurrió un error en la solicitud de las cookies
