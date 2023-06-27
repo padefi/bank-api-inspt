@@ -1,21 +1,25 @@
-import React from 'react';
-import CardContainer from '../components/CardContainer';
+import React, { useEffect, useState } from 'react';
 import { useShowAccountsQuery } from '../slices/accountApiSlice';
-import { Link } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import CardContainer from '../components/CardContainer';
 import Loader from '../components/Loader';
 import { toast } from 'react-toastify';
 import ContentBox from '../components/ContentBox';
 import { FaChevronCircleRight } from "react-icons/fa";
 
 const Accounts = () => {
+  const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const { data, error, isLoading, isFetching } = useShowAccountsQuery({ id: '' }, { refetchOnMountOrArgChange: true });
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error.data?.message || error.error);
+    } else {
+      setCheckAccountsCompleted(true);
+    }
+  }, [data, error]);
 
-  if (isLoading) return <Loader />;
-  if (error) {
-    toast.error(error.data?.message || error.error);
-    return <div>Error al cargar las cuentas</div>;
+  if (!checkAccountsCompleted) {
+    return null;
   }
 
   const accounts = data?.accounts || [];

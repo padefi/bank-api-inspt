@@ -24,6 +24,12 @@
     }
 }
 
+@media (max-width: 1366px) {
+    .carousel-inner {
+        max-height: 150px;
+    }
+}
+
 @media (max-width: 768px) {
     .carousel-inner {
         max-height: 100px;

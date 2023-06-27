@@ -5,14 +5,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
+import { useEffect, useState } from "react";
 
 const SideBarFooter = () => {
+    const [fullName, setFullName] = useState('');
     const { userInfo } = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [logoutApiCall] = useLogoutMutation();
+
+    useEffect(() => {
+        setFullName(userInfo.firstName + ' ' + userInfo.lastName);
+    }, [userInfo.firstName, userInfo.lastName]);
 
     const logoutHandler = async () => {
         try {
@@ -29,7 +35,7 @@ const SideBarFooter = () => {
             <Dropdown as={Sidebar.Sub}>
                 <Dropdown.Toggle variant="success" id="user-dropdown-toggle" className="dropdown-toggle-sidebar">
                     <FaUserCircle className="fa-circle-sidebar" />
-                    <Sidebar.Nav.Title id='username'>{userInfo.firstName + ' ' + userInfo.lastName}</Sidebar.Nav.Title>
+                    <Sidebar.Nav.Title id='username'>{fullName}</Sidebar.Nav.Title>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                     <Dropdown.Item href="/profile">Perfil</Dropdown.Item>

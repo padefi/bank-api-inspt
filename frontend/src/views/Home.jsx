@@ -12,7 +12,7 @@ import { FaChevronCircleRight } from "react-icons/fa";
 import ImageContainer from '../components/ImageContainer';
 
 const AccountOperations = ({ _id, currency }) => {
-  const { data = [], error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id }, { refetchOnMountOrArgChange: true });
+  const { data = [], error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id });
 
   if (isLoading || isFetching) {
     return (
@@ -45,8 +45,7 @@ const AccountOperations = ({ _id, currency }) => {
 };
 
 const Home = () => {
-
-  const { data = [], error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
+  const { data = [], error, isLoading, isFetching } = useShowAccountsQuery();
 
   useEffect(() => {
     if (error) {

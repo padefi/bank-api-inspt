@@ -12,7 +12,10 @@ const userIsLog = asyncHandler(async (req, res) => {
             checkCookiesData: true
         });
     } else {
-        res.status(400);
+        res.status(400).json({
+            message: 'Cookies no encontradas.',
+            checkCookiesData: false
+        });;
         throw new Error('Cookies no encontradas.');
     }
 });

@@ -6,12 +6,10 @@ const SideBarBody = () => {
     return (
         <Sidebar.Body>
             <Sidebar.Nav>
-                <LinkContainer to='/home'>
-                    <Sidebar.Nav.Link>
-                        <FaHome />
-                        <Sidebar.Nav.Title>Posición consolidada</Sidebar.Nav.Title>
-                    </Sidebar.Nav.Link>
-                </LinkContainer>
+                <Sidebar.Nav.Link href="/home">
+                    <FaHome />
+                    <Sidebar.Nav.Title>Posición consolidada</Sidebar.Nav.Title>
+                </Sidebar.Nav.Link>
                 <Sidebar.Sub>
                     <Sidebar.Sub.Toggle>
                         <FaHotel />
@@ -19,24 +17,18 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to='/accounts'>
-                                <Sidebar.Nav.Link>
-                                    <FaWallet />
-                                    <Sidebar.Nav.Title>Mis cuentas</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
-                            </LinkContainer>
-                            <LinkContainer to='/movimientos'>
-                                <Sidebar.Nav.Link>
-                                    <FaRegListAlt />
-                                    <Sidebar.Nav.Title>Movimientos</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
-                            </LinkContainer>
-                            <LinkContainer to='/resumen'>
-                                <Sidebar.Nav.Link>
-                                    <FaRegChartBar />
-                                    <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
-                            </LinkContainer>
+                            <Sidebar.Nav.Link href="/accounts">
+                                <FaWallet />
+                                <Sidebar.Nav.Title>Mis cuentas</Sidebar.Nav.Title>
+                            </Sidebar.Nav.Link>
+                            <Sidebar.Nav.Link href="/movimientos">
+                                <FaRegListAlt />
+                                <Sidebar.Nav.Title>Movimientos</Sidebar.Nav.Title>
+                            </Sidebar.Nav.Link>
+                            <Sidebar.Nav.Link href="/resumen">
+                                <FaRegChartBar />
+                                <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>
+                            </Sidebar.Nav.Link>
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
                 </Sidebar.Sub>
@@ -47,24 +39,18 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to='/deposito'>
-                                <Sidebar.Nav.Link>
-                                    <FaArrowCircleDown />
-                                    <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
-                            </LinkContainer>
-                            <LinkContainer to='/extraccion'>
-                                <Sidebar.Nav.Link>
-                                    <FaArrowCircleUp />
-                                    <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
-                            </LinkContainer>
-                            <LinkContainer to='/transferencia'>
-                                <Sidebar.Nav.Link>
-                                    <FaShareSquare />
-                                    <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
-                            </LinkContainer>
+                            <Sidebar.Nav.Link href="/">
+                                <FaArrowCircleDown />
+                                <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
+                            </Sidebar.Nav.Link>
+                            <Sidebar.Nav.Link href="/">
+                                <FaArrowCircleUp />
+                                <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
+                            </Sidebar.Nav.Link>
+                            <Sidebar.Nav.Link href="/">
+                                <FaShareSquare />
+                                <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>
+                            </Sidebar.Nav.Link>
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
                 </Sidebar.Sub>

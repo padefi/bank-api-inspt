@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoginMutation } from '../slices/usersApiSlice';
@@ -35,6 +35,12 @@ const LoginScreen = () => {
       toast.error(err?.data?.message || err.error);
     }
   };
+
+  if (localStorage.getItem('userMessage')) {
+    toast.error('Sesion expirada');
+  }
+
+  localStorage.removeItem('userMessage');
 
   return (
     <FormContainer>

@@ -70,6 +70,7 @@ $sidebar-menu-dark-brand-hover-color: $navbar-dark-brand-hover-color !default;
 
 .sidebar-menu-collapse.show {
   width: $sidebar-menu-width-expanded;
+  transition: width 0.35s ease;
 }
 
 .sidebar-menu-collapse.collapse {
@@ -88,11 +89,19 @@ $sidebar-menu-dark-brand-hover-color: $navbar-dark-brand-hover-color !default;
   .sidebar-menu-header {
     justify-content: flex-end;
   }
+
+  #username {
+    display: none;
+  }
 }
 
 .sidebar-menu-collapse.collapsing.width {
   transition: width 0.35s;
   height: auto;
+}
+
+.collapsing.collapse-horizontal {
+  width: 72px !important;
 }
 
 .sidebar-menu-body {
@@ -134,8 +143,6 @@ $sidebar-menu-dark-brand-hover-color: $navbar-dark-brand-hover-color !default;
     @extend .navbar-toggler-icon;
     width: $sidebar-menu-toggle-icon-width;
     height: $sidebar-menu-toggle-icon-height;
-
-
   }
 }
 
@@ -413,4 +420,12 @@ $sidebar-menu-dark-brand-hover-color: $navbar-dark-brand-hover-color !default;
     border-color: transparent !important;
     background-color: transparent !important;
   }
+}
+
+#username {
+  display: inline-block;
+  width: 180px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
