@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useShowAccountQuery } from '../slices/accountApiSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
+import useCheckCookies from '../utils/useCheckCookies';
 
 const Operations = ({ _id, currency }) => {
   const { data: dataOperation, error: errorOperation, isLoading: isLoadingOperation } = useShowAllOperationsQuery({ id: _id }, { refetchOnMountOrArgChange: true });
@@ -49,9 +50,8 @@ const Operations = ({ _id, currency }) => {
 };
 
 const AccountOperations = () => {
-
+  useCheckCookies();
   const { id } = useParams();
-
   const { data: dataAccount, error: errorAccount, isLoading: isLoadingAccount } = useShowAccountQuery({ id }, { refetchOnMountOrArgChange: true });
 
   const isLoading = isLoadingAccount;

@@ -5,8 +5,10 @@ import Loader from '../components/Loader';
 import { toast } from 'react-toastify';
 import ContentBox from '../components/ContentBox';
 import { FaChevronCircleRight } from "react-icons/fa";
+import useCheckCookies from '../utils/useCheckCookies';
 
 const Accounts = () => {
+  useCheckCookies();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const { data, error, isLoading, isFetching } = useShowAccountsQuery({ id: '' }, { refetchOnMountOrArgChange: true });
 

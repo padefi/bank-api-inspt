@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import ContentBox from '../components/ContentBox';
 import { FaChevronCircleRight } from "react-icons/fa";
 import ImageContainer from '../components/ImageContainer';
+import useCheckCookies from '../utils/useCheckCookies';
 
 const AccountOperations = ({ _id, currency }) => {
   const { data = [], error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id });
@@ -45,7 +46,8 @@ const AccountOperations = ({ _id, currency }) => {
 };
 
 const Home = () => {
-  const { data = [], error, isLoading, isFetching } = useShowAccountsQuery();
+  useCheckCookies();
+  const { data = [], error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (error) {
