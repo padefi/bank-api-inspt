@@ -120,3 +120,11 @@
 .negative-number {
     color: red !important;
 }
+
+#box-container {
+    margin-top: 3.5rem !important;
+}
+
+.plus-icon {
+    color: #0d6efd;
+}

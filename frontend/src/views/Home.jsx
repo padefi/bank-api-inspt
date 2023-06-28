@@ -61,7 +61,7 @@ const Home = () => {
     <div className='box'>
       <ImageContainer />
       <div className="d-flex justify-content-around">
-        <CardContainer>
+        <CardContainer id="CardContainer">
           <div className='box bg-dark text-white p-2 px-4 rounded-top-2'>
             <h2 className='card-title'>Cuentas</h2>
           </div>
@@ -110,7 +110,7 @@ const Home = () => {
           </ContentBox>
         </CardContainer>
 
-        <CardContainer>
+        <CardContainer id="CardContainer">
           <div className='box bg-dark text-white p-2 px-4 rounded-top-2'>
             <h2 className='card-title'>Últimas operaciones</h2>
           </div>

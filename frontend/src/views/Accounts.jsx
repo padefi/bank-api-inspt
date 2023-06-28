@@ -4,8 +4,11 @@ import CardContainer from '../components/CardContainer';
 import Loader from '../components/Loader';
 import { toast } from 'react-toastify';
 import ContentBox from '../components/ContentBox';
-import { FaChevronCircleRight } from "react-icons/fa";
+import { FaChevronCircleRight, FaPlusCircle } from "react-icons/fa";
 import useCheckCookies from '../utils/useCheckCookies';
+import BoxContainer from '../components/BoxContainer';
+import { Button, Nav } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const Accounts = () => {
   useCheckCookies();
@@ -27,13 +30,24 @@ const Accounts = () => {
   const accounts = data?.accounts || [];
 
   return (
-    <div className='box'>
-      <CardContainer>
-        <div className='box bg-dark text-white p-2 px-4 rounded-top-2'>
-          <h2 className='card-title'>Cuentas</h2>
+    <BoxContainer>
+      <CardContainer className="p-4">
+        <div className='box'>
+          <div className='box mb-2'>
+            <div className='box d-flex flex-row bg-dark text-white p-3 px-4 rounded-top-2'>
+              <h3 className='pb-0 mb-0 txt-title'>Mis Cuentas</h3>
+            </div>
+          </div>
         </div>
-        {isLoading || isFetching && <Loader />}
-        <ContentBox>
+        <div className='box px-4'>
+          <div className='box d-flex mb-2 justify-content-end'>
+            <Button to="/" variant="" className="btn d-flex align-items-center btn-none btn">
+              <span className="plus-icon"><FaPlusCircle className='me-2' /></span>
+              <p className='mb-0 txt-btn-default'>Nueva Cuenta</p>
+            </Button>
+          </div>
+          {isLoading || isFetching && <Loader />}
+          <hr />
           {accounts.length > 0 ? (
             <div className='box d-flex flex-column'>
               {accounts.map((account) => (
@@ -58,6 +72,11 @@ const Accounts = () => {
                       <FaChevronCircleRight />
                     </div>
                   </div>
+                  <div className="my-2">
+                    <LinkContainer to={`/accountOperations/${account._id}`}>
+                      <Nav.Link className="custom-link">Ver todos las operaciones</Nav.Link>
+                    </LinkContainer>
+                  </div>
                   <hr />
                 </React.Fragment>
               ))}
@@ -72,10 +91,10 @@ const Accounts = () => {
               <h5 className="h-striped">No se encontraron cuentas bancarias</h5>
             </div>
           )}
-        </ContentBox>
+        </div>
       </CardContainer>
       <br />
-    </div>
+    </BoxContainer>
   );
 };
 
