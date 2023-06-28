@@ -9,15 +9,13 @@ import "./styles.scss";
 const App = () => {
 
   return (
-    <>
-      <Layout>
-        <SideBar />
-        <Main>
-          <ToastContainer />
-          <Outlet />
-        </Main>
-      </Layout>
-    </>
+    <Layout>
+      <SideBar />
+      <Main>
+        <ToastContainer />
+        <Outlet />
+      </Main>
+    </Layout>
   );
 };
 

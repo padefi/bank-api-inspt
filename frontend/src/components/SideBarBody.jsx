@@ -1,16 +1,17 @@
 import Sidebar from "react-bootstrap-sidebar-menu";
 import { LinkContainer } from 'react-router-bootstrap';
 import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaRegListAlt, FaShareSquare, FaWallet } from "react-icons/fa";
+import { NavLink } from "react-bootstrap";
 
 const SideBarBody = () => {
     return (
         <Sidebar.Body>
             <Sidebar.Nav>
                 <LinkContainer to="/home">
-                    <Sidebar.Nav.Link>
+                    <NavLink className="sidebar-menu-nav-link">
                         <FaHome />
                         <Sidebar.Nav.Title>Posición consolidada</Sidebar.Nav.Title>
-                    </Sidebar.Nav.Link>
+                    </NavLink>
                 </LinkContainer>
                 <Sidebar.Sub>
                     <Sidebar.Sub.Toggle>
@@ -20,10 +21,10 @@ const SideBarBody = () => {
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
                             <LinkContainer to="/accounts">
-                                <Sidebar.Nav.Link>
+                                <NavLink className="sidebar-menu-nav-link">
                                     <FaWallet />
                                     <Sidebar.Nav.Title>Mis cuentas</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
+                                </NavLink>
                             </LinkContainer>
                             <LinkContainer to="/movimientos">
                                 <Sidebar.Nav.Link>

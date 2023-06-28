@@ -53,6 +53,8 @@ const getAllOperations = asyncHandler(async (req, res) => {
         operationDate: operations.operationDate,
         type: operations.type,
         amountFrom: (operations.type === 'deposito') ? operations.amountFrom : operations.amountFrom*-1,
+        holderDataFrom: (operations.type === 'transferencia') ? ' - ' + operations.accountFrom.accountHolder.governmentId.type + ': ' + operations.accountFrom.accountHolder.governmentId.number : '',
+        description: operations.description,
     });
 });
 

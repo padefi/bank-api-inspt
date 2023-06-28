@@ -6,7 +6,7 @@ export const accountApiSlice = apiSlice.injectEndpoints({
     showAccounts: builder.query({
       query: () => `${ACCOUNTS_URL}/`,
     }),
-    showAccount: builder.query({
+    getAccount: builder.query({
       query: ({ id }) => ({
         url: `${ACCOUNTS_URL}/getUserAccount?id=${id}`,
         method: 'GET',
@@ -17,5 +17,5 @@ export const accountApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useShowAccountsQuery,
-  useShowAccountQuery
+  useGetAccountQuery
 } = accountApiSlice;

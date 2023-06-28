@@ -125,6 +125,26 @@
     margin-top: 3.5rem !important;
 }
 
+#box-details {
+    max-height: 75vh;
+}
+
+.box-details {
+    overflow: auto;
+}
+
 .plus-icon {
     color: #0d6efd;
+}
+
+.textbox {
+    border: 1px solid #ccc;
+    padding: 5px;
+    background-color: #f7f7f7;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.detail-button {
+    font-size: 12px;
 }
