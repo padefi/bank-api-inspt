@@ -1,17 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { useShowAccountsQuery } from '../slices/accountApiSlice';
+import { useGetCurrenciesQuery, useShowAccountsQuery } from '../slices/accountApiSlice';
 import CardContainer from '../components/CardContainer';
 import Loader from '../components/Loader';
 import { toast } from 'react-toastify';
 import { FaChevronCircleRight, FaPlusCircle } from "react-icons/fa";
 import useCheckCookies from '../utils/useCheckCookies';
 import BoxContainer from '../components/BoxContainer';
-import { Button, Nav } from 'react-bootstrap';
+import { Button, Form, Modal, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import FormContainer from '../components/FormContainer';
+
+const Currencies = () => {
+  const [getCurrenciesCompleted, setGetCurrenciesCompleted] = useState(false);
+  const { data, error, isLoading, isFetching } = useGetCurrenciesQuery({}, { refetchOnMountOrArgChange: true });
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.data?.message || error.error);
+    } else {
+      setGetCurrenciesCompleted(true);
+    }
+  }, [data, error]);
+
+  if (!getCurrenciesCompleted) {
+    return null;
+  }
+
+  const currencies = data?.currency || [];
+
+  return (
+    <React.Fragment>
+      {currencies.map((currency) => (
+        <option key={currency._id} value={currency._id}>{currency.symbol}</option>
+      ))}
+    </React.Fragment>
+  );
+}
 
 const Accounts = () => {
   useCheckCookies();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
+  const [showModal, setShow] = useState(false);
+  const [accountType, setAccountType] = useState('');
+  const [currencyType, setCurrencyType] = useState('');
   const { data, error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
@@ -25,6 +56,21 @@ const Accounts = () => {
   if (!checkAccountsCompleted) {
     return null;
   }
+
+  const handleButtonOpenModal = () => setShow(true);
+  const handleCloseModal = () => setShow(false);
+
+
+  const submitNewAccount = async (e) => {
+    e.preventDefault();
+    /* try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate('/home');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    } */
+  };
 
   const accounts = data?.accounts || [];
 
@@ -40,7 +86,7 @@ const Accounts = () => {
         </div>
         <div className='box px-4 d-flex flex-column'>
           <div className='box d-flex my-2 justify-content-end'>
-            <Button to="/" variant="outline-primary" className="btn d-flex align-items-center btn-none btn">
+            <Button to="/" variant="outline-primary" className="btn btn-custom d-flex align-items-center" onClick={handleButtonOpenModal}>
               <span className="plus-icon"><FaPlusCircle className='me-2' /></span>
               <p className='mb-0 txt-btn-default'>Nueva Cuenta</p>
             </Button>
@@ -89,6 +135,40 @@ const Accounts = () => {
         </div>
       </CardContainer>
       <br />
+
+      <Modal show={showModal} onHide={handleCloseModal} backdrop="static">
+        <Modal.Header closeButton>
+          <Modal.Title>Nueva Cuenta</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={submitNewAccount}>
+
+            <Form.Group className='my-2' controlId='accountType'>
+              <Form.Label>Tipo de Cuenta</Form.Label>
+              <Form.Select as="select" size="sm" type={accountType} onChange={(e) => setAccountType(e.target.value)}>
+                <option value="CA">Caja de Ahorro</option>
+                <option value="CC">Cuenta Corriente</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group className='my-2' controlId='currencyType'>
+              <Form.Label>Tipo de Moneda</Form.Label>
+              <Form.Select as="select" size="sm" type={currencyType} onChange={(e) => setCurrencyType(e.target.value)}>
+                <Currencies />
+              </Form.Select>
+            </Form.Group>
+
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleCloseModal}>
+            Cancelar
+          </Button>
+          <Button type='submit' variant='success'>
+            Ingresar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </BoxContainer>
   );
 };

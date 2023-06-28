@@ -12,10 +12,14 @@ export const accountApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    getCurrencies: builder.query({
+      query: () => `${ACCOUNTS_URL}/getCurrencies`,
+    }),
   }),
 });
 
 export const {
   useShowAccountsQuery,
-  useGetAccountQuery
+  useGetAccountQuery,
+  useGetCurrenciesQuery,
 } = accountApiSlice;

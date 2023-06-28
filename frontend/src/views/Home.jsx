@@ -112,7 +112,7 @@ const Home = () => {
 
         <CardContainer id="CardContainer">
           <div className='box bg-dark text-white p-2 px-4 rounded-top-2'>
-            <h2 className='card-title'>Últimas operaciones</h2>
+            <h2 className='card-title'>Últimas Operaciones</h2>
           </div>
           <ContentBox>
             {accounts.map((account) => (

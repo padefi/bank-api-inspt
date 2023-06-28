@@ -65,6 +65,9 @@ const getUserAccount = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Busca cuenta bancaria para transferencia
+// @route   GET /api/accounts/
+// @access  Private
 const getAccount = asyncHandler(async (req, res) => {
 
     const { accountId, alias } = req.body;
@@ -195,6 +198,24 @@ const createAccount = asyncHandler(async (req, res) => {
     } else {
         res.status(400);
         throw new Error('Ha ocurrido un error al crear la cuenta.');
+    }
+});
+
+// @desc    Obtener los tipo de monedas
+// @route   POST /api/accounts/currencies
+// @access  Private
+const getCurrencies = asyncHandler(async (req, res) => {
+
+    const currency = await Currency.find();
+
+    if (currency) {
+        res.status(201).json({
+            currency
+        });
+
+    } else {
+        res.status(400);
+        throw new Error('Ha ocurrido un error al obtener los tipos de monedas.');
     }
 });
 
@@ -345,6 +366,7 @@ export {
     getUserAccount,
     getAccount,
     createAccount,
+    getCurrencies,
     changeAlias,
     closeAccount,
     activeAccount
