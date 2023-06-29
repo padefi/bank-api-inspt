@@ -76,7 +76,7 @@ const Home = () => {
                         <div className='box'>
                           <p className='d-inline fw-bold mb-0 box-text'>
                             {account.type}
-                            <span> $ </span>
+                            <span> {account.currency.symbol} </span>
                             {account.accountId.substring(3, 7)} - {account.accountId.substring(11, 21)}
                           </p>
                           <div className='box d-flex justify-content-between'>

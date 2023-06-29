@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useGetCurrenciesQuery, useShowAccountsQuery } from '../slices/accountApiSlice';
+import { useCreateAccountMutation, useGetCurrenciesQuery, useShowAccountsQuery } from '../slices/accountApiSlice';
 import CardContainer from '../components/CardContainer';
 import Loader from '../components/Loader';
 import { toast } from 'react-toastify';
@@ -8,11 +8,11 @@ import useCheckCookies from '../utils/useCheckCookies';
 import BoxContainer from '../components/BoxContainer';
 import { Button, Form, Modal, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import FormContainer from '../components/FormContainer';
+import { useSelector } from 'react-redux';
 
-const Currencies = () => {
+const Currencies = ({ accountType }) => {
   const [getCurrenciesCompleted, setGetCurrenciesCompleted] = useState(false);
-  const { data, error, isLoading, isFetching } = useGetCurrenciesQuery({}, { refetchOnMountOrArgChange: true });
+  const { data, error } = useGetCurrenciesQuery({}, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (error) {
@@ -27,11 +27,12 @@ const Currencies = () => {
   }
 
   const currencies = data?.currency || [];
+  const filteredCurrencies = accountType === 'CC' ? currencies.filter(currency => currency.acronym !== 'USD') : currencies;
 
   return (
     <React.Fragment>
-      {currencies.map((currency) => (
-        <option key={currency._id} value={currency._id}>{currency.symbol}</option>
+      {filteredCurrencies.map((currency) => (
+        <option key={currency._id} value={currency._id}>{currency.symbol} - {currency.name.toUpperCase()}</option>
       ))}
     </React.Fragment>
   );
@@ -41,9 +42,11 @@ const Accounts = () => {
   useCheckCookies();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const [showModal, setShow] = useState(false);
-  const [accountType, setAccountType] = useState('');
-  const [currencyType, setCurrencyType] = useState('');
+  const [accountType, setAccountType] = useState(null);
+  const [currencyId, setCurrencyId] = useState(null);
+  const { userInfo } = useSelector((state) => state.auth);
   const { data, error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
+  const [createAccount, { isLoading: isLoadingCreateAccount }] = useCreateAccountMutation();
 
   useEffect(() => {
     if (error) {
@@ -53,23 +56,29 @@ const Accounts = () => {
     }
   }, [data, error]);
 
+  useEffect(() => {
+    setCurrencyId(null);
+  }, [accountType]);
+
   if (!checkAccountsCompleted) {
     return null;
   }
 
   const handleButtonOpenModal = () => setShow(true);
-  const handleCloseModal = () => setShow(false);
-
+  const handleCloseModal = () => {
+    setShow(false);
+    setAccountType(null);
+    setCurrencyId(null);
+  }
 
   const submitNewAccount = async (e) => {
     e.preventDefault();
-    /* try {
-      const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res }));
-      navigate('/home');
+    try {
+      const res = await createAccount({ userId: userInfo._id, accountType, currencyId }).unwrap();
+      window.location.reload();
     } catch (err) {
       toast.error(err?.data?.message || err.error);
-    } */
+    }
   };
 
   const accounts = data?.accounts || [];
@@ -103,7 +112,7 @@ const Accounts = () => {
                     <div className='box'>
                       <p className='d-inline fw-bold mb-0 box-text'>
                         {account.type}
-                        <span> $ </span>
+                        <span> {account.currency.symbol} </span>
                         {account.accountId.substring(3, 7)} - {account.accountId.substring(11, 21)}
                       </p>
                       <div className='box d-flex justify-content-between'>
@@ -137,39 +146,42 @@ const Accounts = () => {
       <br />
 
       <Modal show={showModal} onHide={handleCloseModal} backdrop="static">
-        <Modal.Header closeButton>
-          <Modal.Title>Nueva Cuenta</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={submitNewAccount}>
-
+        <Form onSubmit={submitNewAccount}>
+          <Modal.Header closeButton>
+            <Modal.Title>Nueva Cuenta</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
             <Form.Group className='my-2' controlId='accountType'>
               <Form.Label>Tipo de Cuenta</Form.Label>
               <Form.Select as="select" size="sm" type={accountType} onChange={(e) => setAccountType(e.target.value)}>
-                <option value="CA">Caja de Ahorro</option>
-                <option value="CC">Cuenta Corriente</option>
+                <option value="">Seleccione una opción</option>
+                <option value="CA">CAJA DE AHORRO</option>
+                <option value="CC">CUENTA CORRIENTE</option>
               </Form.Select>
             </Form.Group>
 
-            <Form.Group className='my-2' controlId='currencyType'>
-              <Form.Label>Tipo de Moneda</Form.Label>
-              <Form.Select as="select" size="sm" type={currencyType} onChange={(e) => setCurrencyType(e.target.value)}>
-                <Currencies />
-              </Form.Select>
-            </Form.Group>
-
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={handleCloseModal}>
-            Cancelar
-          </Button>
-          <Button type='submit' variant='success'>
-            Ingresar
-          </Button>
-        </Modal.Footer>
+            {accountType && (
+              <Form.Group className='my-2' controlId='currencyId'>
+                <Form.Label>Tipo de Moneda</Form.Label>
+                <Form.Select as="select" size="sm" type={currencyId} onChange={(e) => setCurrencyId(e.target.value)} value={currencyId || ""}>
+                  <option value="">Seleccione una opción</option>
+                  <Currencies accountType={accountType} />
+                </Form.Select>
+              </Form.Group>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="danger" onClick={handleCloseModal}>
+              Cancelar
+            </Button>
+            <Button type='submit' variant='success' disabled={!accountType || !currencyId}>
+              Ingresar
+            </Button>
+          </Modal.Footer>
+        </Form>
+        {isLoadingCreateAccount && <Loader />}
       </Modal>
-    </BoxContainer>
+    </BoxContainer >
   );
 };
 

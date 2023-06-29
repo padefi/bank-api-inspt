@@ -15,6 +15,13 @@ export const accountApiSlice = apiSlice.injectEndpoints({
     getCurrencies: builder.query({
       query: () => `${ACCOUNTS_URL}/getCurrencies`,
     }),
+    createAccount: builder.mutation({
+      query: (data) => ({
+        url: `${ACCOUNTS_URL}/create`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -22,4 +29,5 @@ export const {
   useShowAccountsQuery,
   useGetAccountQuery,
   useGetCurrenciesQuery,
+  useCreateAccountMutation,
 } = accountApiSlice;

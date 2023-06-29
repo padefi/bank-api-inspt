@@ -113,7 +113,25 @@ const getAccount = asyncHandler(async (req, res) => {
     res.status(201).json({
         accounts
     });
-})
+});
+
+// @desc    Obtener los tipo de monedas
+// @route   POST /api/accounts/currencies
+// @access  Private
+const getCurrencies = asyncHandler(async (req, res) => {
+
+    const currency = await Currency.find();
+
+    if (currency) {
+        res.status(201).json({
+            currency
+        });
+
+    } else {
+        res.status(400);
+        throw new Error('Ha ocurrido un error al obtener los tipos de monedas.');
+    }
+});
 
 // @desc    Crear cuenta bancaria
 // @route   POST /api/accounts/create
@@ -121,12 +139,6 @@ const getAccount = asyncHandler(async (req, res) => {
 const createAccount = asyncHandler(async (req, res) => {
 
     const { userId, accountType, currencyId } = req.body;
-
-    // Validación
-    if (!isAdmin(req.user)) {
-        res.status(403);
-        throw new Error('Sin autorización.');
-    }
 
     if (!userId || !accountType || !currencyId) {
         res.status(400);
@@ -145,6 +157,11 @@ const createAccount = asyncHandler(async (req, res) => {
     if (!currency) {
         res.status(404);
         throw new Error('Tipo de moneda encontrada.');
+    }
+
+    if (accountType === 'CC' && currency.acronym === 'USD') {
+        res.status(400);
+        throw new Error('No es posible crear el tipo de cuenta con la moneda indicada');
     }
 
     const accountExist = await Account.findOne({ accountHolder: userId, type: accountType, currency: currencyId });
@@ -198,24 +215,6 @@ const createAccount = asyncHandler(async (req, res) => {
     } else {
         res.status(400);
         throw new Error('Ha ocurrido un error al crear la cuenta.');
-    }
-});
-
-// @desc    Obtener los tipo de monedas
-// @route   POST /api/accounts/currencies
-// @access  Private
-const getCurrencies = asyncHandler(async (req, res) => {
-
-    const currency = await Currency.find();
-
-    if (currency) {
-        res.status(201).json({
-            currency
-        });
-
-    } else {
-        res.status(400);
-        throw new Error('Ha ocurrido un error al obtener los tipos de monedas.');
     }
 });
 

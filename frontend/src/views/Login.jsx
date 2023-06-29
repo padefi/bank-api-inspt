@@ -57,7 +57,7 @@ const LoginScreen = () => {
           <Form.Control type='password' placeholder='Ingrese contraseña' value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
         </Form.Group>
 
-        <Button type='submit' variant='primary' className='mt-3'>
+        <Button type='submit' variant='primary' className='mt-3' disabled={!email || !password}>
           Ingresar
         </Button>
       </Form>
