@@ -26,12 +26,6 @@ const SideBarBody = () => {
                                     <Sidebar.Nav.Title>Mis cuentas</Sidebar.Nav.Title>
                                 </NavLink>
                             </LinkContainer>
-                            <LinkContainer to="/movimientos">
-                                <Sidebar.Nav.Link>
-                                    <FaRegListAlt />
-                                    <Sidebar.Nav.Title>Movimientos</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
-                            </LinkContainer>
                             <LinkContainer to="/resumen">
                                 <Sidebar.Nav.Link>
                                     <FaRegChartBar />

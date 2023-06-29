@@ -73,6 +73,7 @@ const Home = () => {
                   {accounts.map((account) => (
                     <React.Fragment key={account._id}>
                       <div className='box button-container py-0 d-flex justify-content-between'>
+                      <div className='button-container-child default focusMouse cursor-pointer' role='button'></div>
                         <div className='box'>
                           <p className='d-inline fw-bold mb-0 box-text'>
                             {account.type}
@@ -89,7 +90,7 @@ const Home = () => {
                           </div>
                         </div>
                         <div className='box d-flex align-items-center'>
-                          <FaChevronCircleRight />
+                          <FaChevronCircleRight className='button-icon-description' />
                         </div>
                       </div>
                       <hr />

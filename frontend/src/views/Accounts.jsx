@@ -64,6 +64,10 @@ const Accounts = () => {
     return null;
   }
 
+  const handleClickAccount = (accountId) => {
+    //navigate(`/account/${accountId}`);
+  };
+
   const handleButtonOpenModal = () => setShow(true);
   const handleCloseModal = () => {
     setShow(false);
@@ -109,6 +113,7 @@ const Accounts = () => {
                 <React.Fragment key={account._id}>
                   <hr />
                   <div className='box button-container py-0 d-flex justify-content-between'>
+                    <div className='button-container-child default focusMouse cursor-pointer' role='button' onClick={handleClickAccount(account._id)}></div>
                     <div className='box'>
                       <p className='d-inline fw-bold mb-0 box-text'>
                         {account.type}
@@ -121,17 +126,17 @@ const Accounts = () => {
                             <p className='mb-0 box-text'>{account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
                           </div>
                           <p className='mb-0 box-text'>CBU: {account.accountId}</p>
-                          <div className="my-2">
-                            <LinkContainer to={`/accountOperations/${account._id}`}>
-                              <Nav.Link className="custom-link">Ver todos las operaciones</Nav.Link>
-                            </LinkContainer>
-                          </div>
                         </div>
                       </div>
                     </div>
                     <div className='box d-flex align-items-center'>
-                      <FaChevronCircleRight />
+                      <FaChevronCircleRight className='button-icon-description' />
                     </div>
+                  </div>
+                  <div className="my-2">
+                    <LinkContainer to={`/accountOperations/${account._id}`}>
+                      <Nav.Link className="custom-link">Ver todos las operaciones</Nav.Link>
+                    </LinkContainer>
                   </div>
                 </React.Fragment>
               ))}

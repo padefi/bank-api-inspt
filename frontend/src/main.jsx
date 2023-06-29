@@ -10,6 +10,7 @@ import Accounts from './views/Accounts.jsx';
 import Profile from './views/Profile.jsx';
 import AccountOperations from './views/AccountOperations.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import UserAccount from './views/UserAccount';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
         <Route path='/accounts' element={<Accounts />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/accountOperations/:id' element={<AccountOperations />} />
+        <Route path='/account/:id' element={<UserAccount />} />
       </Route>
     </Route>
   )

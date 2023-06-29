@@ -85,6 +85,64 @@
     z-index: 1;
 }
 
+.button-container .button-container-child {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.button-container .button-container-child {
+    cursor: pointer;
+    outline: none
+}
+
+.button-container .button-container-child:active,
+.button-container .button-container-child:focus {
+    box-shadow: 0 0 0 .126rem #fafafa, 0 0 0 .282rem #0e22d3
+}
+
+.button-container .button-container-child.load {
+    cursor: wait
+}
+
+.button-container .button-container-child.default {
+    cursor: default
+}
+
+.button-container .button-container-child.focusMouse {
+    box-shadow: none
+}
+
+.button-container .button-container-child.default.cursor-pointer {
+    cursor: pointer
+}
+
+.button-icon-description {
+    width: 2.5rem;
+}
+
+.button-container .button-icon-description {
+    box-shadow: none
+}
+
+
+.button-container .button-icon-description,
+.button-container .button-icon-description:first-child {
+    transition: all .15s ease-in-out;
+}
+
+.button-container:hover .button-icon-description {
+    fill: black;
+    padding-left: .938rem;
+}
+
+.button-container:hover .button-icon-description:first-child {
+    fill: black;
+}
+
 .box-text {
     line-height: 1.25rem;
 }
