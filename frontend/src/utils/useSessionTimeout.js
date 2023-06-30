@@ -19,7 +19,7 @@ function useSessionTimeout() {
             } catch (err) {
                 console.error(err);
             }
-        }, 1 * 10_000);
+        }, 10 * 60_000);
 
         return () => clearTimeout(timer);
     }, [location]);
