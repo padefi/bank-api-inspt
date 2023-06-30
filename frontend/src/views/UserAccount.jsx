@@ -8,6 +8,7 @@ import useCheckCookies from '../utils/useCheckCookies';
 import BoxContainer from '../components/BoxContainer';
 import CardContainer from '../components/CardContainer';
 import { Button } from 'react-bootstrap';
+import useSessionTimeout from '../utils/useSessionTimeout';
 
 const Operations = ({ _id, currency, balanceSnapshot }) => {
   const [checkOperationsCompleted, setCheckOperationsCompleted] = useState(false);
@@ -77,6 +78,7 @@ const Operations = ({ _id, currency, balanceSnapshot }) => {
 
 const UserAccount = () => {
   useCheckCookies();
+  useSessionTimeout();
   const { id } = useParams();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const { data, error, isLoading, isFetching } = useGetAccountQuery({ id }, { refetchOnMountOrArgChange: true });

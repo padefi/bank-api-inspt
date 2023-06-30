@@ -9,6 +9,7 @@ import BoxContainer from '../components/BoxContainer';
 import { Button, Form, Modal, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector } from 'react-redux';
+import useSessionTimeout from '../utils/useSessionTimeout';
 
 const Currencies = ({ accountType }) => {
   const [getCurrenciesCompleted, setGetCurrenciesCompleted] = useState(false);
@@ -40,6 +41,7 @@ const Currencies = ({ accountType }) => {
 
 const Accounts = () => {
   useCheckCookies();
+  useSessionTimeout();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const [showModal, setShow] = useState(false);
   const [accountType, setAccountType] = useState(null);

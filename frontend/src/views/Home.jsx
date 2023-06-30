@@ -11,6 +11,7 @@ import ContentBox from '../components/ContentBox';
 import { FaChevronCircleRight } from "react-icons/fa";
 import ImageContainer from '../components/ImageContainer';
 import useCheckCookies from '../utils/useCheckCookies';
+import useSessionTimeout from '../utils/useSessionTimeout';
 
 const AccountOperations = ({ _id, currency }) => {
   const { data = [], error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id });
@@ -47,6 +48,7 @@ const AccountOperations = ({ _id, currency }) => {
 
 const Home = () => {
   useCheckCookies();
+  useSessionTimeout();  
   const { data = [], error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
