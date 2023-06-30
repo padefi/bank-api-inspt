@@ -17,6 +17,7 @@ const UserAccount = () => {
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const { data, error, isLoading, isFetching } = useGetAccountQuery({ id }, { refetchOnMountOrArgChange: true });
   const [alias, setAlias] = useState('');
+  const [isAliasEditable, setIsAliasEditable] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -30,6 +31,10 @@ const UserAccount = () => {
   if (!checkAccountsCompleted) {
     return null;
   }
+
+  const handleEditClick = () => {
+    setIsAliasEditable(true);
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -77,27 +82,29 @@ const UserAccount = () => {
               <div className='box d-flex justify-content-between'>
                 <div className='box w-100'>
                   <div className='box d-flex align-items-center'>
-                    <p className='my-1'><b>CBU: </b></p>
+                    <p className='my-1 form-label'><b>CBU: </b></p>
                     <p className='my-1'>{account.accountId}</p>
                   </div>
-                  <div className='box form-control-edit d-flex align-items-center'>
-                    <Form onSubmit={submitHandler} className='w-100'>
-                      <Form.Group className='my-2' controlId='alias'>
-                        <div className='form-control-edit d-flex align-items-center'>
-                          <Form.Label className='fw-bold'>Alias CBU: </Form.Label>
-                          <Form.Control type='alias' placeholder='Ingrese el alias' maxLength={22} value={alias} onChange={(e) => setAlias(e.target.value)}></Form.Control>
+                  <Form onSubmit={submitHandler}>
+                    <Form.Group className='box my-2 d-flex align-items-center' controlId='alias'>
+                      <div className='box d-flex align-items-baseline'>
+                        <Form.Label className='fw-bold mb-0'>Alias CBU: </Form.Label>
+                        <div className='flex-fill'>
+                          <div className='box form-control-edit d-flex align-items-center'>
+                            <div className='form-control-edit bold-text'>
+                              <Form.Control type='alias' placeholder='Ingrese el alias' maxLength={22} value={alias} onChange={(e) => setAlias(e.target.value)}  disabled={!isAliasEditable}></Form.Control>
+                            </div>
+                            <Button className="btn px-0 py-0 btn-edit" variant='' onClick={handleEditClick}>
+                              <FaPencilAlt />
+                            </Button>
+                          </div>
                         </div>
-
-                        <Button className="btn px-0 py-0 btn-edit btn">
-                          <FaPencilAlt />
-                        </Button>
-                      </Form.Group>
-
-                    </Form>
-                  </div>
+                      </div>
+                    </Form.Group>
+                  </Form>
                   <div className='box my-3'>
                     <div className='box d-flex'>
-                      <p className='mb-0 txt-input-help fw-bold'>Saldo: </p>
+                      <p className='mb-0 fw-bold'>Saldo: </p>
                       <div className='box mb-0 mx-1 text-nowrap txt-input-help'>
                         <p className='mb-0'>{account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
                       </div>

@@ -2,6 +2,7 @@
     font-family: sans-serif;
 }
 
+
 .carousel {
     width: 100%;
     height: auto;
@@ -146,6 +147,10 @@
     fill: black;
 }
 
+.form-label {
+    margin-right: 0.5rem !important;
+}
+
 .box-text {
     line-height: 1.25rem;
 }
@@ -157,6 +162,22 @@
 .border-normal,
 .border-normal.form-control {
     border-color: transparent transparent #3c3c3b !important
+}
+
+.form-control-edit {
+    margin-right: 10px;
+}
+
+.form-control[disabled] {
+    background-color: transparent;
+    cursor: default;
+    pointer-events: none;
+    border: none;
+    box-shadow: none;
+}
+
+.custom-button {
+    margin-left: 10px;
 }
 
 .form-control-edit .btn-cancel,
@@ -174,7 +195,6 @@
 .form-control-edit .btn-edit:active,
 .form-control-edit .btn-edit:focus,
 .form-control-edit .btn-edit:focus:active {
-    border: .125rem solid #0e22d3;
     box-shadow: none
 }
 
@@ -215,20 +235,12 @@
     padding-left: .125rem !important
 }
 
-.form-control-edit .btn-edit {
-    padding-left: .313rem !important
-}
-
 .bold-text.form-control-edit input {
-    margin-right: .5rem
+    margin-right: 2.5rem
 }
 
-.bold-text.form-control-edit input::-moz-placeholder {
-    color: #9c9b9b
-}
-
-.bold-text.form-control-edit input::placeholder {
-    color: #9c9b9b
+.flex-fill {
+    flex: 1 1 auto !important
 }
 
 .div-striped {
