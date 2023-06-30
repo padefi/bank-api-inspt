@@ -24,7 +24,7 @@ const router = createBrowserRouter(
         <Route path='/accounts' element={<Accounts />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/accountOperations/:id' element={<AccountOperations />} />
-        <Route path='/account/:id' element={<UserAccount />} />
+        <Route path='/userAccount/:id' element={<UserAccount />} />
       </Route>
     </Route>
   )

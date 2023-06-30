@@ -102,7 +102,7 @@ const AccountOperations = () => {
         <div className='box'>
           <div className='box mb-2'>
             <div className='box d-flex flex-row bg-dark text-white p-3 px-4 rounded-top-2'>
-              <h3 className='pb-0 mb-0 txt-title'>Mis Operaciones</h3>
+              <h3 className='pb-0 mb-0'>Mis Operaciones</h3>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@ const AccountOperations = () => {
             <div className='box d-flex flex-column'>
               <div className='box button-container pt-1 d-flex justify-content-between'>
                 <div className='box'>
-                  <p className='d-inline fw-bold mb-0 box-text'>
+                  <p className='d-inline fw-bold mb-0 box-text text-cuenta'>
                     {account.type}
                     <span> {account.currency.symbol} </span>
                     {account.accountId.substring(3, 7)} - {account.accountId.substring(11, 21)}

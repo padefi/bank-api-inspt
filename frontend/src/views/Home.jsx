@@ -3,7 +3,7 @@ import CardContainer from '../components/CardContainer';
 import { useShowAccountsQuery } from '../slices/accountApiSlice';
 import { useShowAllOperationsQuery } from '../slices/operationApiSlice';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Nav } from 'react-bootstrap';
 import Loader from '../components/Loader';
 import { toast } from 'react-toastify';
@@ -49,6 +49,7 @@ const AccountOperations = ({ _id, currency }) => {
 const Home = () => {
   useCheckCookies();
   useSessionTimeout();  
+  const navigate = useNavigate();  
   const { data = [], error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
@@ -56,6 +57,10 @@ const Home = () => {
       toast.error(error.data?.message || error.error);
     }
   }, [error]);
+
+  const handleClickAccount = (accountId) => {
+    navigate(`/userAccount/${accountId}`);
+  };
 
   let accounts = data?.accounts || [];
 
@@ -75,9 +80,9 @@ const Home = () => {
                   {accounts.map((account) => (
                     <React.Fragment key={account._id}>
                       <div className='box button-container py-0 d-flex justify-content-between'>
-                      <div className='button-container-child default focusMouse cursor-pointer' role='button'></div>
+                      <div className='button-container-child default focusMouse cursor-pointer' role='button' onClick={() => handleClickAccount(account._id)}></div>
                         <div className='box'>
-                          <p className='d-inline fw-bold mb-0 box-text'>
+                          <p className='d-inline fw-bold mb-0 box-text text-cuenta'>
                             {account.type}
                             <span> {account.currency.symbol} </span>
                             {account.accountId.substring(3, 7)} - {account.accountId.substring(11, 21)}
@@ -87,7 +92,7 @@ const Home = () => {
                               <div className='box my-1'>
                                 <p className='mb-0 box-text'>{account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
                               </div>
-                              <p className='mb-0 box-text'>CBU: {account.accountId}</p>
+                              <p className='mb-0 box-text'><b>CBU: </b>{account.accountId}</p>
                             </div>
                           </div>
                         </div>

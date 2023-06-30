@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useShowAllOperationsQuery } from '../slices/operationApiSlice';
 import { useParams } from 'react-router-dom';
 import { useGetAccountQuery } from '../slices/accountApiSlice';
 import { toast } from 'react-toastify';
@@ -7,74 +6,9 @@ import Loader from '../components/Loader';
 import useCheckCookies from '../utils/useCheckCookies';
 import BoxContainer from '../components/BoxContainer';
 import CardContainer from '../components/CardContainer';
-import { Button } from 'react-bootstrap';
 import useSessionTimeout from '../utils/useSessionTimeout';
-
-const Operations = ({ _id, currency, balanceSnapshot }) => {
-  const [checkOperationsCompleted, setCheckOperationsCompleted] = useState(false);
-  const [showDescription, setShowDescription] = useState(false);
-  const { data, error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id }, { refetchOnMountOrArgChange: true });
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.data?.message || error.error);
-    } else {
-      setCheckOperationsCompleted(true);
-    }
-  }, [data, error]);
-
-  if (!checkOperationsCompleted) {
-    return null;
-  }
-
-  const handleDescriptionClick = () => {
-    if (showDescription) setShowDescription(false);
-    else setShowDescription(true);
-  };
-
-  const operation = data || null;
-  const isNegative = operation ? operation.amountFrom < 0 : false;
-  return (
-    <>
-      {isLoading || isFetching && <Loader />}
-      {operation ? (
-        <div className='box'>
-          <div className='box d-flex justify-content-between flex-row row-cols-2'>
-            <div className='box col-10'>
-              <p className='mb-0 txt-default'>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short", timeStyle: "short" }).format(new Date(operation.operationDate)).replace(/,/g, " -")}</p>
-              <p className='my-1 txt-input-help'>{operation.type.toUpperCase()}{operation.holderDataFrom.toUpperCase()}</p>
-              <div className='box d-flex'>
-                <p className='mb-0 txt-input-help'>Saldo: </p>
-                <div className='box mb-0 mx-1 text-nowrap txt-input-help'>
-                  <p className='mb-0'>{balanceSnapshot.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
-                </div>
-              </div>
-            </div>
-            <div className='box ps-2 d-flex justify-content-end align-items-start col-2'>
-              <div className='box text-end'>
-                <p className={isNegative ? "negative-number mb-0" : "mb-0"}>{operation.amountFrom.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
-              </div>
-            </div>
-          </div>
-          <div className='box'>
-            <Button variant="primary" size="sm" className="detail-button" onClick={handleDescriptionClick}>
-              <span>DETALLE</span>
-            </Button>
-          </div>
-          {showDescription && (
-            <div className='box'>
-              <p className='mb-0 textbox'>{operation.description.toUpperCase()}</p>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className='box button-container py-0 d-flex justify-content-between'>
-          <h5 className="h-striped">No se encontraron movimientos</h5>
-        </div>
-      )}
-    </>
-  );
-};
+import { Form, Button } from 'react-bootstrap';
+import { FaPencilAlt } from "react-icons/fa";
 
 const UserAccount = () => {
   useCheckCookies();
@@ -82,11 +16,13 @@ const UserAccount = () => {
   const { id } = useParams();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const { data, error, isLoading, isFetching } = useGetAccountQuery({ id }, { refetchOnMountOrArgChange: true });
+  const [alias, setAlias] = useState('');
 
   useEffect(() => {
     if (error) {
       toast.error(error.data?.message || error.error);
     } else {
+      if (data?.account) setAlias(data.account.alias);
       setCheckAccountsCompleted(true);
     }
   }, [data, error]);
@@ -95,6 +31,17 @@ const UserAccount = () => {
     return null;
   }
 
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    /* try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate('/home');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    } */
+  };
+
   const account = data?.account || null;
   return (
     <BoxContainer>
@@ -102,7 +49,7 @@ const UserAccount = () => {
         <div className='box'>
           <div className='box mb-2'>
             <div className='box d-flex flex-row bg-dark text-white p-3 px-4 rounded-top-2'>
-              <h3 className='pb-0 mb-0 txt-title'>Mis Operaciones</h3>
+              <h3 className='pb-0 mb-0'>Detalle de Cuenta</h3>
             </div>
           </div>
         </div>
@@ -110,27 +57,54 @@ const UserAccount = () => {
           {isLoading || isFetching && <Loader />}
           {account ? (
             <div className='box d-flex flex-column'>
-              <div className='box button-container pt-1 d-flex justify-content-between'>
+              <div className='box button-container center pt-1 d-flex justify-content-between'>
                 <div className='box'>
-                  <p className='d-inline fw-bold mb-0 box-text'>
+                  <p className='d-inline fw-bold mb-0 box-text text-cuenta'>
                     {account.type}
                     <span> {account.currency.symbol} </span>
                     {account.accountId.substring(3, 7)} - {account.accountId.substring(11, 21)}
                   </p>
                 </div>
-              </div>
-              {account.operations.length > 0 ? (
-                account.operations.map((operation) => (
-                  <React.Fragment key={operation._id}>
-                    <hr />
-                    <Operations key={operation._id} _id={operation._id} currency={account.currency.acronym} balanceSnapshot={operation.balanceSnapshot} />
-                  </React.Fragment>
-                ))
-              ) : (
-                <div className='box button-container py-0 d-flex justify-content-between'>
-                  <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
+                <div className='box d-flex flex-column'>
+                  <div className='box d-flex my-2 justify-content-end'>
+                    <Button to="/" variant="outline-danger" className="btn btn-custom d-flex align-items-center">
+                      <p className='mb-0 txt-btn-default'>Cerrar Cuenta</p>
+                    </Button>
+                  </div>
                 </div>
-              )}
+              </div>
+              <hr />
+              <div className='box d-flex justify-content-between'>
+                <div className='box w-100'>
+                  <div className='box d-flex align-items-center'>
+                    <p className='my-1'><b>CBU: </b></p>
+                    <p className='my-1'>{account.accountId}</p>
+                  </div>
+                  <div className='box form-control-edit d-flex align-items-center'>
+                    <Form onSubmit={submitHandler} className='w-100'>
+                      <Form.Group className='my-2' controlId='alias'>
+                        <div className='form-control-edit d-flex align-items-center'>
+                          <Form.Label className='fw-bold'>Alias CBU: </Form.Label>
+                          <Form.Control type='alias' placeholder='Ingrese el alias' maxLength={22} value={alias} onChange={(e) => setAlias(e.target.value)}></Form.Control>
+                        </div>
+
+                        <Button className="btn px-0 py-0 btn-edit btn">
+                          <FaPencilAlt />
+                        </Button>
+                      </Form.Group>
+
+                    </Form>
+                  </div>
+                  <div className='box my-3'>
+                    <div className='box d-flex'>
+                      <p className='mb-0 txt-input-help fw-bold'>Saldo: </p>
+                      <div className='box mb-0 mx-1 text-nowrap txt-input-help'>
+                        <p className='mb-0'>{account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className='box button-container py-0 d-flex justify-content-between'>

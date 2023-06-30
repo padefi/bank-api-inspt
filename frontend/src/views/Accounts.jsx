@@ -10,6 +10,7 @@ import { Button, Form, Modal, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector } from 'react-redux';
 import useSessionTimeout from '../utils/useSessionTimeout';
+import { redirect, useNavigate } from 'react-router-dom';
 
 const Currencies = ({ accountType }) => {
   const [getCurrenciesCompleted, setGetCurrenciesCompleted] = useState(false);
@@ -47,6 +48,7 @@ const Accounts = () => {
   const [accountType, setAccountType] = useState(null);
   const [currencyId, setCurrencyId] = useState(null);
   const { userInfo } = useSelector((state) => state.auth);
+  const navigate = useNavigate();  
   const { data, error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
   const [createAccount, { isLoading: isLoadingCreateAccount }] = useCreateAccountMutation();
 
@@ -67,7 +69,7 @@ const Accounts = () => {
   }
 
   const handleClickAccount = (accountId) => {
-    //navigate(`/account/${accountId}`);
+    navigate(`/userAccount/${accountId}`);
   };
 
   const handleButtonOpenModal = () => setShow(true);
@@ -95,7 +97,7 @@ const Accounts = () => {
         <div className='box'>
           <div className='box mb-2'>
             <div className='box d-flex flex-row bg-dark text-white p-3 px-4 rounded-top-2'>
-              <h3 className='pb-0 mb-0 txt-title'>Mis Cuentas</h3>
+              <h3 className='pb-0 mb-0'>Mis Cuentas</h3>
             </div>
           </div>
         </div>
@@ -115,9 +117,9 @@ const Accounts = () => {
                 <React.Fragment key={account._id}>
                   <hr />
                   <div className='box button-container py-0 d-flex justify-content-between'>
-                    <div className='button-container-child default focusMouse cursor-pointer' role='button' onClick={handleClickAccount(account._id)}></div>
+                    <div className='button-container-child default focusMouse cursor-pointer' role='button' onClick={() => handleClickAccount(account._id)}></div>
                     <div className='box'>
-                      <p className='d-inline fw-bold mb-0 box-text'>
+                      <p className='d-inline fw-bold mb-0 box-text text-cuenta'>
                         {account.type}
                         <span> {account.currency.symbol} </span>
                         {account.accountId.substring(3, 7)} - {account.accountId.substring(11, 21)}

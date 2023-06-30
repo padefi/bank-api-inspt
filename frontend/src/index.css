@@ -85,6 +85,10 @@
     z-index: 1;
 }
 
+.center {
+    align-items: center;
+}
+
 .button-container .button-container-child {
     bottom: 0;
     left: 0;
@@ -128,7 +132,6 @@
     box-shadow: none
 }
 
-
 .button-container .button-icon-description,
 .button-container .button-icon-description:first-child {
     transition: all .15s ease-in-out;
@@ -145,6 +148,87 @@
 
 .box-text {
     line-height: 1.25rem;
+}
+
+.text-cuenta {
+    font-size: 18px;
+}
+
+.border-normal,
+.border-normal.form-control {
+    border-color: transparent transparent #3c3c3b !important
+}
+
+.form-control-edit .btn-cancel,
+.form-control-edit .btn-confirm,
+.form-control-edit .btn-edit {
+    position: relative
+}
+
+.form-control-edit .btn-cancel:active,
+.form-control-edit .btn-cancel:focus,
+.form-control-edit .btn-cancel:focus:active,
+.form-control-edit .btn-confirm:active,
+.form-control-edit .btn-confirm:focus,
+.form-control-edit .btn-confirm:focus:active,
+.form-control-edit .btn-edit:active,
+.form-control-edit .btn-edit:focus,
+.form-control-edit .btn-edit:focus:active {
+    border: .125rem solid #0e22d3;
+    box-shadow: none
+}
+
+.form-control-edit .hide.btn-cancel,
+.form-control-edit .hide.btn-confirm,
+.form-control-edit .hide.btn-edit,
+.helpButton {
+    display: none
+}
+
+.form-control-edit input {
+    border: none !important;
+    padding-bottom: 0 !important;
+    padding-left: 0;
+    padding-right: 0
+}
+
+.form-control-edit input,
+.form-control-edit input:active,
+.form-control-edit input:focus,
+.form-control-edit input:hover {
+    background-color: transparent
+}
+
+.form-control-edit input::-moz-placeholder {
+    color: #3c3c3b
+}
+
+.form-control-edit input::placeholder {
+    color: #3c3c3b
+}
+
+.edit.form-control-edit input {
+    box-shadow: 0 .063rem 0 0 #007a2b !important
+}
+
+.edit.form-control-edit .btn-confirm {
+    padding-left: .125rem !important
+}
+
+.form-control-edit .btn-edit {
+    padding-left: .313rem !important
+}
+
+.bold-text.form-control-edit input {
+    margin-right: .5rem
+}
+
+.bold-text.form-control-edit input::-moz-placeholder {
+    color: #9c9b9b
+}
+
+.bold-text.form-control-edit input::placeholder {
+    color: #9c9b9b
 }
 
 .div-striped {
