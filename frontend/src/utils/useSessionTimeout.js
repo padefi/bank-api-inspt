@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 function useSessionTimeout() {
     const location = useLocation();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [logoutApiCall] = useLogoutMutation();
 
     useEffect(() => {
