@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { logout, userMessage } from '../slices/authSlice';
 import { useLogoutMutation } from "../slices/usersApiSlice";
