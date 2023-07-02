@@ -10,7 +10,7 @@ import { Button, Form, Modal, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector } from 'react-redux';
 import useSessionTimeout from '../utils/useSessionTimeout';
-import { redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Currencies = ({ accountType }) => {
   const [getCurrenciesCompleted, setGetCurrenciesCompleted] = useState(false);
@@ -48,8 +48,8 @@ const Accounts = () => {
   const [accountType, setAccountType] = useState(null);
   const [currencyId, setCurrencyId] = useState(null);
   const { userInfo } = useSelector((state) => state.auth);
-  const navigate = useNavigate();  
-  const { data, error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
+  const navigate = useNavigate();
+  const { data, error, isLoading, isFetching, refetch } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
   const [createAccount, { isLoading: isLoadingCreateAccount }] = useCreateAccountMutation();
 
   useEffect(() => {
@@ -83,7 +83,11 @@ const Accounts = () => {
     e.preventDefault();
     try {
       const res = await createAccount({ userId: userInfo._id, accountType, currencyId }).unwrap();
-      window.location.reload();
+      toast.success(res.message);
+      setShow(false);
+      setAccountType(null);
+      setCurrencyId(null);
+      refetch();
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }

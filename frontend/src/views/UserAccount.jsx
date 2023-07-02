@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGetAccountQuery } from '../slices/accountApiSlice';
+import { useActiveAccountMutation, useChangeAliasMutation, useCloseAccountMutation, useGetAccountQuery } from '../slices/accountApiSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import useCheckCookies from '../utils/useCheckCookies';
@@ -8,16 +8,22 @@ import BoxContainer from '../components/BoxContainer';
 import CardContainer from '../components/CardContainer';
 import useSessionTimeout from '../utils/useSessionTimeout';
 import { Form, Button } from 'react-bootstrap';
-import { FaPencilAlt } from "react-icons/fa";
+import { FaCheck, FaPencilAlt, FaTimes } from "react-icons/fa";
+import { useSelector } from 'react-redux';
 
 const UserAccount = () => {
   useCheckCookies();
   useSessionTimeout();
   const { id } = useParams();
+  const { userInfo } = useSelector((state) => state.auth);
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
-  const { data, error, isLoading, isFetching } = useGetAccountQuery({ id }, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching, refetch } = useGetAccountQuery({ id }, { refetchOnMountOrArgChange: true });
   const [alias, setAlias] = useState('');
   const [isAliasEditable, setIsAliasEditable] = useState(false);
+  const [showSubmitButton, setShowSubmitButton] = useState(false);
+  const [closeAccount, { isLoading: isLoadingCloseAccount }] = useCloseAccountMutation();
+  const [activeAccount, { isLoading: isLoadingActiveAccount }] = useActiveAccountMutation();
+  const [changeAlias, { isLoading: isLoadingChangeAlias }] = useChangeAliasMutation();
 
   useEffect(() => {
     if (error) {
@@ -32,22 +38,58 @@ const UserAccount = () => {
     return null;
   }
 
-  const handleEditClick = () => {
-    setIsAliasEditable(true);
-  };
-
-  const submitHandler = async (e) => {
+  const handleCloseAccount = async (e) => {
     e.preventDefault();
-    /* try {
-      const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res }));
-      navigate('/home');
+    try {
+      const res = await closeAccount({ accountId: id }).unwrap();
+      toast.success(res.message);
+      refetch();
     } catch (err) {
       toast.error(err?.data?.message || err.error);
-    } */
+    }
+  };
+
+  const handleActiveAccount = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await activeAccount({ accountId: id }).unwrap();
+      toast.success(res.message);
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
+
+  const handleEditClick = () => {
+    setIsAliasEditable(true)
+    setShowSubmitButton(true);
+  };
+
+  const handleCancelClick = () => {
+    setIsAliasEditable(false);
+    setShowSubmitButton(false);
+    setAlias(data.account.alias);
+  };
+
+  const submitChangeAlias = async (e) => {
+    e.preventDefault();
+    if (alias !== data.account.alias) {
+      try {
+        const res = await changeAlias({ accountId: id, alias }).unwrap();
+        toast.success(res.message);
+        setIsAliasEditable(false);
+        setShowSubmitButton(false);
+        refetch();
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
+      }
+    } else {
+      toast.error('No ha realizado ninguna modificación del alias.');
+    }
   };
 
   const account = data?.account || null;
+
   return (
     <BoxContainer>
       <CardContainer className="p-4" id="box-details">
@@ -72,9 +114,21 @@ const UserAccount = () => {
                 </div>
                 <div className='box d-flex flex-column'>
                   <div className='box d-flex my-2 justify-content-end'>
-                    <Button to="/" variant="outline-danger" className="btn btn-custom d-flex align-items-center">
-                      <p className='mb-0 txt-btn-default'>Cerrar Cuenta</p>
-                    </Button>
+                    {account.isActive ? (
+                      <>
+                        <Button to="/" variant="outline-danger" className="btn btn-custom d-flex align-items-center" onClick={handleCloseAccount}>
+                          <p className='mb-0 txt-btn-default'>Cerrar Cuenta</p>
+                        </Button>
+                        {isLoadingCloseAccount && <Loader />}
+                      </>
+                    ) : (
+                      <>
+                        <Button to="/" variant="outline-success" className="btn btn-custom d-flex align-items-center" onClick={handleActiveAccount}>
+                          <p className='mb-0 txt-btn-default'>Habilitar Cuenta</p>
+                        </Button>
+                        {isLoadingActiveAccount && <Loader />}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -85,22 +139,36 @@ const UserAccount = () => {
                     <p className='my-1 form-label'><b>CBU: </b></p>
                     <p className='my-1'>{account.accountId}</p>
                   </div>
-                  <Form onSubmit={submitHandler}>
+                  <Form onSubmit={submitChangeAlias}>
                     <Form.Group className='box my-2 d-flex align-items-center' controlId='alias'>
                       <div className='box d-flex align-items-baseline'>
                         <Form.Label className='fw-bold mb-0'>Alias CBU: </Form.Label>
                         <div className='flex-fill'>
                           <div className='box form-control-edit d-flex align-items-center'>
                             <div className='form-control-edit bold-text'>
-                              <Form.Control type='alias' placeholder='Ingrese el alias' maxLength={22} value={alias} onChange={(e) => setAlias(e.target.value)}  disabled={!isAliasEditable}></Form.Control>
+                              <Form.Control type='alias' className='form-control-edit-input rounded-0' placeholder='Ingrese el alias' minLength={6} maxLength={20} value={alias} onChange={(e) => setAlias(e.target.value.toUpperCase())} disabled={!isAliasEditable}></Form.Control>
                             </div>
-                            <Button className="btn px-0 py-0 btn-edit" variant='' onClick={handleEditClick}>
-                              <FaPencilAlt />
-                            </Button>
+                            {!showSubmitButton && (
+                              <Button className="btn px-0 py-0 btn-edit" variant="" onClick={handleEditClick}>
+                                <FaPencilAlt />
+                              </Button>
+                            )}
+                            {showSubmitButton && (
+                              <>
+                                <Button className="btn px-0 py-0 btn-edit" variant="" type="submit">
+                                  <FaCheck className="green-icon" />
+                                </Button>
+                                <Button className="btn px-0 py-0 btn-edit" variant="" onClick={handleCancelClick}>
+                                  <FaTimes className="red-icon" />
+                                </Button>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
                     </Form.Group>
+                    {isLoadingChangeAlias && <Loader />}
+
                   </Form>
                   <div className='box my-3'>
                     <div className='box d-flex'>

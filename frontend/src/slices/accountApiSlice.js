@@ -22,6 +22,27 @@ export const accountApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    changeAlias: builder.mutation({
+      query: (data) => ({
+        url: `${ACCOUNTS_URL}/changeAlias`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    closeAccount: builder.mutation({
+      query: (data) => ({
+        url: `${ACCOUNTS_URL}/close`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    activeAccount: builder.mutation({
+      query: (data) => ({
+        url: `${ACCOUNTS_URL}/active`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -30,4 +51,7 @@ export const {
   useGetAccountQuery,
   useGetCurrenciesQuery,
   useCreateAccountMutation,
+  useChangeAliasMutation,
+  useCloseAccountMutation,
+  useActiveAccountMutation,
 } = accountApiSlice;

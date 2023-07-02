@@ -168,12 +168,19 @@
     margin-right: 10px;
 }
 
-.form-control[disabled] {
+.form-control-edit-input[disabled] {
     background-color: transparent;
     cursor: default;
     pointer-events: none;
     border: none;
     box-shadow: none;
+    border-bottom: 0 !important;
+}
+
+.form-control-edit-input:not(:disabled) {
+    border-color: transparent;
+    box-shadow: none;
+    border-bottom: 1px solid black !important;
 }
 
 .custom-button {
@@ -241,6 +248,14 @@
 
 .flex-fill {
     flex: 1 1 auto !important
+}
+
+.green-icon {
+    color: green;
+}
+
+.red-icon {
+    color: red;
 }
 
 .div-striped {

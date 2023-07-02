@@ -209,7 +209,6 @@ const createAccount = asyncHandler(async (req, res) => {
         extendToken(req, res);
         res.status(201).json({
             message: 'Cuenta creada con exito.',
-            account
         });
 
     } else {
@@ -236,7 +235,9 @@ const changeAlias = asyncHandler(async (req, res) => {
         throw new Error('El Alias debe tener entre 6 y 20 caracteres alfanuméricos.');
     }
 
-    const account = await Account.findOne({ _id: accountId, accountHolder: req.user._id });
+    const dencryptedId = await decrypt(accountId);
+
+    const account = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
 
     if (!account) {
         res.status(403);
@@ -261,9 +262,7 @@ const changeAlias = asyncHandler(async (req, res) => {
     if (updateAccount) {
         extendToken(req, res);
         res.status(201).json({
-            message: 'Alias modificado con exito.',
-            _id: updateAccount._id
-
+            message: 'Alias modificado con exito.'
         });
     } else {
         res.status(404);
@@ -284,7 +283,9 @@ const closeAccount = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const account = await Account.findOne({ _id: accountId, accountHolder: req.user._id });
+    const dencryptedId = await decrypt(accountId);
+
+    const account = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
 
     if (!account) {
         res.status(403);
@@ -293,12 +294,12 @@ const closeAccount = asyncHandler(async (req, res) => {
 
     if (!account.isActive) {
         res.status(400);
-        throw new Error(`La cuenta ${accountId} no se encuentra activa.`);
+        throw new Error(`La cuenta ${account.accountId} no se encuentra activa.`);
     }
 
     if (account.accountBalance > 0) {
         res.status(400);
-        throw new Error(`Para poder cerrar la cuenta ${accountId} no debe tener saldo disponible.`);
+        throw new Error(`Para poder cerrar la cuenta no debe tener saldo disponible.`);
     }
 
     account.isActive = false;
@@ -309,8 +310,6 @@ const closeAccount = asyncHandler(async (req, res) => {
         extendToken(req, res);
         res.status(201).json({
             message: 'Cuenta cerrada con exito.',
-            _id: updateAccount._id
-
         });
     } else {
         res.status(404);
@@ -330,8 +329,10 @@ const activeAccount = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
+    
+    const dencryptedId = await decrypt(accountId);
 
-    const account = await Account.findOne({ _id: accountId, accountHolder: req.user._id });
+    const account = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
 
     if (!account) {
         res.status(403);
@@ -340,7 +341,7 @@ const activeAccount = asyncHandler(async (req, res) => {
 
     if (account.isActive) {
         res.status(400);
-        throw new Error(`La cuenta ${accountId} se encuentra activa.`);
+        throw new Error(`La cuenta se encuentra activa.`);
     }
 
     account.isActive = true;
@@ -350,9 +351,7 @@ const activeAccount = asyncHandler(async (req, res) => {
     if (updateAccount) {
         extendToken(req, res);
         res.status(201).json({
-            message: 'Cuenta activada con exito.',
-            _id: updateAccount._id
-
+            message: 'Cuenta activada con exito.'
         });
     } else {
         res.status(404);
