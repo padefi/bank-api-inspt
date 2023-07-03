@@ -47,14 +47,24 @@ const getAllOperations = asyncHandler(async (req, res) => {
         throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
+    let description;
+
+    if (operations.type === 'deposito') {
+        description = 'Deposito. ' + operations.description;
+    } else if (operations.type === 'extraccion') {
+        description = 'Extraccion. ' + operations.description;
+    } else {
+        description = operations.description;
+    }
+
     extendToken(req, res);
     res.status(201).json({
         idOperation: operations._id,
         operationDate: operations.operationDate,
         type: operations.type,
-        amountFrom: (operations.type === 'deposito') ? operations.amountFrom : operations.amountFrom*-1,
+        amountFrom: (operations.type === 'deposito') ? operations.amountFrom : operations.amountFrom * -1,
         holderDataFrom: (operations.type === 'transferencia') ? ' - ' + operations.accountFrom.accountHolder.governmentId.type + ': ' + operations.accountFrom.accountHolder.governmentId.number : '',
-        description: operations.description,
+        description,
     });
 });
 
@@ -79,12 +89,12 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 
     if (!accountFrom.isActive) {
         res.status(400);
-        throw new Error(`La cuenta ${accountId} no se encuentra activa.`);
+        throw new Error(`La cuenta no se encuentra activa.`);
     }
 
     if (accountFrom.accountBalance < amount) {
         res.status(400);
-        throw new Error(`La cuenta ${accountId} no dispone de fondo suficiente para realizar la extracción.`);
+        throw new Error(`La cuenta no dispone de fondo suficiente para realizar la extracción.`);
     }
 
     let description = '';
@@ -131,7 +141,7 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 });
 
 // @desc    Realizar una extracción de dinero
-// @route   POST /api/operations/withdraw
+// @route   POST /api/operations/deposit
 // @access  Private
 const depositMoney = asyncHandler(async (req, res) => {
     const { accountId, amount } = req.body;
@@ -147,16 +157,19 @@ const depositMoney = asyncHandler(async (req, res) => {
         throw new Error('El monto a depositar debe ser mayor a cero.');
     }
 
-    const accountFrom = await Account.findOne({ _id: accountId, accountHolder: req.user._id });
+    const dencryptedId = await decrypt(accountId);
+
+    const accountFrom = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
 
     if (!accountFrom) {
         res.status(403);
-        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+        throw new Error('Sin autorización.');
+        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     if (!accountFrom.isActive) {
         res.status(400);
-        throw new Error(`La cuenta ${accountId} no se encuentra activa.`);
+        throw new Error(`La cuenta no se encuentra activa.`);
     }
 
     let description = '';
@@ -171,7 +184,7 @@ const depositMoney = asyncHandler(async (req, res) => {
 
     const operation = await Operation.create({
         type: 'deposito',
-        accountFrom: accountId,
+        accountFrom: dencryptedId,
         amountFrom,
         amountTo,
         operationDate: new Date(),
@@ -193,7 +206,6 @@ const depositMoney = asyncHandler(async (req, res) => {
         extendToken(req, res);
         res.status(200).json({
             message: 'Deposito realizado con exito.',
-            operation
         });
 
     } else {

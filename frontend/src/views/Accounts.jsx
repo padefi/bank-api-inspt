@@ -8,11 +8,20 @@ import useCheckCookies from '../utils/useCheckCookies';
 import BoxContainer from '../components/BoxContainer';
 import { Button, Form, Modal, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useSelector } from 'react-redux';
 import useSessionTimeout from '../utils/useSessionTimeout';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 
-const Currencies = ({ accountType }) => {
+const AccountTypeOptions = () => {
+  const options = [
+    { value: 'CA', label: 'CAJA DE AHORRO' },
+    { value: 'CC', label: 'CUENTA CORRIENTE' }
+  ]
+
+  return options;
+}
+
+const CurrenciesOptions = ({ accountType }) => {
   const [getCurrenciesCompleted, setGetCurrenciesCompleted] = useState(false);
   const { data, error } = useGetCurrenciesQuery({}, { refetchOnMountOrArgChange: true });
 
@@ -47,10 +56,30 @@ const Accounts = () => {
   const [showModal, setShow] = useState(false);
   const [accountType, setAccountType] = useState(null);
   const [currencyId, setCurrencyId] = useState(null);
-  const { userInfo } = useSelector((state) => state.auth);
+  const accountTypeOptions = AccountTypeOptions();
   const navigate = useNavigate();
   const { data, error, isLoading, isFetching, refetch } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
   const [createAccount, { isLoading: isLoadingCreateAccount }] = useCreateAccountMutation();
+
+  const selectStyles = () => ({
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+  });
+
+  const defaultSelectValueAccountType = () => ({
+    value: 0,
+    label: "Seleccione un tipo de cuenta"
+  });
+
+  const defaultSelectValueCurrency = () => ({
+    value: 0,
+    label: "Seleccione un tipo de moneda"
+  });
+
+  const [selectedOptionKeyAccountType, setSelectedOptionKeyAccountType] = useState(0);
+  const [selectedOptionKeyCurrency, setSelectedOptionKeyCurrency] = useState(0);
 
   useEffect(() => {
     if (error) {
@@ -82,10 +111,12 @@ const Accounts = () => {
   const submitNewAccount = async (e) => {
     e.preventDefault();
     try {
-      const res = await createAccount({ userId: userInfo._id, accountType, currencyId }).unwrap();
+      const res = await createAccount({ accountType, currencyId }).unwrap();
       toast.success(res.message);
       setShow(false);
+      setSelectedOptionKeyAccountType((prevKey) => prevKey + 1);
       setAccountType(null);
+      setSelectedOptionKeyCurrency((prevKey) => prevKey + 1);
       setCurrencyId(null);
       refetch();
     } catch (err) {
@@ -165,12 +196,8 @@ const Accounts = () => {
           </Modal.Header>
           <Modal.Body>
             <Form.Group className='my-2' controlId='accountType'>
-              <Form.Label>Tipo de Cuenta</Form.Label>
-              <Form.Select as="select" size="sm" type={accountType} onChange={(e) => setAccountType(e.target.value)}>
-                <option value="">Seleccione una opción</option>
-                <option value="CA">CAJA DE AHORRO</option>
-                <option value="CC">CUENTA CORRIENTE</option>
-              </Form.Select>
+              <h6>Tipo de Cuenta</h6>
+              <Select key={selectedOptionKeyAccountType} options={accountTypeOptions} onChange={(option) => setAccountType(option?.value || null)} styles={selectStyles} defaultValue={defaultSelectValueAccountType} />
             </Form.Group>
 
             {accountType && (
@@ -178,7 +205,7 @@ const Accounts = () => {
                 <Form.Label>Tipo de Moneda</Form.Label>
                 <Form.Select as="select" size="sm" type={currencyId} onChange={(e) => setCurrencyId(e.target.value)} value={currencyId || ""}>
                   <option value="">Seleccione una opción</option>
-                  <Currencies accountType={accountType} />
+                  <CurrenciesOptions accountType={accountType} />
                 </Form.Select>
               </Form.Group>
             )}

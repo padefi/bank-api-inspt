@@ -42,19 +42,19 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to="/">
+                            <LinkContainer to="/deposit">
                                 <Sidebar.Nav.Link>
                                     <FaArrowCircleDown />
                                     <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
                                 </Sidebar.Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to="/">
+                            <LinkContainer to="/withdraw">
                                 <Sidebar.Nav.Link>
                                     <FaArrowCircleUp />
                                     <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
                                 </Sidebar.Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to="/">
+                            <LinkContainer to="/transfer">
                                 <Sidebar.Nav.Link>
                                     <FaShareSquare />
                                     <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>

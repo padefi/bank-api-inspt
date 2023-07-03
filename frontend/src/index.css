@@ -334,3 +334,10 @@
 .detail-button {
     font-size: 12px;
 }
+
+#box-operation {
+    top: 0px;
+    left: 0px;
+    width: calc(70% - 12px);
+    max-height: 70vh;
+}

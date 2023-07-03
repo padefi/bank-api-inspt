@@ -246,7 +246,7 @@ const changeAlias = asyncHandler(async (req, res) => {
 
     if (!account.isActive) {
         res.status(400);
-        throw new Error(`La cuenta ${accountId} no se encuentra activa.`);
+        throw new Error(`La cuenta no se encuentra activa.`);
     }
 
     let aliasExist = await Account.findOne({ alias });
@@ -294,7 +294,7 @@ const closeAccount = asyncHandler(async (req, res) => {
 
     if (!account.isActive) {
         res.status(400);
-        throw new Error(`La cuenta ${account.accountId} no se encuentra activa.`);
+        throw new Error(`La cuenta no se encuentra activa.`);
     }
 
     if (account.accountBalance > 0) {

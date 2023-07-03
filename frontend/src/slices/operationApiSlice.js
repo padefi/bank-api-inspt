@@ -15,10 +15,18 @@ export const operationApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    depositMoney: builder.mutation({
+      query: (data) => ({
+        url: `${OPERATIONS_URL}/deposit`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
 export const {
   useShowAllOperationsQuery,
-  useShowOperationsQuery
+  useShowOperationsQuery,
+  useDepositMoneyMutation,
 } = operationApiSlice;

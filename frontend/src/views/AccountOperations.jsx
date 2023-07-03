@@ -120,7 +120,7 @@ const AccountOperations = () => {
                 </div>
               </div>
               {account.operations.length > 0 ? (
-                account.operations.map((operation) => (
+                account.operations.slice().reverse().map((operation) => (
                   <React.Fragment key={operation._id}>
                     <hr />
                     <Operations key={operation._id} _id={operation._id} currency={account.currency.acronym} balanceSnapshot={operation.balanceSnapshot} />

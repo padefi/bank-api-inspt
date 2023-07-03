@@ -13,6 +13,7 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import UserAccount from './views/UserAccount';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import DepositMoney from './views/Deposit';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
         <Route path='/profile' element={<Profile />} />
         <Route path='/accountOperations/:id' element={<AccountOperations />} />
         <Route path='/userAccount/:id' element={<UserAccount />} />
+        <Route path='/deposit' element={<DepositMoney />} />
       </Route>
     </Route>
   )
