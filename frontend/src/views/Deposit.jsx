@@ -31,7 +31,8 @@ const UserAccounts = () => {
 
   const options = filteredAccounts.map((account) => ({
     value: account._id,
-    label: `${account.type} ${account.currency.symbol} ${account.accountId.substring(3, 7)} - ${account.accountId.substring(11, 21)}`
+    label: `${account.type} ${account.currency.symbol} ${account.accountId.substring(3, 7)} - ${account.accountId.substring(11, 21)}`,
+    currency: `${account.currency.symbol}`,
   }));
 
   return options;
@@ -41,6 +42,7 @@ const DepositMoney = () => {
   useCheckCookies();
   useSessionTimeout();
   const [accountId, setAccountId] = useState(null);
+  const [currency, setCurrency] = useState('$');
   const [amount, setAmount] = useState('');
   const options = UserAccounts();
   const [DepositMoney, { isLoading }] = useDepositMoneyMutation();
@@ -54,7 +56,8 @@ const DepositMoney = () => {
 
   const defaultSelectValue = () => ({
     value: 0,
-    label: "Seleccione una cuenta"
+    label: "Seleccione una cuenta",
+    currency: '$',
   });
 
   const amountChange = (e) => {
@@ -104,13 +107,13 @@ const DepositMoney = () => {
           <div className='box px-4 d-flex flex-column box-details '>
             <Form onSubmit={submitDeposit}>
               <h6>Cuenta</h6>
-              <Select key={selectedOptionKey} options={options} onChange={(option) => setAccountId(option?.value || null)} styles={selectStyles}
+              <Select key={selectedOptionKey} options={options} onChange={(option) => {setAccountId(option?.value || null); setCurrency(option?.currency || '$')}} styles={selectStyles}
                 menuPortalTarget={document.body} defaultValue={defaultSelectValue} />
 
               <Form.Group className='my-2' controlId='amount'>
                 <Form.Label>Importe</Form.Label>
-                <InputGroup> 
-                  <InputGroup.Text>$</InputGroup.Text>
+                <InputGroup>
+                  <InputGroup.Text>{currency}</InputGroup.Text>
                   <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={amountChange} disabled={!accountId} />
                 </InputGroup>
               </Form.Group>

@@ -138,14 +138,14 @@ const getCurrencies = asyncHandler(async (req, res) => {
 // @access  Private
 const createAccount = asyncHandler(async (req, res) => {
 
-    const { userId, accountType, currencyId } = req.body;
+    const { accountType, currencyId } = req.body;
 
-    if (!userId || !accountType || !currencyId) {
+    if (!accountType || !currencyId) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
         res.status(404);
@@ -164,7 +164,7 @@ const createAccount = asyncHandler(async (req, res) => {
         throw new Error('No es posible crear el tipo de cuenta con la moneda indicada');
     }
 
-    const accountExist = await Account.findOne({ accountHolder: userId, type: accountType, currency: currencyId });
+    const accountExist = await Account.findOne({ accountHolder: req.user._id, type: accountType, currency: currencyId });
 
     if (accountExist) {
         res.status(400);
@@ -201,7 +201,7 @@ const createAccount = asyncHandler(async (req, res) => {
         accountId,
         type: accountType,
         alias,
-        accountHolder: userId,
+        accountHolder: req.user._id,
         currency: currency._id
     });
 
@@ -329,7 +329,7 @@ const activeAccount = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
-    
+
     const dencryptedId = await decrypt(accountId);
 
     const account = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });

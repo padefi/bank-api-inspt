@@ -21,7 +21,7 @@ const AccountTypeOptions = () => {
   return options;
 }
 
-const CurrenciesOptions = ({ accountType }) => {
+const CurrenciesOptions = ({ accountType, selectStyles, defaultSelectValueCurrency, setCurrencyId }) => {
   const [getCurrenciesCompleted, setGetCurrenciesCompleted] = useState(false);
   const { data, error } = useGetCurrenciesQuery({}, { refetchOnMountOrArgChange: true });
 
@@ -40,12 +40,19 @@ const CurrenciesOptions = ({ accountType }) => {
   const currencies = data?.currency || [];
   const filteredCurrencies = accountType === 'CC' ? currencies.filter(currency => currency.acronym !== 'USD') : currencies;
 
+  const options = filteredCurrencies.map((currency) => ({
+    value: `${currency._id}`,
+    label: `${currency.symbol} - ${currency.name.toUpperCase()}`,
+  }));
+
   return (
-    <React.Fragment>
-      {filteredCurrencies.map((currency) => (
-        <option key={currency._id} value={currency._id}>{currency.symbol} - {currency.name.toUpperCase()}</option>
-      ))}
-    </React.Fragment>
+    <Select
+      key={accountType}
+      options={options}
+      onChange={(option) => setCurrencyId(option?.value || null)}
+      styles={selectStyles}
+      defaultValue={defaultSelectValueCurrency}
+    />
   );
 }
 
@@ -79,7 +86,6 @@ const Accounts = () => {
   });
 
   const [selectedOptionKeyAccountType, setSelectedOptionKeyAccountType] = useState(0);
-  const [selectedOptionKeyCurrency, setSelectedOptionKeyCurrency] = useState(0);
 
   useEffect(() => {
     if (error) {
@@ -116,7 +122,6 @@ const Accounts = () => {
       setShow(false);
       setSelectedOptionKeyAccountType((prevKey) => prevKey + 1);
       setAccountType(null);
-      setSelectedOptionKeyCurrency((prevKey) => prevKey + 1);
       setCurrencyId(null);
       refetch();
     } catch (err) {
@@ -202,11 +207,8 @@ const Accounts = () => {
 
             {accountType && (
               <Form.Group className='my-2' controlId='currencyId'>
-                <Form.Label>Tipo de Moneda</Form.Label>
-                <Form.Select as="select" size="sm" type={currencyId} onChange={(e) => setCurrencyId(e.target.value)} value={currencyId || ""}>
-                  <option value="">Seleccione una opción</option>
-                  <CurrenciesOptions accountType={accountType} />
-                </Form.Select>
+                <h6>Tipo de Moneda</h6>
+                <CurrenciesOptions accountType={accountType} selectStyles={selectStyles} defaultSelectValueCurrency={defaultSelectValueCurrency} setCurrencyId={setCurrencyId} />
               </Form.Group>
             )}
           </Modal.Body>
