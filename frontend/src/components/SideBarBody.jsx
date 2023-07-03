@@ -1,7 +1,7 @@
 import Sidebar from "react-bootstrap-sidebar-menu";
 import { LinkContainer } from 'react-router-bootstrap';
-import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaRegListAlt, FaShareSquare, FaWallet } from "react-icons/fa";
-import { NavLink } from "react-bootstrap";
+import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaShareSquare, FaWallet } from "react-icons/fa";
+import { Nav, NavLink } from "react-bootstrap";
 
 const SideBarBody = () => {
     return (
@@ -27,10 +27,10 @@ const SideBarBody = () => {
                                 </NavLink>
                             </LinkContainer>
                             <LinkContainer to="/resumen">
-                                <Sidebar.Nav.Link>
+                                <NavLink className="sidebar-menu-nav-link">
                                     <FaRegChartBar />
                                     <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
+                                </NavLink>
                             </LinkContainer>
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
@@ -43,22 +43,22 @@ const SideBarBody = () => {
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
                             <LinkContainer to="/deposit">
-                                <Sidebar.Nav.Link>
+                                <NavLink className="sidebar-menu-nav-link">
                                     <FaArrowCircleDown />
                                     <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
+                                </NavLink>
                             </LinkContainer>
                             <LinkContainer to="/withdraw">
-                                <Sidebar.Nav.Link>
+                                <NavLink className="sidebar-menu-nav-link">
                                     <FaArrowCircleUp />
                                     <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
+                                </NavLink>
                             </LinkContainer>
                             <LinkContainer to="/transfer">
-                                <Sidebar.Nav.Link>
+                                <NavLink className="sidebar-menu-nav-link">
                                     <FaShareSquare />
                                     <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>
-                                </Sidebar.Nav.Link>
+                                </NavLink>
                             </LinkContainer>
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
