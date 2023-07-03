@@ -8,9 +8,9 @@ import useSessionTimeout from '../utils/useSessionTimeout';
 import { useShowAccountsQuery } from '../slices/accountApiSlice';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
-import { useDepositMoneyMutation } from '../slices/operationApiSlice';
+import { useWithdrawMoneyMutation } from '../slices/operationApiSlice';
 
-const UserAccounts = ({ data, error }) => {
+const UserAccounts = ({data, error}) => {
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
 
   useEffect(() => {
@@ -38,16 +38,16 @@ const UserAccounts = ({ data, error }) => {
   return options;
 }
 
-const DepositMoney = () => {
+const WithdrawMoney = () => {
   useCheckCookies();
   useSessionTimeout();
   const [accountId, setAccountId] = useState(null);
   const [currency, setCurrency] = useState('$');
   const [accountBalance, setAccountBalance] = useState('$ 0,00');
   const [amount, setAmount] = useState('');
-  const [DepositMoney, { isLoading }] = useDepositMoneyMutation();
+  const [withdrawMoney, { isLoading }] = useWithdrawMoneyMutation();
   const { data, error, refetch } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
-  const options = UserAccounts({ data, error });
+  const options = UserAccounts({data, error });
 
   const selectStyles = () => ({
     menuPortal: (base) => ({
@@ -85,7 +85,7 @@ const DepositMoney = () => {
   const submitDeposit = async (e) => {
     e.preventDefault();
     try {
-      const res = await DepositMoney({ accountId, amount }).unwrap();
+      const res = await withdrawMoney({ accountId, amount }).unwrap();
       toast.success(res.message);
       setSelectedOptionKey((prevKey) => prevKey + 1);
       setAccountId(null);
@@ -111,7 +111,7 @@ const DepositMoney = () => {
           <div className='box px-4 d-flex flex-column box-details '>
             <Form onSubmit={submitDeposit}>
               <Form.Group className='my-2'>
-                <div className='fw-bold'>Cuenta a acreditar</div>
+                <div className='fw-bold'>Cuenta a debitar</div>
                 <Select key={selectedOptionKey} options={options} onChange={(option) => { setAccountId(option?.value || null); setCurrency(option?.currency || '$'); setAccountBalance(option?.balance || '$ 0,00'); }} styles={selectStyles}
                   menuPortalTarget={document.body} defaultValue={defaultSelectValue} />
                 <Form.Text className="text-muted">
@@ -126,7 +126,7 @@ const DepositMoney = () => {
                   <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={amountChange} disabled={!accountId} />
                 </InputGroup>
               </Form.Group>
-              
+
               <hr />
 
               <div className='d-flex justify-content-end'>
@@ -144,4 +144,4 @@ const DepositMoney = () => {
   );
 };
 
-export default DepositMoney;
+export default WithdrawMoney;

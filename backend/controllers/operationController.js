@@ -69,78 +69,6 @@ const getAllOperations = asyncHandler(async (req, res) => {
 });
 
 // @desc    Realizar una extracción de dinero
-// @route   POST /api/operations/withdraw
-// @access  Private
-const withdrawMoney = asyncHandler(async (req, res) => {
-    const { accountId, amount } = req.body;
-
-    // Validación
-    if (!accountId || !amount) {
-        res.status(400);
-        throw new Error('Por favor, complete todos los campos.');
-    }
-
-    const accountFrom = await Account.findOne({ _id: accountId, accountHolder: req.user._id });
-
-    if (!accountFrom) {
-        res.status(403);
-        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
-    }
-
-    if (!accountFrom.isActive) {
-        res.status(400);
-        throw new Error(`La cuenta no se encuentra activa.`);
-    }
-
-    if (accountFrom.accountBalance < amount) {
-        res.status(400);
-        throw new Error(`La cuenta no dispone de fondo suficiente para realizar la extracción.`);
-    }
-
-    let description = '';
-
-    let amountFrom, amountTo; amountFrom = amountTo = Number(amount);
-
-    if (accountFrom.type == 'CC') {
-        const tax = amount * 0.005;
-        amountFrom += tax;
-        description = `Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
-    }
-
-    const operation = await Operation.create({
-        type: 'extraccion',
-        accountFrom: accountId,
-        amountFrom,
-        amountTo,
-        operationDate: new Date(),
-        description
-    });
-
-    if (operation) {
-
-        const newBalanceFrom = accountFrom.accountBalance - amountFrom;
-        const roundedBalanceFrom = Number(newBalanceFrom.toFixed(2));
-        accountFrom.accountBalance = roundedBalanceFrom;
-        accountFrom.operations.push({
-            _id: operation._id,
-            balanceSnapshot: roundedBalanceFrom
-        });
-
-        await accountFrom.save();
-
-        extendToken(req, res);
-        res.status(200).json({
-            message: 'Extracción realizada con exito.',
-            operation
-        });
-
-    } else {
-        res.status(400);
-        throw new Error('Ha ocurrido un error al realizar la extracción.');
-    }
-});
-
-// @desc    Realizar una extracción de dinero
 // @route   POST /api/operations/deposit
 // @access  Private
 const depositMoney = asyncHandler(async (req, res) => {
@@ -211,6 +139,86 @@ const depositMoney = asyncHandler(async (req, res) => {
     } else {
         res.status(400);
         throw new Error('Ha ocurrido un error al realizar el depósito');
+    }
+});
+
+// @desc    Realizar una extracción de dinero
+// @route   POST /api/operations/withdraw
+// @access  Private
+const withdrawMoney = asyncHandler(async (req, res) => {
+    const { accountId, amount } = req.body;
+
+    // Validación
+    if (!accountId || !amount) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    if (amount <= 0) {
+        res.status(400);
+        throw new Error('El monto a extraer debe ser mayor a cero.');
+    }
+
+    const dencryptedId = await decrypt(accountId);
+
+    const accountFrom = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
+
+    if (!accountFrom) {
+        res.status(403);
+        throw new Error('Sin autorización.');
+        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+    }
+
+    if (!accountFrom.isActive) {
+        res.status(400);
+        throw new Error(`La cuenta no se encuentra activa.`);
+    }
+
+    if (accountFrom.accountBalance < amount) {
+        res.status(400);
+        throw new Error(`La cuenta no dispone de fondo suficiente para realizar la extracción.`);
+    }
+
+    let description = '';
+
+    let amountFrom, amountTo; amountFrom = amountTo = Number(amount);
+
+    if (accountFrom.type == 'CC') {
+        const tax = amount * 0.005;
+        amountFrom += tax;
+        description = `Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
+    }
+
+    const operation = await Operation.create({
+        type: 'extraccion',
+        accountFrom: dencryptedId,
+        amountFrom,
+        amountTo,
+        operationDate: new Date(),
+        description
+    });
+
+    if (operation) {
+
+        const newBalanceFrom = accountFrom.accountBalance - amountFrom;
+        const roundedBalanceFrom = Number(newBalanceFrom.toFixed(2));
+        accountFrom.accountBalance = roundedBalanceFrom;
+        accountFrom.operations.push({
+            _id: operation._id,
+            balanceSnapshot: roundedBalanceFrom
+        });
+
+        await accountFrom.save();
+
+        extendToken(req, res);
+        res.status(200).json({
+            message: 'Extracción realizada con exito.',
+            operation
+        });
+
+    } else {
+        res.status(400);
+        throw new Error('Ha ocurrido un error al realizar la extracción.');
     }
 });
 

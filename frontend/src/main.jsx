@@ -14,6 +14,7 @@ import UserAccount from './views/UserAccount';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import DepositMoney from './views/Deposit';
+import WithdrawMoney from './views/Withdraw';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,6 +28,7 @@ const router = createBrowserRouter(
         <Route path='/accountOperations/:id' element={<AccountOperations />} />
         <Route path='/userAccount/:id' element={<UserAccount />} />
         <Route path='/deposit' element={<DepositMoney />} />
+        <Route path='/withdraw' element={<WithdrawMoney />} />
       </Route>
     </Route>
   )
