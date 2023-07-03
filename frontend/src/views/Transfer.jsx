@@ -8,7 +8,7 @@ import useSessionTimeout from '../utils/useSessionTimeout';
 import { useShowAccountsQuery } from '../slices/accountApiSlice';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
-import { useWithdrawMoneyMutation } from '../slices/operationApiSlice';
+import { useTransferMoneyMutation } from '../slices/operationApiSlice';
 
 const UserAccounts = ({data, error}) => {
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
@@ -38,14 +38,15 @@ const UserAccounts = ({data, error}) => {
   return options;
 }
 
-const WithdrawMoney = () => {
+const TransferMoney = () => {
   useCheckCookies();
   useSessionTimeout();
   const [accountId, setAccountId] = useState(null);
+  const [accountToId, setAccountToId] = useState(null);
   const [currency, setCurrency] = useState('$');
   const [accountBalance, setAccountBalance] = useState('$ 0,00');
   const [amount, setAmount] = useState('');
-  const [withdrawMoney, { isLoading }] = useWithdrawMoneyMutation();
+  const [transferMoney, { isLoading }] = useTransferMoneyMutation();
   const { data, error, refetch } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
   const options = UserAccounts({data, error });
 
@@ -80,12 +81,16 @@ const WithdrawMoney = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(accountToId);
+  }, [accountToId]);
+
   const [selectedOptionKey, setSelectedOptionKey] = useState(0);
 
   const submitDeposit = async (e) => {
     e.preventDefault();
     try {
-      const res = await withdrawMoney({ accountId, amount }).unwrap();
+      const res = await transferMoney({ accountId, amount }).unwrap();
       toast.success(res.message);
       setSelectedOptionKey((prevKey) => prevKey + 1);
       setAccountId(null);
@@ -104,7 +109,7 @@ const WithdrawMoney = () => {
           <div className='box'>
             <div className='box mb-2'>
               <div className='box d-flex flex-row bg-dark text-white p-3 px-4 rounded-top-2'>
-                <h3 className='pb-0 mb-0'>Extracción</h3>
+                <h3 className='pb-0 mb-0'>Deposito</h3>
               </div>
             </div>
           </div>
@@ -119,11 +124,16 @@ const WithdrawMoney = () => {
                 </Form.Text>
               </Form.Group>
 
-              <Form.Group className='my-2' controlId='amount'>
+              <Form.Group className='my-3' controlId='accountTo'>
+                <Form.Label className='fw-bold mb-0'>Cuenta a acreditar</Form.Label>
+                <Form.Control type='accountTo' className='form-control-edit-input rounded-0' placeholder='Ingrese alias o CBU a transferir' minLength={6} maxLength={22} onBlur={(e) => setAccountToId(e.target.value.toUpperCase())}></Form.Control>
+              </Form.Group>
+
+              <Form.Group className='my-3' controlId='amount'>
                 <Form.Label className='fw-bold mb-0'>Importe</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>{currency}</InputGroup.Text>
-                  <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={amountChange} disabled={!accountId} />
+                  <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={amountChange} disabled={!accountId || !accountToId} />
                 </InputGroup>
               </Form.Group>
 
@@ -144,4 +154,4 @@ const WithdrawMoney = () => {
   );
 };
 
-export default WithdrawMoney;
+export default TransferMoney;

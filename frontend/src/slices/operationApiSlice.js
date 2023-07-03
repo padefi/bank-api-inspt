@@ -29,6 +29,13 @@ export const operationApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    transferMoney: builder.mutation({
+      query: (data) => ({
+        url: `${OPERATIONS_URL}/transfer`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -37,4 +44,5 @@ export const {
   useShowOperationsQuery,
   useDepositMoneyMutation,
   useWithdrawMoneyMutation,
+  useTransferMoneyMutation,
 } = operationApiSlice;
