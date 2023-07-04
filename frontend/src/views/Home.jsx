@@ -13,8 +13,8 @@ import ImageContainer from '../components/ImageContainer';
 import useCheckCookies from '../utils/useCheckCookies';
 import useSessionTimeout from '../utils/useSessionTimeout';
 
-const AccountOperations = ({ _id, currency }) => {
-  const { data = [], error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id });
+const AccountOperations = ({ _id, accountFrom, currency }) => {
+  const { data = [], error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id, accountFrom });
 
   if (isLoading || isFetching) {
     return (
@@ -34,7 +34,7 @@ const AccountOperations = ({ _id, currency }) => {
     );
   }
 
-  const { idOperation, operationDate, type, amountFrom } = data;
+  const { operationDate, type, amountFrom } = data;
   const isNegative = amountFrom < 0;
 
   return (
@@ -135,7 +135,7 @@ const Home = () => {
                     <>
                       <div className='box d-flex flex-column'>
                         {account.operations.slice().reverse().slice(0, 2).map((operation) => (
-                          <AccountOperations key={operation._id} _id={operation._id} currency={account.currency.acronym} />
+                          <AccountOperations key={operation._id} _id={operation._id} accountFrom={account._id} currency={account.currency.acronym} />
                         ))}
                       </div>
                       <div className="mt-0 mb-0 div-center">

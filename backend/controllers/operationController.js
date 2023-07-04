@@ -11,10 +11,12 @@ import { decrypt } from "../utils/crypter.js";
 // @access  Private
 const getAllOperations = asyncHandler(async (req, res) => {
 
-    const { id } = req.query;
+    const { id, accountFrom } = req.query;    
+
+    const dencryptedId = await decrypt(accountFrom);
 
     // Validación
-    if (!id) {
+    if (!id || !dencryptedId) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
@@ -57,12 +59,16 @@ const getAllOperations = asyncHandler(async (req, res) => {
         description = operations.description;
     }
 
+    let amountFrom = operations.amountFrom;
+    if(operations.type === 'extraccion') amountFrom *= -1;
+    else if(operations.type === 'transferencia' && operations.accountTo._id.toString() !== dencryptedId) amountFrom *= -1;
+
     extendToken(req, res);
     res.status(201).json({
         idOperation: operations._id,
         operationDate: operations.operationDate,
         type: operations.type,
-        amountFrom: (operations.type === 'deposito') ? operations.amountFrom : operations.amountFrom * -1,
+        amountFrom,
         holderDataFrom: (operations.type === 'transferencia') ? ' - ' + operations.accountFrom.accountHolder.governmentId.type + ': ' + operations.accountFrom.accountHolder.governmentId.number : '',
         description,
     });
@@ -227,21 +233,18 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 // @access  Private
 const transferMoney = asyncHandler(async (req, res) => {
 
-    const { accountFromId, accountToId, amount } = req.body;
+    const { accountFromId, accountTo, amount } = req.body;
     let description = req.body.description;
 
     // Validación
-    if (!accountFromId || !accountToId || !amount) {
+    if (!accountFromId || !accountTo || !amount) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    if (accountFromId === accountToId) {
-        res.status(400);
-        throw new Error('No puede realizarse una transferencia a la misma cuenta.');
-    }
+    const dencryptedId = await decrypt(accountFromId);
 
-    const accountFrom = await Account.findOne({ _id: accountFromId, accountHolder: req.user._id }).populate('currency');
+    const accountFrom = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id }).populate('currency');
 
     if (!accountFrom) {
         res.status(403);
@@ -250,44 +253,49 @@ const transferMoney = asyncHandler(async (req, res) => {
 
     if (!accountFrom.isActive) {
         res.status(400);
-        throw new Error(`La cuenta ${accountFromId} no se encuentra activa.`);
+        throw new Error(`La cuenta ${accountFrom.accountId} no se encuentra activa.`);
     }
 
     if (accountFrom.accountBalance < amount) {
         res.status(400);
-        throw new Error(`La cuenta ${accountFromId} no dispone de fondo suficiente para realizar la transferencia.`);
+        throw new Error(`La cuenta ${accountFrom.accountId} no dispone de fondo suficiente para realizar la transferencia.`);
     }
 
-    const accountTo = await Account.findById(accountToId).populate('currency');
+    const accountToData = await Account.findOne({
+        $or: [
+            { accountId: accountTo },
+            { alias: accountTo }
+        ], isActive: true
+    }).populate('currency');
 
-    if (!accountTo) {
+    if (!accountToData) {
         res.status(404);
         throw new Error('La cuenta no ha sido encontrada.');
     }
 
-    if (!accountTo.isActive) {
+    if (accountFrom.accountId === accountToData.accountId) {
         res.status(400);
-        throw new Error(`La cuenta ${accountToId} no se encuentra activa.`);
+        throw new Error('No puede realizarse una transferencia a la misma cuenta.');
     }
 
-    if (accountFrom.currency.acronym != accountTo.currency.acronym) {
+    if (accountFrom.currency.acronym !== accountToData.currency.acronym) {
         res.status(400);
         throw new Error('La operación no puede realizarse ya que las cuentas no son de la misma moneda.');
     }
 
     let amountFrom, amountTo; amountFrom = amountTo = Number(amount);
 
-    if (accountFrom.accountHolder.toString() != accountTo.accountHolder.toString() && (accountFrom.type == 'CC' || accountTo.type == 'CC')) {
+    if (accountFrom.accountHolder.toString() != accountToData.accountHolder.toString() && (accountFrom.type == 'CC' || accountToData.type == 'CC')) {
         const tax = amount * 0.005;
-        if (accountTo.type == 'CA') amountFrom += tax;
-        else if (accountTo.type == 'CC') amountTo = amount - tax;
+        if (accountToData.type == 'CA') amountFrom += tax;
+        else if (accountToData.type == 'CC') amountTo = amount - tax;
         description += `. Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
     }
 
     const operation = await Operation.create({
         type: 'transferencia',
-        accountFrom: accountFromId,
-        accountTo: accountToId,
+        accountFrom: dencryptedId,
+        accountTo: accountToData._id,
         amountFrom,
         amountTo,
         operationDate: new Date(),
@@ -304,15 +312,15 @@ const transferMoney = asyncHandler(async (req, res) => {
             balanceSnapshot: roundedBalanceFrom
         });
 
-        const newBalanceTo = accountTo.accountBalance + amountTo;
+        const newBalanceTo = accountToData.accountBalance + amountTo;
         const roundedBalanceTo = Number(newBalanceTo.toFixed(2));
-        accountTo.accountBalance = roundedBalanceTo;
-        accountTo.operations.push({
+        accountToData.accountBalance = roundedBalanceTo;
+        accountToData.operations.push({
             _id: operation._id,
             balanceSnapshot: roundedBalanceTo
         });
 
-        await Promise.all([accountFrom.save(), accountTo.save()]);
+        await Promise.all([accountFrom.save(), accountToData.save()]);
 
         extendToken(req, res);
         res.status(200).json({

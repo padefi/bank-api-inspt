@@ -6,7 +6,7 @@ export const accountApiSlice = apiSlice.injectEndpoints({
     showAccounts: builder.query({
       query: () => `${ACCOUNTS_URL}/`,
     }),
-    getAccount: builder.query({
+    getUserAccount: builder.query({
       query: ({ id }) => ({
         url: `${ACCOUNTS_URL}/getUserAccount?id=${id}`,
         method: 'GET',
@@ -43,15 +43,22 @@ export const accountApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getAccount: builder.query({
+      query: ({ data }) => ({
+        url: `${ACCOUNTS_URL}/getAccount?data=${data}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
 export const {
   useShowAccountsQuery,
-  useGetAccountQuery,
+  useGetUserAccountQuery,
   useGetCurrenciesQuery,
   useCreateAccountMutation,
   useChangeAliasMutation,
   useCloseAccountMutation,
   useActiveAccountMutation,
+  useGetAccountQuery,
 } = accountApiSlice;

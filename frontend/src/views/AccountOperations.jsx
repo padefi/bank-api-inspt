@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useShowAllOperationsQuery } from '../slices/operationApiSlice';
 import { useParams } from 'react-router-dom';
-import { useGetAccountQuery } from '../slices/accountApiSlice';
+import { useGetUserAccountQuery } from '../slices/accountApiSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import useCheckCookies from '../utils/useCheckCookies';
@@ -10,10 +10,10 @@ import CardContainer from '../components/CardContainer';
 import { Button } from 'react-bootstrap';
 import useSessionTimeout from '../utils/useSessionTimeout';
 
-const Operations = ({ _id, currency, balanceSnapshot }) => {
+const Operations = ({ _id, accountFrom, currency, balanceSnapshot }) => {
   const [checkOperationsCompleted, setCheckOperationsCompleted] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const { data, error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id }, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id, accountFrom }, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (error) {
@@ -81,7 +81,7 @@ const AccountOperations = () => {
   useSessionTimeout();
   const { id } = useParams();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
-  const { data, error, isLoading, isFetching } = useGetAccountQuery({ id }, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching } = useGetUserAccountQuery({ id }, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (error) {
@@ -118,12 +118,15 @@ const AccountOperations = () => {
                     {account.accountId.substring(3, 7)} - {account.accountId.substring(11, 21)}
                   </p>
                 </div>
+                <div className='box'>
+                  <p className='fw-bold'>Saldo: {account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
+                </div>
               </div>
               {account.operations.length > 0 ? (
                 account.operations.slice().reverse().map((operation) => (
                   <React.Fragment key={operation._id}>
                     <hr />
-                    <Operations key={operation._id} _id={operation._id} currency={account.currency.acronym} balanceSnapshot={operation.balanceSnapshot} />
+                    <Operations key={operation._id} _id={operation._id} accountFrom={id} currency={account.currency.acronym} balanceSnapshot={operation.balanceSnapshot} />
                   </React.Fragment>
                 ))
               ) : (

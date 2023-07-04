@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useActiveAccountMutation, useChangeAliasMutation, useCloseAccountMutation, useGetAccountQuery } from '../slices/accountApiSlice';
+import { useActiveAccountMutation, useChangeAliasMutation, useCloseAccountMutation, useGetUserAccountQuery } from '../slices/accountApiSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import useCheckCookies from '../utils/useCheckCookies';
@@ -17,7 +17,7 @@ const UserAccount = () => {
   const { id } = useParams();
   const { userInfo } = useSelector((state) => state.auth);
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
-  const { data, error, isLoading, isFetching, refetch } = useGetAccountQuery({ id }, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching, refetch } = useGetUserAccountQuery({ id }, { refetchOnMountOrArgChange: true });
   const [alias, setAlias] = useState('');
   const [isAliasEditable, setIsAliasEditable] = useState(false);
   const [showSubmitButton, setShowSubmitButton] = useState(false);

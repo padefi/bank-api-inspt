@@ -4,8 +4,8 @@ const OPERATIONS_URL = '/api/operations';
 export const operationApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     showAllOperations: builder.query({
-      query: ({ id }) => ({
-        url: `${OPERATIONS_URL}/allOperations?id=${id}`,
+      query: ({ id, accountFrom }) => ({
+        url: `${OPERATIONS_URL}/allOperations?id=${id}&accountFrom=${accountFrom}`,
         method: 'GET',
       }),
     }),

@@ -46,13 +46,7 @@ const CurrenciesOptions = ({ accountType, selectStyles, defaultSelectValueCurren
   }));
 
   return (
-    <Select
-      key={accountType}
-      options={options}
-      onChange={(option) => setCurrencyId(option?.value || null)}
-      styles={selectStyles}
-      defaultValue={defaultSelectValueCurrency}
-    />
+    <Select key={accountType} options={options} onChange={(option) => setCurrencyId(option?.value || null)} styles={selectStyles} defaultValue={defaultSelectValueCurrency} />
   );
 }
 
@@ -167,7 +161,7 @@ const Accounts = () => {
                       <div className='box d-flex justify-content-between'>
                         <div className='box'>
                           <div className='box my-1'>
-                            <p className='mb-0 box-text'>{account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
+                            <p className='mb-0 box-text'>Saldo: {account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
                           </div>
                           <p className='mb-0 box-text'>CBU: {account.accountId}</p>
                         </div>

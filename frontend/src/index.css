@@ -341,3 +341,7 @@
     width: calc(70% - 12px);
     max-height: 70vh;
 }
+
+.detail-account {
+    font-size: 16px;
+}

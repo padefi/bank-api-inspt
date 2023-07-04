@@ -70,18 +70,18 @@ const getUserAccount = asyncHandler(async (req, res) => {
 // @access  Private
 const getAccount = asyncHandler(async (req, res) => {
 
-    const { accountId, alias } = req.body;
+    const { data } = req.query;
 
     // Validación
-    if (!accountId && !alias) {
+    if (!data) {
         res.status(400);
         throw new Error('Por favor, complete uno de los campos.');
     }
 
     const accounts = await Account.findOne({
         $or: [
-            { accountId },
-            { alias }
+            { accountId: data },
+            { alias: data }
         ], isActive: true
     }).select({
         _id: 0,
