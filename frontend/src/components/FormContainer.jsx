@@ -1,13 +1,13 @@
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
 const FormContainer = ({ children }) => {
   return (
-    <Container>
-      <Row className="justify-content-md-center mt-5">
-        <Col xs={12} md={6} className="card p-5">
+    <Container className='container-login' fluid="xxl">
+      <Card>
+        <Row className="g-0 d-flex justify-content-center align-items-center">
           {children}
-        </Col>
-      </Row>
+        </Row>
+      </Card>
     </Container>
   );
 };

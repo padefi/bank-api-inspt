@@ -2,6 +2,29 @@
     font-family: sans-serif;
 }
 
+.container-login {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-icon {
+    font-size: 50px;
+}
+
+#LoginImg {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-login {
+    letter-spacing: 1px;
+}
 
 .carousel {
     width: 100%;
