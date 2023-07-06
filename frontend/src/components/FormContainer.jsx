@@ -4,7 +4,7 @@ const FormContainer = ({ children }) => {
   return (
     <Container className='container-login' fluid="xxl">
       <Card>
-        <Row className="g-0 d-flex justify-content-center align-items-center">
+        <Row className="g-0">
           {children}
         </Row>
       </Card>

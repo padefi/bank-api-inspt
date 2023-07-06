@@ -22,8 +22,13 @@
     object-fit: cover;
 }
 
-.text-login {
+.text-login,
+.text-login-title {
     letter-spacing: 1px;
+}
+
+.text-login-title {
+    font-family: math;
 }
 
 .carousel {

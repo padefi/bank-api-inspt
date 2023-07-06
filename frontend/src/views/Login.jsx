@@ -46,7 +46,7 @@ const LoginScreen = () => {
 
   return (
     <FormContainer>
-      <Col xs={12} md={6}>
+      <Col xs={12} md={6} className="d-flex align-items-center">
         <Card.Img id="LoginImg" className="d-block h-100 w-100" src={loginImg} alt="First slide" />
       </Col>
       <Col xs={12} md={6}>
@@ -55,7 +55,7 @@ const LoginScreen = () => {
           <hr />
           <div className='d-flex flex-row m-2'>
             <BsBank className='login-icon' />
-            <span className="h1 fw-bold my-2 mx-2">Banco INSPT-UTN</span>
+            <span className="h1 fw-bold my-2 mx-2 text-login-title">Banco INSPT-UTN</span>
           </div>
           <hr />
 
