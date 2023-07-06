@@ -11,7 +11,7 @@ import { decrypt } from "../utils/crypter.js";
 // @access  Private
 const getAllOperations = asyncHandler(async (req, res) => {
 
-    const { id, accountFrom } = req.query;    
+    const { id, accountFrom } = req.query;
 
     const dencryptedId = await decrypt(accountFrom);
 
@@ -59,17 +59,25 @@ const getAllOperations = asyncHandler(async (req, res) => {
         description = operations.description;
     }
 
-    let amountFrom = operations.amountFrom;
-    if(operations.type === 'extraccion') amountFrom *= -1;
-    else if(operations.type === 'transferencia' && operations.accountTo._id.toString() !== dencryptedId) amountFrom *= -1;
+    let amount = (operations.accountFrom._id.toString() === dencryptedId) ? operations.amountFrom : operations.amountTo;
+    if (operations.type === 'extraccion') amount *= -1;
+    else if (operations.type === 'deposito') amount = operations.amountTo;
+    else if (operations.type === 'transferencia' && operations.accountTo._id.toString() !== dencryptedId) amount *= -1;
+
+    let holderDataFrom = '';
+    if (operations.type === 'transferencia') {
+        holderDataFrom = (operations.accountFrom._id.toString() === dencryptedId)
+            ? ' - ' + operations.accountFrom.accountHolder.governmentId.type + ': ' + operations.accountFrom.accountHolder.governmentId.number 
+            : ' - ' + operations.accountTo.accountHolder.governmentId.type + ': ' + operations.accountTo.accountHolder.governmentId.number 
+    }
 
     extendToken(req, res);
     res.status(201).json({
         idOperation: operations._id,
         operationDate: operations.operationDate,
         type: operations.type,
-        amountFrom,
-        holderDataFrom: (operations.type === 'transferencia') ? ' - ' + operations.accountFrom.accountHolder.governmentId.type + ': ' + operations.accountFrom.accountHolder.governmentId.number : '',
+        amount,
+        holderDataFrom,
         description,
     });
 });
@@ -108,10 +116,10 @@ const depositMoney = asyncHandler(async (req, res) => {
 
     let description = '';
 
-    let amountFrom, amountTo; amountFrom = amountTo = Number(amount);
+    let amountFrom, amountTo, tax; amountFrom = amountTo = Number(amount); tax = 0;
 
     if (accountFrom.type == 'CC') {
-        const tax = amount * 0.005;
+        tax = amount * 0.005;
         amountTo -= tax;
         description = `Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
     }
@@ -140,6 +148,10 @@ const depositMoney = asyncHandler(async (req, res) => {
         extendToken(req, res);
         res.status(200).json({
             message: 'Deposito realizado con exito.',
+            date: operation.operationDate,
+            amountFrom,
+            amountTo,
+            tax,
         });
 
     } else {
@@ -187,10 +199,10 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 
     let description = '';
 
-    let amountFrom, amountTo; amountFrom = amountTo = Number(amount);
+    let amountFrom, amountTo, tax; amountFrom = amountTo = Number(amount); tax = 0;
 
     if (accountFrom.type == 'CC') {
-        const tax = amount * 0.005;
+        tax = amount * 0.005;
         amountFrom += tax;
         description = `Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
     }
@@ -219,7 +231,10 @@ const withdrawMoney = asyncHandler(async (req, res) => {
         extendToken(req, res);
         res.status(200).json({
             message: 'Extracción realizada con exito.',
-            operation
+            date: operation.operationDate,
+            amountFrom,
+            amountTo,
+            tax,
         });
 
     } else {
@@ -283,10 +298,10 @@ const transferMoney = asyncHandler(async (req, res) => {
         throw new Error('La operación no puede realizarse ya que las cuentas no son de la misma moneda.');
     }
 
-    let amountFrom, amountTo; amountFrom = amountTo = Number(amount);
+    let amountFrom, amountTo, tax; amountFrom = amountTo = Number(amount); tax = 0;
 
     if (accountFrom.accountHolder.toString() != accountToData.accountHolder.toString() && (accountFrom.type == 'CC' || accountToData.type == 'CC')) {
-        const tax = amount * 0.005;
+        tax = amount * 0.005;
         if (accountToData.type == 'CA') amountFrom += tax;
         else if (accountToData.type == 'CC') amountTo = amount - tax;
         description += `. Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
@@ -325,7 +340,10 @@ const transferMoney = asyncHandler(async (req, res) => {
         extendToken(req, res);
         res.status(200).json({
             message: 'Transferencia realizada con exito.',
-            operation
+            date: operation.operationDate,
+            amountFrom,
+            amountTo,
+            tax,
         });
 
     } else {

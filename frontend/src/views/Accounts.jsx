@@ -190,7 +190,7 @@ const Accounts = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} backdrop="static">
         <Form onSubmit={submitNewAccount}>
-          <Modal.Header closeButton>
+          <Modal.Header closeButton className='bg-dark text-white justify-content-center'>
             <Modal.Title>Nueva Cuenta</Modal.Title>
           </Modal.Header>
           <Modal.Body>

@@ -34,14 +34,14 @@ const AccountOperations = ({ _id, accountFrom, currency }) => {
     );
   }
 
-  const { operationDate, type, amountFrom } = data;
-  const isNegative = amountFrom < 0;
+  const { operationDate, type, amount } = data;
+  const isNegative = amount < 0;
 
   return (
     <div className='box button-container py-0 d-flex justify-content-between'>
       <p className='d-inline mb-0 box-text'>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short", timeStyle: "short" }).format(new Date(operationDate)).replace(/,/g, " -")}</p>
       <p className='d-inline mb-0 box-text text-start'>{type.toUpperCase()}</p>
-      <p className={isNegative ? "negative-number d-inline mb-0 box-text box text-end" : "d-inline mb-0 box-text box text-end"}>{amountFrom.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
+      <p className={isNegative ? "negative-number d-inline mb-0 box-text box text-end" : "d-inline mb-0 box-text box text-end"}>{amount.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CardContainer from '../components/CardContainer';
 import Loader from '../components/Loader';
 import { toast } from 'react-toastify';
@@ -9,45 +9,26 @@ import { useShowAccountsQuery } from '../slices/accountApiSlice';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
 import { useDepositMoneyMutation } from '../slices/operationApiSlice';
-
-const UserAccounts = ({ data, error }) => {
-  const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.data?.message || error.error);
-    } else {
-      setCheckAccountsCompleted(true);
-    }
-  }, [data, error]);
-
-  if (!checkAccountsCompleted) {
-    return null;
-  }
-
-  const accounts = data?.accounts || [];
-  const filteredAccounts = accounts.filter((account) => account.isActive);
-
-  const options = filteredAccounts.map((account) => ({
-    value: account._id,
-    label: `${account.type} ${account.currency.symbol} ${account.accountId.substring(3, 7)} - ${account.accountId.substring(11, 21)}`,
-    currency: `${account.currency.symbol}`,
-    balance: `${account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}`,
-  }));
-
-  return options;
-}
+import UserAccounts from '../utils/userAccounts';
+import ConfirmOperationModal from '../components/ConfirmOperationModal';
 
 const DepositMoney = () => {
   useCheckCookies();
   useSessionTimeout();
   const [accountId, setAccountId] = useState(null);
   const [currency, setCurrency] = useState('$');
+  const [acronym, setAcronym] = useState(null);
   const [accountBalance, setAccountBalance] = useState('$ 0,00');
   const [amount, setAmount] = useState('');
   const [DepositMoney, { isLoading }] = useDepositMoneyMutation();
   const { data, error, refetch } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
   const options = UserAccounts({ data, error });
+  const [accountFrom, setAccountFrom] = useState(null);
+  const [operationDate, setOperationDate] = useState(null);
+  const [amountFromData, setAmountFromData] = useState(null);
+  const [amountToData, setAmountToData] = useState(null);
+  const [tax, setTax] = useState(null);
+  const [showModal, setShow] = useState(false);
 
   const selectStyles = () => ({
     menuPortal: (base) => ({
@@ -80,6 +61,10 @@ const DepositMoney = () => {
     }
   };
 
+  const handleCloseModal = () => {
+    setShow(false);
+  };
+
   const [selectedOptionKey, setSelectedOptionKey] = useState(0);
 
   const submitDeposit = async (e) => {
@@ -87,6 +72,11 @@ const DepositMoney = () => {
     try {
       const res = await DepositMoney({ accountId, amount }).unwrap();
       toast.success(res.message);
+      setOperationDate(res.date);
+      setAmountFromData(res.amountFrom);
+      setAmountToData(res.amountTo);
+      setTax(res.tax);
+      setShow(true);
       setSelectedOptionKey((prevKey) => prevKey + 1);
       setAccountId(null);
       setAccountBalance('$ 0,00');
@@ -112,7 +102,7 @@ const DepositMoney = () => {
             <Form onSubmit={submitDeposit}>
               <Form.Group className='my-2'>
                 <div className='fw-bold'>Cuenta a acreditar</div>
-                <Select key={selectedOptionKey} options={options} onChange={(option) => { setAccountId(option?.value || null); setCurrency(option?.currency || '$'); setAccountBalance(option?.balance || '$ 0,00'); }} styles={selectStyles}
+                <Select key={selectedOptionKey} options={options} onChange={(option) => { setAccountId(option?.value || null); setAccountFrom(option?.label || null); setCurrency(option?.currency || '$'); setAcronym(option?.acronym || null); setAccountBalance(option?.balance || '$ 0,00'); }} styles={selectStyles}
                   menuPortalTarget={document.body} defaultValue={defaultSelectValue} />
                 <Form.Text className="text-muted">
                   Saldo: {accountBalance}
@@ -126,7 +116,7 @@ const DepositMoney = () => {
                   <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={amountChange} disabled={!accountId} />
                 </InputGroup>
               </Form.Group>
-              
+
               <hr />
 
               <div className='d-flex justify-content-end'>
@@ -136,6 +126,17 @@ const DepositMoney = () => {
               </div>
             </Form>
             {isLoading && <Loader />}
+            {showModal && <ConfirmOperationModal state={showModal}
+              type='Deposito'
+              desc='acreditado'
+              date={operationDate}
+              origin={accountFrom}
+              destination={null}
+              amountFromData={amountFromData}
+              amountToData={amountToData}
+              acronym={acronym}
+              tax={tax}
+              onCloseModal={handleCloseModal} />}
           </div>
         </CardContainer>
       </div>

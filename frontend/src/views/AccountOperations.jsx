@@ -33,7 +33,7 @@ const Operations = ({ _id, accountFrom, currency, balanceSnapshot }) => {
   };
 
   const operation = data || null;
-  const isNegative = operation ? operation.amountFrom < 0 : false;
+  const isNegative = operation ? operation.amount < 0 : false;
   return (
     <>
       {isLoading || isFetching && <Loader />}
@@ -52,7 +52,7 @@ const Operations = ({ _id, accountFrom, currency, balanceSnapshot }) => {
             </div>
             <div className='box ps-2 d-flex justify-content-end align-items-start col-2'>
               <div className='box text-end'>
-                <p className={isNegative ? "negative-number mb-0" : "mb-0"}>{operation.amountFrom.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
+                <p className={isNegative ? "negative-number mb-0" : "mb-0"}>{operation.amount.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
               </div>
             </div>
           </div>
