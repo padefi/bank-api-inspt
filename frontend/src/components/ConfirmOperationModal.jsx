@@ -1,11 +1,33 @@
 import { Button, Container, Form, Modal } from 'react-bootstrap';
 import { FaCheckCircle } from "react-icons/fa";
 import { BsFillPrinterFill } from "react-icons/bs";
+import { pdf } from '@react-pdf/renderer';
+import OperationReceipt from './OperationReceipt';
 
 const ConfirmOperationModal = ({ state, type, desc, date, origin, destination, amountFromData, amountToData, acronym, tax, onCloseModal }) => {
-    
+
     const handleClose = () => {
         onCloseModal();
+    };
+
+    const handleDownloadPDF = async () => {
+        const blob = await pdf(<OperationReceipt type={type}
+            desc={desc}
+            date={date}
+            origin={origin}
+            destination={destination}
+            amountFromData={amountFromData}
+            amountToData={amountToData}
+            acronym={acronym}
+            tax={tax}
+        />).toBlob();
+        
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = date + '.pdf';
+        link.click();
+        URL.revokeObjectURL(url);
     };
 
     return (
@@ -16,7 +38,7 @@ const ConfirmOperationModal = ({ state, type, desc, date, origin, destination, a
             <Modal.Body>
                 <Container className='border border-2 p-3'>
                     <div className='d-grid justify-content-center align-items-center'>
-                        <h6 className='fw-bold'>{type} realizada con exito</h6>
+                        <h6 className='fw-bold'>{type === 'Deposito' ? (<>{type} realizado</>) : (<>{type} realizada</>)} con éxito</h6>
                         <div className='d-flex justify-content-center'>
                             <FaCheckCircle className='modal-icon' />
                         </div>
@@ -43,7 +65,7 @@ const ConfirmOperationModal = ({ state, type, desc, date, origin, destination, a
                 </Container>
             </Modal.Body>
             <Modal.Footer className='d-flex justify-content-center align-items-center'>
-                <Button type='submit' variant='secondary'>
+                <Button type='submit' variant='secondary' onClick={handleDownloadPDF}>
                     <BsFillPrinterFill className='printer-icon' />
                     Descargar
                 </Button>
