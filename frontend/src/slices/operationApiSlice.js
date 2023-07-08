@@ -9,6 +9,12 @@ export const operationApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    showAccountOperations: builder.query({
+      query: ({ accountFrom }) => ({
+        url: `${OPERATIONS_URL}/accountOperations?accountFrom=${accountFrom}`,
+        method: 'GET',
+      }),
+    }),
     showOperations: builder.query({
       query: ({ id }) => ({
         url: `${OPERATIONS_URL}/accountOperations?id=${id}`,
@@ -41,6 +47,7 @@ export const operationApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useShowAllOperationsQuery,
+  useShowAccountOperationsQuery,
   useShowOperationsQuery,
   useDepositMoneyMutation,
   useWithdrawMoneyMutation,

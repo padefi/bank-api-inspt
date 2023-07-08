@@ -1,12 +1,11 @@
 import asyncHandler from "express-async-handler";
 import Account from "../models/accountModel.js";
-import Currency from "../models/currencyModel.js";
 import Operation from "../models/operationModel.js"
 import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
 import { extendToken } from "../utils/generateToken.js";
 import { decrypt } from "../utils/crypter.js";
 
-// @desc    Visualizar operaciones de una cuenta
+// @desc    Visualizar operaciones
 // @route   GET /api/operations/allOperations
 // @access  Private
 const getAllOperations = asyncHandler(async (req, res) => {
@@ -67,8 +66,8 @@ const getAllOperations = asyncHandler(async (req, res) => {
     let holderDataFrom = '';
     if (operations.type === 'transferencia') {
         holderDataFrom = (operations.accountFrom._id.toString() === dencryptedId)
-            ? ' - ' + operations.accountFrom.accountHolder.governmentId.type + ': ' + operations.accountFrom.accountHolder.governmentId.number 
-            : ' - ' + operations.accountTo.accountHolder.governmentId.type + ': ' + operations.accountTo.accountHolder.governmentId.number 
+            ? ' - ' + operations.accountFrom.accountHolder.governmentId.type + ': ' + operations.accountFrom.accountHolder.governmentId.number
+            : ' - ' + operations.accountTo.accountHolder.governmentId.type + ': ' + operations.accountTo.accountHolder.governmentId.number
     }
 
     extendToken(req, res);
@@ -79,6 +78,102 @@ const getAllOperations = asyncHandler(async (req, res) => {
         amount,
         holderDataFrom,
         description,
+    });
+});
+
+// @desc    Visualizar operaciones de una cuenta
+// @route   GET /api/operations/accountOperations
+// @access  Private
+const getAccountOperations = asyncHandler(async (req, res) => {
+
+    const { accountFrom } = req.query;
+
+    const dencryptedId = await decrypt(accountFrom);
+
+    // Validación
+    if (!dencryptedId) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const account = await Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance')
+    .populate('currency')
+    .populate({
+        path: 'operations',
+        populate:
+        {
+            path: '_id',
+            populate: [
+                {
+                    path: 'accountFrom',
+                    select: 'accountId',
+                    populate: {
+                        path: 'accountHolder',
+                        select: 'firstName lastName governmentId',
+                    }
+                },
+                {
+                    path: 'accountTo',
+                    select: 'accountId',
+                    populate: {
+                        path: 'accountHolder',
+                        select: 'firstName lastName governmentId',
+                    }
+                }
+            ]
+        }
+    });
+
+    if (!account) {
+        res.status(403);
+        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+    }
+
+    const operationDataArray = [];
+
+    account.operations.forEach(operation => {
+        let description;
+
+        if (operation._id.type === 'deposito') {
+            description = 'Deposito. ' + operation._id.description;
+        } else if (operation._id.type === 'extraccion') {
+            description = 'Extraccion. ' + operation._id.description;
+        } else {
+            description = operation._id.description;
+        }
+
+        let amount = (operation._id.accountFrom._id.toString() === dencryptedId) ? operation._id.amountFrom : operation._id.amountTo;
+        if (operation._id.type === 'extraccion') amount *= -1;
+        else if (operation._id.type === 'deposito') amount = operation._id.amountTo;
+        else if (operation._id.type === 'transferencia' && operation._id.accountTo._id.toString() !== dencryptedId) amount *= -1;
+
+        let holderDataFrom = '';
+        if (operation._id.type === 'transferencia') {
+            holderDataFrom = (operation._id.accountFrom._id.toString() === dencryptedId)
+                ? ' - ' + operation._id.accountFrom.accountHolder.governmentId.type + ': ' + operation._id.accountFrom.accountHolder.governmentId.number
+                : ' - ' + operation._id.accountTo.accountHolder.governmentId.type + ': ' + operation._id.accountTo.accountHolder.governmentId.number
+        }
+
+        const operationData = {
+            operationId: operation._id._id,
+            operationDate: operation._id.operationDate,
+            type: operation._id.type,
+            amount,
+            holderDataFrom,
+            description,
+            balance: operation.balanceSnapshot
+        };
+
+        operationDataArray.push(operationData);
+    });
+
+    extendToken(req, res);
+    res.status(201).json({
+        accountId: account.accountId,
+        type: account.Type,
+        accountBalance: account.accountBalance,
+        currency: account.currency,
+        operationDataArray
     });
 });
 
@@ -354,6 +449,7 @@ const transferMoney = asyncHandler(async (req, res) => {
 
 export {
     getAllOperations,
+    getAccountOperations,
     withdrawMoney,
     depositMoney,
     transferMoney

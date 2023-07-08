@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useShowAllOperationsQuery } from '../slices/operationApiSlice';
+import { useShowAccountOperationsQuery, useShowAllOperationsQuery } from '../slices/operationApiSlice';
 import { useParams } from 'react-router-dom';
 import { useGetUserAccountQuery } from '../slices/accountApiSlice';
 import { toast } from 'react-toastify';
@@ -10,69 +10,46 @@ import CardContainer from '../components/CardContainer';
 import { Button } from 'react-bootstrap';
 import useSessionTimeout from '../utils/useSessionTimeout';
 
-const Operations = ({ _id, accountFrom, currency, balanceSnapshot }) => {
-  const [checkOperationsCompleted, setCheckOperationsCompleted] = useState(false);
+const Operations = ({ data, currency }) => {
   const [showDescription, setShowDescription] = useState(false);
-  const { data, error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id, accountFrom }, { refetchOnMountOrArgChange: true });
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.data?.message || error.error);
-    } else {
-      setCheckOperationsCompleted(true);
-    }
-  }, [data, error]);
-
-  if (!checkOperationsCompleted) {
-    return null;
-  }
 
   const handleDescriptionClick = () => {
     if (showDescription) setShowDescription(false);
     else setShowDescription(true);
   };
 
-  const operation = data || null;
-  const isNegative = operation ? operation.amount < 0 : false;
+  const isNegative = data.amount < 0 ? true : false;
+
   return (
-    <>
-      {isLoading || isFetching && <Loader />}
-      {operation ? (
-        <div className='box'>
-          <div className='box d-flex justify-content-between flex-row row-cols-2'>
-            <div className='box col-10'>
-              <p className='mb-0 txt-default'>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short", timeStyle: "short" }).format(new Date(operation.operationDate)).replace(/,/g, " -")}</p>
-              <p className='my-1 txt-input-help'>{operation.type.toUpperCase()}{operation.holderDataFrom.toUpperCase()}</p>
-              <div className='box d-flex'>
-                <p className='mb-0 txt-input-help'>Saldo: </p>
-                <div className='box mb-0 mx-1 text-nowrap txt-input-help'>
-                  <p className='mb-0'>{balanceSnapshot.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
-                </div>
-              </div>
-            </div>
-            <div className='box ps-2 d-flex justify-content-end align-items-start col-2'>
-              <div className='box text-end'>
-                <p className={isNegative ? "negative-number mb-0" : "mb-0"}>{operation.amount.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
-              </div>
+    <div className='box'>
+      <div className='box d-flex justify-content-between flex-row row-cols-2'>
+        <div className='box col-10'>
+          <p className='mb-0 txt-default'>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short", timeStyle: "short" }).format(new Date(data.operationDate)).replace(/,/g, " -")}</p>
+          <p className='my-1 txt-input-help'>{data.type.toUpperCase()}{data.holderDataFrom.toUpperCase()}</p>
+          <div className='box d-flex'>
+            <p className='mb-0 txt-input-help'>Saldo: </p>
+            <div className='box mb-0 mx-1 text-nowrap txt-input-help'>
+              <p className='mb-0'>{data.balance.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
             </div>
           </div>
-          <div className='box'>
-            <Button variant="primary" size="sm" className="detail-button" onClick={handleDescriptionClick}>
-              <span>DETALLE</span>
-            </Button>
-          </div>
-          {showDescription && (
-            <div className='box'>
-              <p className='mb-0 textbox'>{operation.description.toUpperCase()}</p>
-            </div>
-          )}
         </div>
-      ) : (
-        <div className='box button-container py-0 d-flex justify-content-between'>
-          <h5 className="h-striped">No se encontraron movimientos</h5>
+        <div className='box ps-2 d-flex justify-content-end align-items-start col-2'>
+          <div className='box text-end'>
+            <p className={isNegative ? "negative-number mb-0" : "mb-0"}>{data.amount.toLocaleString("es-AR", { style: "currency", currency: currency })}</p>
+          </div>
+        </div>
+      </div>
+      <div className='box'>
+        <Button variant="primary" size="sm" className="detail-button" onClick={handleDescriptionClick}>
+          <span>DETALLE</span>
+        </Button>
+      </div>
+      {showDescription && (
+        <div className='box'>
+          <p className='mb-0 textbox'>{data.description.toUpperCase()}</p>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
@@ -81,7 +58,7 @@ const AccountOperations = () => {
   useSessionTimeout();
   const { id } = useParams();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
-  const { data, error, isLoading, isFetching } = useGetUserAccountQuery({ id }, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching } = useShowAccountOperationsQuery({ accountFrom: id }, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (error) {
@@ -95,7 +72,8 @@ const AccountOperations = () => {
     return null;
   }
 
-  const account = data?.account || null;
+  const account = data || null;
+
   return (
     <BoxContainer>
       <CardContainer className="p-4" id="box-details">
@@ -122,7 +100,13 @@ const AccountOperations = () => {
                   <p className='fw-bold'>Saldo: {account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
                 </div>
               </div>
-              {account.operations.length > 0 ? (
+              {account.operationDataArray.slice().reverse().map((operation) => (
+                <React.Fragment key={operation.operationId}>
+                  <hr />
+                  <Operations data={operation} currency={account.currency.acronym} />
+                </React.Fragment>
+              ))}
+              {/* {account.operations.length > 0 ? (
                 account.operations.slice().reverse().map((operation) => (
                   <React.Fragment key={operation._id}>
                     <hr />
@@ -133,11 +117,11 @@ const AccountOperations = () => {
                 <div className='box button-container py-0 d-flex justify-content-between'>
                   <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
                 </div>
-              )}
+              )} */}
             </div>
           ) : (
             <div className='box button-container py-0 d-flex justify-content-between'>
-              <h5 className="h-striped">No se encontró la cuenta bancaria</h5>
+              <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
             </div>
           )}
         </div>
