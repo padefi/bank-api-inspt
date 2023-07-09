@@ -26,7 +26,7 @@ const SideBarBody = () => {
                                     <Sidebar.Nav.Title>Mis cuentas</Sidebar.Nav.Title>
                                 </NavLink>
                             </LinkContainer>
-                            <LinkContainer to="/resumen">
+                            <LinkContainer to="/accountSummary">
                                 <NavLink className="sidebar-menu-nav-link">
                                     <FaRegChartBar />
                                     <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>

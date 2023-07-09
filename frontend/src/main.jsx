@@ -9,13 +9,14 @@ import Home from './views/Home.jsx';
 import Accounts from './views/Accounts.jsx';
 import Profile from './views/Profile.jsx';
 import AccountOperations from './views/AccountOperations.jsx';
+import AccountSummary from './views/AccountSummary';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import UserAccount from './views/UserAccount';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
 import DepositMoney from './views/Deposit';
 import WithdrawMoney from './views/Withdraw';
 import TransferMoney from './views/Transfer';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +29,7 @@ const router = createBrowserRouter(
         <Route path='/profile' element={<Profile />} />
         <Route path='/accountOperations/:id' element={<AccountOperations />} />
         <Route path='/userAccount/:id' element={<UserAccount />} />
+        <Route path='/accountSummary' element={<AccountSummary />} />
         <Route path='/deposit' element={<DepositMoney />} />
         <Route path='/withdraw' element={<WithdrawMoney />} />
         <Route path='/transfer' element={<TransferMoney />} />

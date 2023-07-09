@@ -6,7 +6,7 @@ import Loader from '../components/Loader';
 import useCheckCookies from '../utils/useCheckCookies';
 import BoxContainer from '../components/BoxContainer';
 import CardContainer from '../components/CardContainer';
-import { Button } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import useSessionTimeout from '../utils/useSessionTimeout';
 import Select from 'react-select';
 
@@ -141,25 +141,25 @@ const AccountOperations = () => {
                 </Button>
               </div>
               <div className={`box advanced-search d-flex justify-content-center ${advancedSearch ? 'advanced-search-visible' : 'advanced-search-hidden'}`}>
-                <div className='box box-advanced-search d-flex flex-column'>
-                  <div className='box d-flex'>
-                    <div className='box d-flex flex-column'>
-                      <label htmlFor="dateFrom" className='fw-bold detail-text'>Fecha desde:</label>
-                      <input id="dateFrom" type="date" className="form-control form-control-sm" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); handleAdvanced; }} />
+                <Row className='justify-content-center'>
+                  <Col>
+                    <div className='box d-flex justify-content-between'>
+                      <Form.Group className='mr-2 mb-2'>
+                        <Form.Label htmlFor="dateFrom" className='fw-bold detail-text'>Fecha desde:</Form.Label>
+                        <Form.Control id="dateFrom" type="date" className="form-control form-control-sm" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); handleAdvanced; }} />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label htmlFor="dateTo" className='fw-bold detail-text'>Fecha hasta:</Form.Label>
+                        <Form.Control id="dateTo" type="date" className="form-control form-control-sm" value={dateTo} onChange={(e) => { setDateTo(e.target.value); handleAdvanced; }} />
+                      </Form.Group>
                     </div>
-                    <div className='box d-flex flex-column'>
-                      <label htmlFor="dateTo" className='fw-bold detail-text'>Fecha hasta:</label>
-                      <input id="dateTo" type="date" className="form-control form-control-sm" value={dateTo} onChange={(e) => { setDateTo(e.target.value); handleAdvanced; }} />
-                    </div>
-                  </div>
-                  <div className='box d-flex flex-column'>
-                    <div className='box d-flex flex-column'>
+                    <Form.Group>
                       <div className='fw-bold detail-text'>Tipo de operación:</div>
                       <Select options={optionsOperationType} onChange={(optionsOperationType) => { setOperationType(optionsOperationType?.value || null); handleAdvanced; }} styles={selectStyles}
                         menuPortalTarget={document.body} defaultValue={defaultSelectValue} />
-                    </div>
-                  </div>
-                </div>
+                    </Form.Group>
+                  </Col>
+                </Row>
               </div>
               {account.operationDataArray.length > 0 ? (
                 account.operationDataArray.slice().reverse().map((operation) => (
@@ -188,7 +188,7 @@ const AccountOperations = () => {
         </div>
       </CardContainer>
       <br />
-    </BoxContainer>
+    </BoxContainer >
   );
 };
 

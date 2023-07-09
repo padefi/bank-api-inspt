@@ -394,10 +394,6 @@
     transition: max-height 0.3s ease-in-out;
 }
 
-.advanced-search .box {
-    margin: 5px;
-}
-
 @media (max-width: 768px) {
     .advanced-search .flex-wrap {
         flex-wrap: nowrap;
@@ -414,4 +410,8 @@
 
 .detail-text {
     font-size: 12px;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;;
 }
