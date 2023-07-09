@@ -386,3 +386,32 @@
 .printer-icon {
     margin-right: 0.5rem;
 }
+
+.advanced-search {
+    flex-wrap: wrap;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.advanced-search .box {
+    margin: 5px;
+}
+
+@media (max-width: 768px) {
+    .advanced-search .flex-wrap {
+        flex-wrap: nowrap;
+    }
+}
+
+.advanced-search-visible {
+    max-height: 200px;
+}
+
+.advanced-search-hidden {
+    max-height: 0;
+}
+
+.detail-text {
+    font-size: 12px;
+}

@@ -86,7 +86,7 @@ const getAllOperations = asyncHandler(async (req, res) => {
 // @access  Private
 const getAccountOperations = asyncHandler(async (req, res) => {
 
-    const { accountFrom } = req.query;
+    const { accountFrom, dateFrom, dateTo, operationType } = req.query;
 
     const dencryptedId = await decrypt(accountFrom);
 
@@ -96,7 +96,53 @@ const getAccountOperations = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const account = await Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance')
+    const query = Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance').populate('currency');
+
+    const matchConditions = {};
+    const startDate = (dateFrom) ? new Date(new Date(dateFrom).getTime() + new Date().getTimezoneOffset() * 60000) : '';
+    const endDate = (dateTo) ? new Date(new Date(dateTo).getTime() + new Date().getTimezoneOffset() * 540000) : '';
+
+    if (dateFrom || dateTo) {
+        matchConditions.operationDate = {};
+        if (dateFrom) {
+            matchConditions.operationDate.$gte = startDate;
+        }
+        if (dateTo) {
+            matchConditions.operationDate.$lte = endDate;
+        }
+    }
+
+    if (operationType && operationType !== 'null') {
+        matchConditions.type = operationType;
+    }
+
+    query.populate({
+        path: 'operations',
+        populate: {
+            path: '_id',
+            match: matchConditions,
+            populate: [
+                {
+                    path: 'accountFrom',
+                    select: 'accountId',
+                    populate: {
+                        path: 'accountHolder',
+                        select: 'firstName lastName governmentId',
+                    },
+                },
+                {
+                    path: 'accountTo',
+                    select: 'accountId',
+                    populate: {
+                        path: 'accountHolder',
+                        select: 'firstName lastName governmentId',
+                    },
+                },
+            ],
+        },
+    });
+
+    /* const account = await Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance')
     .populate('currency')
     .populate({
         path: 'operations',
@@ -122,7 +168,9 @@ const getAccountOperations = asyncHandler(async (req, res) => {
                 }
             ]
         }
-    });
+    }); */
+
+    const account = await query.exec();
 
     if (!account) {
         res.status(403);
@@ -132,39 +180,41 @@ const getAccountOperations = asyncHandler(async (req, res) => {
     const operationDataArray = [];
 
     account.operations.forEach(operation => {
-        let description;
+        if (operation._id) {
+            let description;
 
-        if (operation._id.type === 'deposito') {
-            description = 'Deposito. ' + operation._id.description;
-        } else if (operation._id.type === 'extraccion') {
-            description = 'Extraccion. ' + operation._id.description;
-        } else {
-            description = operation._id.description;
+            if (operation._id.type === 'deposito') {
+                description = 'Deposito. ' + operation._id.description;
+            } else if (operation._id.type === 'extraccion') {
+                description = 'Extraccion. ' + operation._id.description;
+            } else {
+                description = operation._id.description;
+            }
+
+            let amount = (operation._id.accountFrom._id.toString() === dencryptedId) ? operation._id.amountFrom : operation._id.amountTo;
+            if (operation._id.type === 'extraccion') amount *= -1;
+            else if (operation._id.type === 'deposito') amount = operation._id.amountTo;
+            else if (operation._id.type === 'transferencia' && operation._id.accountTo._id.toString() !== dencryptedId) amount *= -1;
+
+            let holderDataFrom = '';
+            if (operation._id.type === 'transferencia') {
+                holderDataFrom = (operation._id.accountFrom._id.toString() === dencryptedId)
+                    ? ' - ' + operation._id.accountFrom.accountHolder.governmentId.type + ': ' + operation._id.accountFrom.accountHolder.governmentId.number
+                    : ' - ' + operation._id.accountTo.accountHolder.governmentId.type + ': ' + operation._id.accountTo.accountHolder.governmentId.number
+            }
+
+            const operationData = {
+                operationId: operation._id._id,
+                operationDate: operation._id.operationDate,
+                type: operation._id.type,
+                amount,
+                holderDataFrom,
+                description,
+                balance: operation.balanceSnapshot
+            };
+
+            operationDataArray.push(operationData);
         }
-
-        let amount = (operation._id.accountFrom._id.toString() === dencryptedId) ? operation._id.amountFrom : operation._id.amountTo;
-        if (operation._id.type === 'extraccion') amount *= -1;
-        else if (operation._id.type === 'deposito') amount = operation._id.amountTo;
-        else if (operation._id.type === 'transferencia' && operation._id.accountTo._id.toString() !== dencryptedId) amount *= -1;
-
-        let holderDataFrom = '';
-        if (operation._id.type === 'transferencia') {
-            holderDataFrom = (operation._id.accountFrom._id.toString() === dencryptedId)
-                ? ' - ' + operation._id.accountFrom.accountHolder.governmentId.type + ': ' + operation._id.accountFrom.accountHolder.governmentId.number
-                : ' - ' + operation._id.accountTo.accountHolder.governmentId.type + ': ' + operation._id.accountTo.accountHolder.governmentId.number
-        }
-
-        const operationData = {
-            operationId: operation._id._id,
-            operationDate: operation._id.operationDate,
-            type: operation._id.type,
-            amount,
-            holderDataFrom,
-            description,
-            balance: operation.balanceSnapshot
-        };
-
-        operationDataArray.push(operationData);
     });
 
     extendToken(req, res);

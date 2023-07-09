@@ -10,8 +10,8 @@ export const operationApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     showAccountOperations: builder.query({
-      query: ({ accountFrom }) => ({
-        url: `${OPERATIONS_URL}/accountOperations?accountFrom=${accountFrom}`,
+      query: ({ accountFrom, dateFrom, dateTo, operationType }) => ({
+        url: `${OPERATIONS_URL}/accountOperations?accountFrom=${accountFrom}&dateFrom=${dateFrom}&dateTo=${dateTo}&operationType=${operationType}`,
         method: 'GET',
       }),
     }),

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useShowAccountOperationsQuery, useShowAllOperationsQuery } from '../slices/operationApiSlice';
 import { useParams } from 'react-router-dom';
-import { useGetUserAccountQuery } from '../slices/accountApiSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import useCheckCookies from '../utils/useCheckCookies';
@@ -9,6 +8,7 @@ import BoxContainer from '../components/BoxContainer';
 import CardContainer from '../components/CardContainer';
 import { Button } from 'react-bootstrap';
 import useSessionTimeout from '../utils/useSessionTimeout';
+import Select from 'react-select';
 
 const Operations = ({ data, currency }) => {
   const [showDescription, setShowDescription] = useState(false);
@@ -58,7 +58,42 @@ const AccountOperations = () => {
   useSessionTimeout();
   const { id } = useParams();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
-  const { data, error, isLoading, isFetching } = useShowAccountOperationsQuery({ accountFrom: id }, { refetchOnMountOrArgChange: true });
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [operationType, setOperationType] = useState('');
+  const [advancedSearch, setAdvancedSearch] = useState(false);
+  const { data, error, isLoading, isFetching, refetch } = useShowAccountOperationsQuery({ accountFrom: id, dateFrom, dateTo, operationType }, { refetchOnMountOrArgChange: true });
+
+  const optionsOperationType = [
+    { value: '', label: 'Todas' },
+    { value: 'deposito', label: 'Deposito' },
+    { value: 'extraccion', label: 'Extraccion' },
+    { value: 'transferencia', label: 'Transferencia' }
+  ];
+
+  const handleAdvancedSearch = () => {
+    setAdvancedSearch(!advancedSearch);
+  };
+
+  const selectStyles = {
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+    control: (provided) => ({
+      ...provided,
+      fontSize: '12px',
+    }),
+  };
+
+  const defaultSelectValue = () => ({
+    value: '',
+    label: "Todas",
+  });
+
+  const handleAdvanced = () => {
+    refetch();
+  };
 
   useEffect(() => {
     if (error) {
@@ -100,29 +135,55 @@ const AccountOperations = () => {
                   <p className='fw-bold'>Saldo: {account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</p>
                 </div>
               </div>
-              {account.operationDataArray.slice().reverse().map((operation) => (
-                <React.Fragment key={operation.operationId}>
-                  <hr />
-                  <Operations data={operation} currency={account.currency.acronym} />
-                </React.Fragment>
-              ))}
-              {/* {account.operations.length > 0 ? (
-                account.operations.slice().reverse().map((operation) => (
-                  <React.Fragment key={operation._id}>
+              <div className='box d-flex justify-content-center'>
+                <Button variant="primary" size="sm" className="detail-button" onClick={handleAdvancedSearch}>
+                  <span>Busqueda avanzada</span>
+                </Button>
+              </div>
+              <div className={`box advanced-search d-flex justify-content-center ${advancedSearch ? 'advanced-search-visible' : 'advanced-search-hidden'}`}>
+                <div className='box box-advanced-search d-flex flex-column'>
+                  <div className='box d-flex'>
+                    <div className='box d-flex flex-column'>
+                      <label htmlFor="dateFrom" className='fw-bold detail-text'>Fecha desde:</label>
+                      <input id="dateFrom" type="date" className="form-control form-control-sm" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); handleAdvanced; }} />
+                    </div>
+                    <div className='box d-flex flex-column'>
+                      <label htmlFor="dateTo" className='fw-bold detail-text'>Fecha hasta:</label>
+                      <input id="dateTo" type="date" className="form-control form-control-sm" value={dateTo} onChange={(e) => { setDateTo(e.target.value); handleAdvanced; }} />
+                    </div>
+                  </div>
+                  <div className='box d-flex flex-column'>
+                    <div className='box d-flex flex-column'>
+                      <div className='fw-bold detail-text'>Tipo de operación:</div>
+                      <Select options={optionsOperationType} onChange={(optionsOperationType) => { setOperationType(optionsOperationType?.value || null); handleAdvanced; }} styles={selectStyles}
+                        menuPortalTarget={document.body} defaultValue={defaultSelectValue} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {account.operationDataArray.length > 0 ? (
+                account.operationDataArray.slice().reverse().map((operation) => (
+                  <React.Fragment key={operation.operationId}>
                     <hr />
-                    <Operations key={operation._id} _id={operation._id} accountFrom={id} currency={account.currency.acronym} balanceSnapshot={operation.balanceSnapshot} />
+                    <Operations data={operation} currency={account.currency.acronym} />
                   </React.Fragment>
                 ))
               ) : (
-                <div className='box button-container py-0 d-flex justify-content-between'>
-                  <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
-                </div>
-              )} */}
+                <>
+                  <hr />
+                  <div className='box button-container py-0 d-flex justify-content-center'>
+                    <h5 className="h-striped">No existen en el rango indicado</h5>
+                  </div>
+                </>
+              )}
             </div>
           ) : (
-            <div className='box button-container py-0 d-flex justify-content-between'>
-              <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
-            </div>
+            <>
+              <hr />
+              <div className='box button-container py-0 d-flex justify-content-between'>
+                <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
+              </div>
+            </>
           )}
         </div>
       </CardContainer>
