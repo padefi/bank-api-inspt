@@ -11,7 +11,13 @@ export const authApiSlice = apiSlice.injectEndpoints({
         credentials: 'include',
       }),
     }),
+    userRole: builder.query({
+      query: () => ({
+        url: `${AUTH_URL}/role`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useCheckCookiesQuery } = authApiSlice;
+export const { useCheckCookiesQuery, useUserRoleQuery } = authApiSlice;

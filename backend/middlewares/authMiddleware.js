@@ -30,8 +30,12 @@ const isAdmin = (user) => {
     return user.role && user.role.name === 'admin';
 };
 
+const isEmployee = (user) => {
+    return req.user && req.user.role === 'empleado';
+}
+
 const isClient = (user) => {
-    return req.user && req.user.role === 'cliente'
+    return req.user && req.user.role === 'cliente';
 }
 
 const loginIsClient = (user) => {
@@ -41,6 +45,7 @@ const loginIsClient = (user) => {
 export {
     protect,
     isAdmin,
+    isEmployee,
     isClient,
     loginIsClient
 }

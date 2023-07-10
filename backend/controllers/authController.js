@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import { extendToken } from "../utils/generateToken.js";
 
 // @desc    Comprueba que existan las cookies
-// @route   POST /api/auth/check-cookies
+// @route   GET /api/auth/check-cookies
 // @access  Private
 const userIsLog = asyncHandler(async (req, res) => {
     if (req.cookies) {
@@ -20,6 +20,24 @@ const userIsLog = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Rol del usuario
+// @route   GET /auth/users/role
+// @access  Private
+const userRole = asyncHandler(async (req, res) => {
+
+    if (req.user.role.name) {
+        res.status(201).json({
+            role: req.user.role.name
+        });
+    } else {
+        res.status(400).json({
+            role: false
+        });;
+        throw new Error('Rol no encontrado.');
+    }
+});
+
 export {
-    userIsLog
+    userIsLog,
+    userRole,
 }
