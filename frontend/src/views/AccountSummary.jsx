@@ -11,8 +11,9 @@ import AccountSummaryPDF from '../components/AccountSummaryPDF';
 import { pdf } from '@react-pdf/renderer';
 import { useShowAccountOperationsQuery } from '../slices/operationApiSlice';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
-const AccountOperations = ({ accountId, dateFrom, dateTo, onDataLoaded  }) => {
+const AccountOperations = ({ accountId, dateFrom, dateTo, onDataLoaded }) => {
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const { data, error } = useShowAccountOperationsQuery({ accountFrom: accountId, dateFrom, dateTo, operationType: '' }, { refetchOnMountOrArgChange: true });
 
@@ -28,7 +29,7 @@ const AccountOperations = ({ accountId, dateFrom, dateTo, onDataLoaded  }) => {
     if (data) {
       onDataLoaded(data);
     }
-  }, [data, onDataLoaded ]);
+  }, [data, onDataLoaded]);
 
   if (!checkAccountsCompleted) {
     return null;
@@ -44,6 +45,7 @@ const AccountSumarry = () => {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [dataAccountOperations, setDataAccountOperations] = useState(false);
+  const { userInfo } = useSelector((state) => state.auth);
 
   const handleDataLoaded = (data) => {
     setDataAccountOperations(data);
@@ -61,9 +63,9 @@ const AccountSumarry = () => {
     label: "Seleccione una cuenta",
   });
 
-  const handleDownloadPDF = async () => {
-
+  const handleDownloadPDF = async () => {    
     const blob = await pdf(<AccountSummaryPDF
+      holder={userInfo.firstName + ' ' + userInfo.lastName}
       dateFrom={dateFrom}
       dateTo={dateTo}
       operations={dataAccountOperations}

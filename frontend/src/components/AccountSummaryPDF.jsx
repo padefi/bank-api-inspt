@@ -7,31 +7,46 @@ const styles = StyleSheet.create({
   page: {
     fontSize: 12,
     paddingTop: 30,
-    paddingLeft: 60,
-    paddingRight: 60,
+    paddingLeft: 30,
+    paddingRight: 30,
     paddingBottom: 30,
   },
   headerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   headerTitleContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
     alignItems: 'center',
   },
+  headerTextContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerDateContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
   headerTitle: {
-    fontSize: 28,
-    marginTop: 10,
-    marginLeft: 10,
+    fontSize: 10,
+    marginLeft: 2,
   },
   headerText: {
     fontSize: 18,
-    marginBottom: 20,
-    textDecoration: 'underline',
+  },
+  headerDate: {
+    fontSize: 10,
   },
   headerTitleIcon: {
-    width: 40,
-    height: 40,
+    width: 10,
+    height: 10,
+  },
+  hr: {
+    borderBottom: '1 solid black',
+    marginBottom: 10,
   },
   section: {
     marginBottom: 10,
@@ -72,10 +87,28 @@ const styles = StyleSheet.create({
   tableBody: {
     fontSize: 10,
   },
+  noResult: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  footerContainer: {
+    position: 'absolute',
+    bottom: 30,
+    right: 60,
+    left: 'auto',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  footerText: {
+    fontSize: 10,
+    textAlign: 'center',
+  },
 });
 
 // Componente del resumen de cuenta bancaria
-const AccountSummaryPDF = ({ dateFrom, dateTo, operations }) => {
+const AccountSummaryPDF = ({ holder, dateFrom, dateTo, operations }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -84,54 +117,72 @@ const AccountSummaryPDF = ({ dateFrom, dateTo, operations }) => {
             <Image style={styles.headerTitleIcon} src={bank} />
             <Text style={styles.headerTitle}>Banco INSPT-UTN</Text>
           </View>
-          <Text style={styles.headerText}>Resumen de Cuenta Bancaria</Text>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerText}>Resumen de cuenta</Text>
+          </View>
+          <View style={styles.headerDateContainer}>
+            <Text style={styles.headerDate}>Fecha: {new Date().toLocaleDateString()}</Text>
+          </View>
         </View>
+        <View style={styles.hr} />
         <View>
           <View style={styles.section}>
-            <Text>Número de Cuenta: {operations.accountId}</Text>
+            <Text>Titular: {holder}</Text>
+            <Text>Cuenta: {operations.accountId.substring(3, 7)} - {operations.accountId.substring(11, 21)}</Text>
             <Text>Saldo: {operations.accountBalance.toLocaleString("es-AR", { style: "currency", currency: operations.currency.acronym })}</Text>
           </View>
           <View style={styles.section}>
-            <Text style={styles.subTitle}>Movimientos Bancarios:</Text>
             <View style={styles.datesContainer}>
               <Text style={styles.datesLabel}>Desde:</Text>
-              <Text style={styles.dateValue}>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short" }).format(new Date(dateFrom)).replace(/,/g, " -")}</Text>
+              <Text style={styles.dateValue}>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short", timeZone: 'UTC' }).format(new Date(dateFrom)).replace(/,/g, " -")}</Text>
               <Text style={styles.datesLabel}>&nbsp;-&nbsp;Hasta:</Text>
-              <Text style={styles.dateValue}>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short" }).format(new Date(dateTo)).replace(/,/g, " -")}</Text>
+              <Text style={styles.dateValue}>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short", timeZone: 'UTC' }).format(new Date(dateTo)).replace(/,/g, " -")}</Text>
             </View>
+            <View style={styles.hr} />
             <View style={styles.tableContainer}>
               <View style={[styles.tableRow, styles.tableHeader]}>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableHeader}>Fecha</Text>
+                  <Text style={styles.tableHeader} fixed>Fecha</Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableHeader}>Tipo</Text>
+                  <Text style={styles.tableHeader} fixed>Tipo</Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableHeader}>Monto</Text>
+                  <Text style={styles.tableHeader} fixed>Monto</Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableHeader}>Saldo</Text>
+                  <Text style={styles.tableHeader} fixed>Saldo</Text>
                 </View>
               </View>
-              {operations.operationDataArray.map((operation, index) => (
-                <View style={styles.tableRow} key={index}>
-                  <View style={styles.tableCell}>
-                    <Text style={styles.tableBody}>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short", timeStyle: "short" }).format(new Date(operation.operationDate)).replace(/,/g, " -")}</Text>
+              {operations.operationDataArray.length > 0 ? (
+                operations.operationDataArray.map((operation, index) => (
+                  <View style={styles.tableRow} key={index}>
+                    <View style={styles.tableCell}>
+                      <Text style={styles.tableBody}>{new Intl.DateTimeFormat("en-GB", { dateStyle: "short", timeStyle: "short" }).format(new Date(operation.operationDate)).replace(/,/g, " -")}</Text>
+                    </View>
+                    <View style={styles.tableCell}>
+                      <Text style={styles.tableBody}>{operation.type.toUpperCase()}</Text>
+                    </View>
+                    <View style={styles.tableCell}>
+                      <Text style={styles.tableBody}>{operation.amount.toLocaleString("es-AR", { style: "currency", currency: operations.currency.acronym })}</Text>
+                    </View>
+                    <View style={styles.tableCell}>
+                      <Text style={styles.tableBody}>{operation.balance.toLocaleString("es-AR", { style: "currency", currency: operations.currency.acronym })}</Text>
+                    </View>
                   </View>
-                  <View style={styles.tableCell}>
-                    <Text style={styles.tableBody}>{operation.type.toUpperCase()}</Text>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Text style={styles.tableBody}>{operation.amount.toLocaleString("es-AR", { style: "currency", currency: operations.currency.acronym })}</Text>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Text style={styles.tableBody}>{operation.balance.toLocaleString("es-AR", { style: "currency", currency: operations.currency.acronym })}</Text>
-                  </View>
+                ))
+              ) : (
+                <View style={styles.noResult}>
+                  <Text style={styles.subTitle}>Sin operaciones en el rango indicado</Text>
                 </View>
-              ))}
+              )}
             </View>
           </View>
+        </View>
+        <View style={styles.footerContainer}>
+          <Text style={styles.footerText} render={({ pageNumber, totalPages }) => (
+            `Página: ${pageNumber} de ${totalPages}`
+          )} fixed />
         </View>
       </Page>
     </Document>
