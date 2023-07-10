@@ -14,16 +14,12 @@ const SideBarBody = () => {
     return (
         <Sidebar.Body>
             <Sidebar.Nav>
-                {isClient && (
-                    <>
-                        <LinkContainer to="/home">
-                            <NavLink className="sidebar-menu-nav-link">
-                                <FaHome />
-                                <Sidebar.Nav.Title>Posición consolidada</Sidebar.Nav.Title>
-                            </NavLink>
-                        </LinkContainer>
-                    </>
-                )}
+                <LinkContainer to="/home">
+                    <NavLink className="sidebar-menu-nav-link">
+                        <FaHome />
+                        <Sidebar.Nav.Title>{isAdmin && isEmployee ? (`Posición consolidada`) : (`Inicio`)}</Sidebar.Nav.Title>
+                    </NavLink>
+                </LinkContainer>
                 <Sidebar.Sub>
                     <Sidebar.Sub.Toggle>
                         <FaHotel />
@@ -34,7 +30,7 @@ const SideBarBody = () => {
                             <LinkContainer to="/accounts">
                                 <NavLink className="sidebar-menu-nav-link">
                                     <FaWallet />
-                                    <Sidebar.Nav.Title>Mis cuentas</Sidebar.Nav.Title>
+                                    <Sidebar.Nav.Title>{isAdmin && isEmployee ? (`Mis cuentas`) : (`Cuentas`)}</Sidebar.Nav.Title>
                                 </NavLink>
                             </LinkContainer>
                             <LinkContainer to="/accountSummary">

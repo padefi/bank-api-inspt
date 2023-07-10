@@ -22,9 +22,15 @@ const PrivateRouteAdmin = () => {
     return data?.role === 'admin' ? <Outlet /> : <Navigate to='/home' replace />;
 };
 
+const PrivateRouteEmployeeAdmin = () => {
+    const { data } = useUserRoleQuery();
+    return data?.role === 'empleado' || data?.role === 'admin' ? <Outlet /> : <Navigate to='/home' replace />;
+};
+
 export {
     PrivateRoute,
     PrivateRouteClient,
     PrivateRouteEmployee,
     PrivateRouteAdmin,
+    PrivateRouteEmployeeAdmin,
 }

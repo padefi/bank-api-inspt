@@ -5,12 +5,12 @@ import { Provider } from 'react-redux';
 import store from './store';
 import App from './App.jsx';
 import Login from './views/Login.jsx';
-import HomeClient from './views/HomeClient.jsx';
+import Home from './views/Home.jsx';
 import Accounts from './views/Accounts.jsx';
 import Profile from './views/Profile.jsx';
 import AccountOperations from './views/AccountOperations.jsx';
 import AccountSummary from './views/AccountSummary';
-import { PrivateRoute, PrivateRouteClient, PrivateRouteEmployee } from './components/PrivateRoute.jsx';
+import PrivateRoute from './components/PrivateRoute.jsx';
 import UserAccount from './views/UserAccount';
 import DepositMoney from './views/Deposit';
 import WithdrawMoney from './views/Withdraw';
@@ -23,28 +23,15 @@ const router = createBrowserRouter(
     <Route path='/' element={<App />}>
       <Route path='/login' element={<Login />} />
       <Route path='' element={<PrivateRoute />}>
-
-        <Route path='' element={<PrivateRouteClient />}>
-          <Route index={true} path='/home' element={<HomeClient />} />
-          <Route path='/' element={<HomeClient />} />
-        </Route>
-
-        <Route path='' element={<PrivateRouteEmployee />}>
-          {/* <Route index={true} path='/home' element={<HomeEmployee />} />
-          <Route path='/' element={<HomeEmployee />} /> */}
-        </Route>
-
+        <Route index={true} path='/home' element={<Home />} />
+        <Route path='/' element={<Home />} />
         <Route path='/accounts' element={<Accounts />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/accountOperations/:id' element={<AccountOperations />} />
         <Route path='/userAccount/:id' element={<UserAccount />} />
         <Route path='/accountSummary' element={<AccountSummary />} />
-
-        <Route path='' element={<PrivateRouteEmployee />}>
-          <Route path='/deposit' element={<DepositMoney />} />
-          <Route path='/withdraw' element={<WithdrawMoney />} />
-        </Route>
-
+        <Route path='/deposit' element={<DepositMoney />} />
+        <Route path='/withdraw' element={<WithdrawMoney />} />
         <Route path='/transfer' element={<TransferMoney />} />
       </Route>
     </Route>
