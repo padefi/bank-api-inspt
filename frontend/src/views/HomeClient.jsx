@@ -46,7 +46,7 @@ const AccountOperations = ({ _id, accountFrom, currency }) => {
   );
 };
 
-const Home = () => {
+const HomeClient = () => {
   useCheckCookies();
   useSessionTimeout();  
   const navigate = useNavigate();  
@@ -161,4 +161,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeClient;

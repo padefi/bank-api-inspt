@@ -5,7 +5,7 @@ import { NavLink } from "react-bootstrap";
 import { useUserRoleQuery } from "../slices/authApiSlice";
 
 const SideBarBody = () => {
-    const { data } = useUserRoleQuery();
+    const { data } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
 
     const isAdmin = data?.role === 'admin';
     const isEmployee = data?.role === 'empleado';
@@ -17,7 +17,7 @@ const SideBarBody = () => {
                 <LinkContainer to="/home">
                     <NavLink className="sidebar-menu-nav-link">
                         <FaHome />
-                        <Sidebar.Nav.Title>{isAdmin && isEmployee ? (`Posición consolidada`) : (`Inicio`)}</Sidebar.Nav.Title>
+                        <Sidebar.Nav.Title>{isClient ? (`Posición consolidada`) : (`Inicio`)}</Sidebar.Nav.Title>
                     </NavLink>
                 </LinkContainer>
                 <Sidebar.Sub>
@@ -30,7 +30,7 @@ const SideBarBody = () => {
                             <LinkContainer to="/accounts">
                                 <NavLink className="sidebar-menu-nav-link">
                                     <FaWallet />
-                                    <Sidebar.Nav.Title>{isAdmin && isEmployee ? (`Mis cuentas`) : (`Cuentas`)}</Sidebar.Nav.Title>
+                                    <Sidebar.Nav.Title>{isClient ? (`Mis cuentas`) : (`Cuentas`)}</Sidebar.Nav.Title>
                                 </NavLink>
                             </LinkContainer>
                             <LinkContainer to="/accountSummary">
@@ -49,7 +49,7 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            {isAdmin && isEmployee && (
+                            {!isClient && (                                
                                 <>
                                     <LinkContainer to="/deposit">
                                         <NavLink className="sidebar-menu-nav-link">

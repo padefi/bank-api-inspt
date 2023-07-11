@@ -7,30 +7,24 @@ const PrivateRoute = () => {
     return userInfo ? <Outlet /> : <Navigate to='/login' replace />;
 };
 
-const PrivateRouteClient = () => {
-    const { data } = useUserRoleQuery();
-    return data?.role === 'cliente' ? <Outlet /> : <Navigate to='/home' replace />;
+const PrivateRouteClient = ({ children }) => {
+    const { data } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
+    return data?.role === 'cliente' ? children : <Outlet />;
 };
 
-const PrivateRouteEmployee = () => {
-    const { data } = useUserRoleQuery();
-    return data?.role === 'empleado' ? <Outlet /> : <Navigate to='/home' replace />;
+const PrivateRouteAdmin = ({ children }) => {
+    const { data } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
+    return data?.role === 'admin' ? children : <Navigate to='/home' replace />;
 };
 
-const PrivateRouteAdmin = () => {
-    const { data } = useUserRoleQuery();
-    return data?.role === 'admin' ? <Outlet /> : <Navigate to='/home' replace />;
-};
-
-const PrivateRouteEmployeeAdmin = () => {
-    const { data } = useUserRoleQuery();
-    return data?.role === 'empleado' || data?.role === 'admin' ? <Outlet /> : <Navigate to='/home' replace />;
+const PrivateRouteEmployeeAdmin = ({ children }) => {
+    const { data } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
+    return data?.role === 'empleado' || data?.role === 'admin' ? children : <Navigate to='/home' replace />;
 };
 
 export {
     PrivateRoute,
     PrivateRouteClient,
-    PrivateRouteEmployee,
     PrivateRouteAdmin,
     PrivateRouteEmployeeAdmin,
 }
