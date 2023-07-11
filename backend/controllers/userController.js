@@ -41,10 +41,10 @@ const loginUser = asyncHandler(async (req, res) => {
 
             res.status(200).json({
                 message: 'Usuario logueado.',
-                _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                email: user.email
+                email: user.email,
+                role: user.role.name,
             });
 
         } else {

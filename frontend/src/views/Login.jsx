@@ -5,11 +5,10 @@ import { Form, Button, Col, Card } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoginMutation } from '../slices/usersApiSlice';
-import { setCredentials } from '../slices/authSlice';
+import { setCredentials, userMessage } from '../slices/authSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import loginImg from '../img/login.jpg';
-import UserRole from "../utils/userRole";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -21,13 +20,11 @@ const LoginScreen = () => {
   const [login, { isLoading }] = useLoginMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
-  const data = UserRole();
 
   useEffect(() => {
     if (userInfo) {
-      if (data?.role === 'employee' || data?.role === 'admin') navigate('/bank/dashboard');
+      if (userInfo.role === 'employee' || userInfo.role === 'admin') navigate('/bank/dashboard');
       else navigate('/client/home');
-
     }
   }, [navigate, userInfo]);
 
@@ -36,7 +33,7 @@ const LoginScreen = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      if (data?.role === 'employee' || data?.role === 'admin') navigate('/bank/dashboard');
+      if (res.role === 'employee' || res.role === 'admin') navigate('/bank/dashboard');
       else navigate('/client/home');
     } catch (err) {
       toast.error(err?.data?.message || err.error);

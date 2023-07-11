@@ -10,14 +10,13 @@ const UserRole = () => {
     const { data, error } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
     const dispatch = useDispatch();
 
-
     useEffect(() => {
         if (error) {
             localStorage.removeItem('userInfo');
             dispatch(userMessage('exp'));
             window.location.href = '/login';
         }
-    }, [data, error]);
+    }, [data, error, dispatch, userInfo]);
 
     return data;
 }
