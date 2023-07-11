@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useActiveAccountMutation, useChangeAliasMutation, useCloseAccountMutation, useGetUserAccountQuery } from '../slices/accountApiSlice';
+import { useActiveAccountMutation, useChangeAliasMutation, useCloseAccountMutation, useGetUserAccountQuery } from '../../slices/accountApiSlice';
 import { toast } from 'react-toastify';
-import Loader from '../components/Loader';
-import useCheckCookies from '../utils/useCheckCookies';
-import BoxContainer from '../components/BoxContainer';
-import CardContainer from '../components/CardContainer';
-import useSessionTimeout from '../utils/useSessionTimeout';
+import Loader from '../../components/Loader';
+import useCheckCookies from '../../utils/useCheckCookies';
+import BoxContainer from '../../components/BoxContainer';
+import CardContainer from '../../components/CardContainer';
+import useSessionTimeout from '../../utils/useSessionTimeout';
 import { Form, Button } from 'react-bootstrap';
 import { FaCheck, FaPencilAlt, FaTimes } from "react-icons/fa";
 import { useSelector } from 'react-redux';

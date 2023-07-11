@@ -2,10 +2,10 @@ import Sidebar from "react-bootstrap-sidebar-menu";
 import { LinkContainer } from 'react-router-bootstrap';
 import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaShareSquare, FaWallet } from "react-icons/fa";
 import { NavLink } from "react-bootstrap";
-import { useUserRoleQuery } from "../slices/authApiSlice";
+import UserRole from "../utils/userRole";
 
 const SideBarBody = () => {
-    const { data } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
+    const data = UserRole();
 
     const isAdmin = data?.role === 'admin';
     const isEmployee = data?.role === 'empleado';
@@ -14,7 +14,7 @@ const SideBarBody = () => {
     return (
         <Sidebar.Body>
             <Sidebar.Nav>
-                <LinkContainer to="/home">
+                <LinkContainer to={isClient ? '/client/home' : '/bank/dashboard'}>
                     <NavLink className="sidebar-menu-nav-link">
                         <FaHome />
                         <Sidebar.Nav.Title>{isClient ? (`Posición consolidada`) : (`Inicio`)}</Sidebar.Nav.Title>
@@ -27,13 +27,13 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to="/accounts">
+                            <LinkContainer to={isClient ? '/client/accounts' : '/bank/clientAccounts'}>
                                 <NavLink className="sidebar-menu-nav-link">
                                     <FaWallet />
                                     <Sidebar.Nav.Title>{isClient ? (`Mis cuentas`) : (`Cuentas`)}</Sidebar.Nav.Title>
                                 </NavLink>
                             </LinkContainer>
-                            <LinkContainer to="/accountSummary">
+                            <LinkContainer to={isClient ? '/client/accountSummary' : '/bank/accountSummary'}>
                                 <NavLink className="sidebar-menu-nav-link">
                                     <FaRegChartBar />
                                     <Sidebar.Nav.Title>Resumen de Cuenta</Sidebar.Nav.Title>
@@ -51,13 +51,13 @@ const SideBarBody = () => {
                         <Sidebar.Nav>
                             {!isClient && (                                
                                 <>
-                                    <LinkContainer to="/deposit">
+                                    <LinkContainer to='/bank/deposit'>
                                         <NavLink className="sidebar-menu-nav-link">
                                             <FaArrowCircleDown />
                                             <Sidebar.Nav.Title>Deposito</Sidebar.Nav.Title>
                                         </NavLink>
                                     </LinkContainer>
-                                    <LinkContainer to="/withdraw">
+                                    <LinkContainer to="/bank/withdraw">
                                         <NavLink className="sidebar-menu-nav-link">
                                             <FaArrowCircleUp />
                                             <Sidebar.Nav.Title>Extraccion</Sidebar.Nav.Title>
@@ -65,7 +65,7 @@ const SideBarBody = () => {
                                     </LinkContainer>
                                 </>
                             )}
-                            <LinkContainer to="/transfer">
+                            <LinkContainer to={isClient ? '/client/transfer' : '/bank/transfer'}>
                                 <NavLink className="sidebar-menu-nav-link">
                                     <FaShareSquare />
                                     <Sidebar.Nav.Title>Transferencia</Sidebar.Nav.Title>

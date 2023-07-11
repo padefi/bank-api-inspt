@@ -5,17 +5,17 @@ import { Provider } from 'react-redux';
 import store from './store';
 import App from './App.jsx';
 import Login from './views/Login.jsx';
-import Home from './views/Home.jsx';
-import HomeClient from './views/HomeClient.jsx';
-import Accounts from './views/Accounts.jsx';
-import Profile from './views/Profile.jsx';
-import AccountOperations from './views/AccountOperations.jsx';
-import AccountSummary from './views/AccountSummary';
+import Home from './views/client/Home.jsx';
+import Dashboard from './views/bank/Dashboard.jsx';
+import Accounts from './views/client/Accounts.jsx';
+import Profile from './views/client/Profile.jsx';
+import AccountOperations from './views/client/AccountOperations.jsx';
+import AccountSummary from './views/client/AccountSummary';
 import { PrivateRoute, PrivateRouteClient, PrivateRouteEmployeeAdmin } from './components/PrivateRoute.jsx';
-import UserAccount from './views/UserAccount';
-import DepositMoney from './views/Deposit';
-import WithdrawMoney from './views/Withdraw';
-import TransferMoney from './views/Transfer';
+import UserAccount from './views/client/UserAccount';
+import DepositMoney from './views/bank/Deposit';
+import WithdrawMoney from './views/bank/Withdraw';
+import TransferMoney from './views/client/Transfer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
@@ -24,27 +24,19 @@ const router = createBrowserRouter(
     <Route path='/' element={<App />}>
       <Route path='/login' element={<Login />} />
       <Route path='' element={<PrivateRoute />}>
-        <Route path="/home" element={
-          <>
-            <PrivateRouteClient>
-              <HomeClient />
-            </PrivateRouteClient>
-            <PrivateRouteEmployeeAdmin>
-              <Home />
-            </PrivateRouteEmployeeAdmin>
-          </>
-        } />
 
-        <Route path="/deposit" element={<PrivateRouteEmployeeAdmin>
-          <DepositMoney />
-        </PrivateRouteEmployeeAdmin>} />
-        <Route path="/withdraw" element={<PrivateRouteEmployeeAdmin>
-          <DepositMoney />
-        </PrivateRouteEmployeeAdmin>} />
-        <Route path="/transfer" element={<PrivateRouteClient>
-          <DepositMoney />
-        </PrivateRouteClient>} />
-        
+        <Route path="/client/home" element={<PrivateRouteClient><Home /></PrivateRouteClient>} />
+        <Route path="/client/transfer" element={<PrivateRouteClient><DepositMoney /></PrivateRouteClient>} />
+        <Route path="/client/accounts" element={<PrivateRouteClient><Accounts /></PrivateRouteClient>} />
+        <Route path="/client/accountOperations/:id" element={<PrivateRouteClient><AccountOperations /></PrivateRouteClient>} />
+        <Route path="/client/userAccount/:id" element={<PrivateRouteClient><UserAccount /></PrivateRouteClient>} />
+        <Route path="/client/accountSummary" element={<PrivateRouteClient><AccountSummary /></PrivateRouteClient>} />
+        <Route path="/client/profile" element={<PrivateRouteClient><Profile /></PrivateRouteClient>} />
+
+        <Route path="/bank/dashboard" element={<PrivateRouteEmployeeAdmin><Dashboard /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/deposit" element={<PrivateRouteEmployeeAdmin><DepositMoney /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/withdraw" element={<PrivateRouteEmployeeAdmin><DepositMoney /></PrivateRouteEmployeeAdmin>} />
+
         {/* <Route index={true} path='/home' element={<Home />} />
         <Route path='/' element={<Home />} />
         <Route path='/accounts' element={<Accounts />} />

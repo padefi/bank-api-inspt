@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import CardContainer from '../components/CardContainer';
-import Loader from '../components/Loader';
+import CardContainer from '../../components/CardContainer';
+import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
-import useCheckCookies from '../utils/useCheckCookies';
-import BoxContainer from '../components/BoxContainer';
-import useSessionTimeout from '../utils/useSessionTimeout';
-import { useShowAccountsQuery } from '../slices/accountApiSlice';
+import useCheckCookies from '../../utils/useCheckCookies';
+import BoxContainer from '../../components/BoxContainer';
+import useSessionTimeout from '../../utils/useSessionTimeout';
+import { useShowAccountsQuery } from '../../slices/accountApiSlice';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
-import { useDepositMoneyMutation } from '../slices/operationApiSlice';
-import UserAccounts from '../utils/userAccounts';
-import ConfirmOperationModal from '../components/ConfirmOperationModal';
+import { useWithdrawMoneyMutation } from '../../slices/operationApiSlice';
+import UserAccounts from '../../utils/userAccounts';
+import ConfirmOperationModal from '../../components/ConfirmOperationModal';
 
-const DepositMoney = () => {
+const WithdrawMoney = () => {
   useCheckCookies();
   useSessionTimeout();
   const [accountId, setAccountId] = useState(null);
@@ -20,7 +20,7 @@ const DepositMoney = () => {
   const [acronym, setAcronym] = useState(null);
   const [accountBalance, setAccountBalance] = useState('$ 0,00');
   const [amount, setAmount] = useState('');
-  const [DepositMoney, { isLoading }] = useDepositMoneyMutation();
+  const [withdrawMoney, { isLoading }] = useWithdrawMoneyMutation();
   const { data, error, refetch } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
   const options = UserAccounts({ data, error });
   const [accountFrom, setAccountFrom] = useState(null);
@@ -70,11 +70,11 @@ const DepositMoney = () => {
   const submitDeposit = async (e) => {
     e.preventDefault();
     try {
-      const res = await DepositMoney({ accountId, amount }).unwrap();
+      const res = await withdrawMoney({ accountId, amount }).unwrap();
       toast.success(res.message);
       setOperationDate(res.date);
-      setAmountFromData(res.amountFrom);
-      setAmountToData(res.amountTo);
+      setAmountFromData(res.amountTo);
+      setAmountToData(res.amountFrom);
       setTax(res.tax);
       setShow(true);
       setSelectedOptionKey((prevKey) => prevKey + 1);
@@ -94,15 +94,15 @@ const DepositMoney = () => {
           <div className='box'>
             <div className='box mb-2'>
               <div className='box d-flex flex-row bg-dark text-white p-3 px-4 rounded-top-2'>
-                <h3 className='pb-0 mb-0'>Deposito</h3>
+                <h3 className='pb-0 mb-0'>Extracción</h3>
               </div>
             </div>
           </div>
           <div className='box px-4 d-flex flex-column box-details '>
             <Form onSubmit={submitDeposit}>
               <Form.Group className='my-2'>
-                <div className='fw-bold'>Cuenta a acreditar</div>
-                <Select key={selectedOptionKey} options={options} onChange={(option) => { setAccountId(option?.value || null); setAccountFrom(option?.label || null); setCurrency(option?.currency || '$'); setAcronym(option?.acronym || null); setAccountBalance(option?.balance || '$ 0,00'); }} styles={selectStyles}
+                <div className='fw-bold'>Cuenta a debitar</div>
+                <Select key={selectedOptionKey} options={options} onChange={(option) => { setAccountId(option?.value || null); setCurrency(option?.currency || '$'); setAccountFrom(option?.label || null); setAcronym(option?.acronym || null); setAccountBalance(option?.balance || '$ 0,00'); }} styles={selectStyles}
                   menuPortalTarget={document.body} defaultValue={defaultSelectValue} />
                 <Form.Text className="text-muted">
                   Saldo: {accountBalance}
@@ -121,14 +121,14 @@ const DepositMoney = () => {
 
               <div className='d-flex justify-content-end'>
                 <Button type='submit' variant='success' className='mb-3 ml-auto' disabled={!accountId || !amount}>
-                  Depositar
+                  Extraer
                 </Button>
               </div>
             </Form>
             {isLoading && <Loader />}
             {showModal && <ConfirmOperationModal state={showModal}
-              type='Deposito'
-              desc='acreditado'
+              type='Extracción'
+              desc='debitado'
               date={operationDate}
               origin={accountFrom}
               destination={null}
@@ -145,4 +145,4 @@ const DepositMoney = () => {
   );
 };
 
-export default DepositMoney;
+export default WithdrawMoney;

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useCreateAccountMutation, useGetCurrenciesQuery, useShowAccountsQuery } from '../slices/accountApiSlice';
-import CardContainer from '../components/CardContainer';
-import Loader from '../components/Loader';
+import { useCreateAccountMutation, useGetCurrenciesQuery, useShowAccountsQuery } from '../../slices/accountApiSlice';
+import CardContainer from '../../components/CardContainer';
+import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
 import { FaChevronCircleRight, FaPlusCircle } from "react-icons/fa";
-import useCheckCookies from '../utils/useCheckCookies';
-import BoxContainer from '../components/BoxContainer';
+import useCheckCookies from '../../utils/useCheckCookies';
+import BoxContainer from '../../components/BoxContainer';
 import { Button, Form, Modal, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import useSessionTimeout from '../utils/useSessionTimeout';
+import useSessionTimeout from '../../utils/useSessionTimeout';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 

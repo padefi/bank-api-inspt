@@ -9,6 +9,7 @@ import { setCredentials } from '../slices/authSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import loginImg from '../img/login.jpg';
+import UserRole from "../utils/userRole";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -20,10 +21,13 @@ const LoginScreen = () => {
   const [login, { isLoading }] = useLoginMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
+  const data = UserRole();
 
   useEffect(() => {
     if (userInfo) {
-      navigate('/home');
+      if (data?.role === 'employee' || data?.role === 'admin') navigate('/bank/dashboard');
+      else navigate('/client/home');
+
     }
   }, [navigate, userInfo]);
 
@@ -32,7 +36,8 @@ const LoginScreen = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate('/home');
+      if (data?.role === 'employee' || data?.role === 'admin') navigate('/bank/dashboard');
+      else navigate('/client/home');
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -51,7 +56,7 @@ const LoginScreen = () => {
       </Col>
       <Col xs={12} md={6}>
         <Card.Body>
-          
+
           <hr />
           <div className='d-flex flex-row m-2'>
             <BsBank className='login-icon' />
@@ -82,11 +87,11 @@ const LoginScreen = () => {
           </div>
         </Card.Body>
       </Col>
-      
+
       {isLoading && <Loader />}
 
     </FormContainer>
-    
+
   );
 };
 

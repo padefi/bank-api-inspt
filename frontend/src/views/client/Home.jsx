@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
-import CardContainer from '../components/CardContainer';
-import { useShowAccountsQuery } from '../slices/accountApiSlice';
-import { useShowAllOperationsQuery } from '../slices/operationApiSlice';
+import CardContainer from '../../components/CardContainer';
+import { useShowAccountsQuery } from '../../slices/accountApiSlice';
+import { useShowAllOperationsQuery } from '../../slices/operationApiSlice';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Nav } from 'react-bootstrap';
-import Loader from '../components/Loader';
+import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
-import ContentBox from '../components/ContentBox';
+import ContentBox from '../../components/ContentBox';
 import { FaChevronCircleRight } from "react-icons/fa";
-import ImageContainer from '../components/ImageContainer';
-import useCheckCookies from '../utils/useCheckCookies';
-import useSessionTimeout from '../utils/useSessionTimeout';
+import ImageContainer from '../../components/ImageContainer';
+import useCheckCookies from '../../utils/useCheckCookies';
+import useSessionTimeout from '../../utils/useSessionTimeout';
 
 const AccountOperations = ({ _id, accountFrom, currency }) => {
   const { data = [], error, isLoading, isFetching } = useShowAllOperationsQuery({ id: _id, accountFrom });
@@ -46,10 +46,10 @@ const AccountOperations = ({ _id, accountFrom, currency }) => {
   );
 };
 
-const HomeClient = () => {
+const Home = () => {
   useCheckCookies();
-  useSessionTimeout();  
-  const navigate = useNavigate();  
+  useSessionTimeout();
+  const navigate = useNavigate();
   const { data = [], error, isLoading, isFetching } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
@@ -80,7 +80,7 @@ const HomeClient = () => {
                   {accounts.map((account) => (
                     <React.Fragment key={account._id}>
                       <div className='box button-container py-0 d-flex justify-content-between'>
-                      <div className='button-container-child default focusMouse cursor-pointer' role='button' onClick={() => handleClickAccount(account._id)}></div>
+                        <div className='button-container-child default focusMouse cursor-pointer' role='button' onClick={() => handleClickAccount(account._id)}></div>
                         <div className='box'>
                           <p className='d-inline fw-bold mb-0 box-text text-cuenta'>
                             {account.type}
@@ -161,4 +161,4 @@ const HomeClient = () => {
   );
 };
 
-export default HomeClient;
+export default Home;

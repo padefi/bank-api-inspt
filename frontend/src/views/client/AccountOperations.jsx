@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useShowAccountOperationsQuery } from '../slices/operationApiSlice';
+import { useShowAccountOperationsQuery } from '../../slices/operationApiSlice';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Loader from '../components/Loader';
-import useCheckCookies from '../utils/useCheckCookies';
-import BoxContainer from '../components/BoxContainer';
-import CardContainer from '../components/CardContainer';
+import Loader from '../../components/Loader';
+import useCheckCookies from '../../utils/useCheckCookies';
+import BoxContainer from '../../components/BoxContainer';
+import CardContainer from '../../components/CardContainer';
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import useSessionTimeout from '../utils/useSessionTimeout';
+import useSessionTimeout from '../../utils/useSessionTimeout';
 import Select from 'react-select';
 
 const Operations = ({ data, currency }) => {
