@@ -20,7 +20,7 @@ const userSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',
         required: true,
-        default: '000000000000000000000001'
+        default: '000000000000000000000002'
     },
     firstName: {
         type: String,

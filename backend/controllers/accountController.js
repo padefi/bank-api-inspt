@@ -4,7 +4,7 @@ import Currency from "../models/currencyModel.js";
 import { extendToken } from "../utils/generateToken.js";
 import User from "../models/userModel.js";
 import { generateAlias, generateAccountId } from "../utils/generateAccountInfo.js";
-import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
+import { isAdmin, isClient, isEmployee } from "../middlewares/authMiddleware.js";
 import { decrypt, encrypt } from "../utils/crypter.js";
 
 // @desc    Ver cuentas bancarias
@@ -12,14 +12,18 @@ import { decrypt, encrypt } from "../utils/crypter.js";
 // @access  Private
 const getUserAccounts = asyncHandler(async (req, res) => {
 
-    const { userId } = req.body;
+    const { id } = req.query;
 
-    if (isAdmin(req.user) && !userId) {
+    if ((isEmployee(req.user) || isAdmin(req.user)) && !id) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    let accounts = await Account.find(isAdmin(req.user) ? { accountHolder: userId } : { accountHolder: req.user._id }).populate('currency');
+    const dencryptedId = await decrypt(id);
+
+    let accounts = await Account.find(isEmployee(req.user) || isAdmin(req.user) ? { accountHolder: dencryptedId } : { accountHolder: req.user._id })
+    .select('accountBalance accountId alias isActive operations type _id')
+    .populate('currency','acronym symbol');
 
     if (!accounts) {
         res.status(403);

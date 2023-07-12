@@ -31,11 +31,11 @@ const isAdmin = (user) => {
 };
 
 const isEmployee = (user) => {
-    return req.user && req.user.role === 'empleado';
+    return user.role && user.role.name === 'empleado';
 }
 
 const isClient = (user) => {
-    return req.user && req.user.role === 'cliente';
+    return user.role && user.role.name === 'cliente';
 }
 
 const loginIsClient = (user) => {

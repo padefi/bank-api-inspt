@@ -4,6 +4,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import operationRoutes from "./routes/operationRoutes.js";
 import accountRoutes from "./routes/accountRoutes.js";
+import customerRoutes from "./routes/customerRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
@@ -45,6 +46,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/operations', operationRoutes);
 app.use('/api/accounts', accountRoutes);
+app.use('/api/customers', customerRoutes);
 app.get('/', (req, res) => res.send('API corriendo'));
 
 // Middlewares error

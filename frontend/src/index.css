@@ -415,3 +415,10 @@
 .mr-2 {
     margin-right: 0.5rem;;
 }
+
+#BankCardContainer {
+    top: 10px;
+    left: 0px;
+    width: calc(100% - 12px);
+    max-height: 70vh;
+}
