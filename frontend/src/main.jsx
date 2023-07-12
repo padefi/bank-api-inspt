@@ -26,16 +26,16 @@ const router = createBrowserRouter(
       <Route path='' element={<PrivateRoute />}>
 
         <Route path="/client/home" element={<PrivateRouteClient><Home /></PrivateRouteClient>} />
-        <Route path="/client/transfer" element={<PrivateRouteClient><DepositMoney /></PrivateRouteClient>} />
         <Route path="/client/accounts" element={<PrivateRouteClient><Accounts /></PrivateRouteClient>} />
         <Route path="/client/accountOperations/:id" element={<PrivateRouteClient><AccountOperations /></PrivateRouteClient>} />
         <Route path="/client/userAccount/:id" element={<PrivateRouteClient><UserAccount /></PrivateRouteClient>} />
         <Route path="/client/accountSummary" element={<PrivateRouteClient><AccountSummary /></PrivateRouteClient>} />
+        <Route path="/client/transfer" element={<PrivateRouteClient><TransferMoney /></PrivateRouteClient>} />
         <Route path="/client/profile" element={<PrivateRouteClient><Profile /></PrivateRouteClient>} />
 
         <Route path="/bank/dashboard" element={<PrivateRouteEmployeeAdmin><Dashboard /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/deposit" element={<PrivateRouteEmployeeAdmin><DepositMoney /></PrivateRouteEmployeeAdmin>} />
-        <Route path="/bank/withdraw" element={<PrivateRouteEmployeeAdmin><DepositMoney /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/withdraw" element={<PrivateRouteEmployeeAdmin><WithdrawMoney /></PrivateRouteEmployeeAdmin>} />
 
         {/* <Route index={true} path='/home' element={<Home />} />
         <Route path='/' element={<Home />} />

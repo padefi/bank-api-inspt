@@ -59,7 +59,7 @@ const Home = () => {
   }, [error]);
 
   const handleClickAccount = (accountId) => {
-    navigate(`/userAccount/${accountId}`);
+    navigate(`/client/userAccount/${accountId}`);
   };
 
   let accounts = data?.accounts || [];
@@ -105,7 +105,7 @@ const Home = () => {
                   ))}
                 </div>
                 <div className="box mt-0 d-flex justify-content-center">
-                  <Button as={Link} to="/accounts" variant="primary" className="btn col col-md-8 btn">
+                  <Button as={Link} to="/client/accounts" variant="primary" className="btn col col-md-8 btn">
                     <p className='my-0 py-0 btn-title'>Ver cuentas</p>
                   </Button>
                 </div>
@@ -139,7 +139,7 @@ const Home = () => {
                         ))}
                       </div>
                       <div className="mt-0 mb-0 div-center">
-                        <LinkContainer to={`/accountOperations/${account._id}`}>
+                        <LinkContainer to={`/client/accountOperations/${account._id}`}>
                           <Nav.Link className="custom-link">Ver todos las operaciones</Nav.Link>
                         </LinkContainer>
                       </div>

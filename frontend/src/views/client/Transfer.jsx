@@ -162,7 +162,7 @@ const TransferMoney = () => {
 
               <Form.Group className='my-2' controlId='accountTo'>
                 <Form.Label className='fw-bold mb-0'>Cuenta a acreditar</Form.Label>
-                <Form.Control type='accountTo' className='form-control-edit-input rounded-0' placeholder='Ingrese alias o CBU a transferir' minLength={6} maxLength={22} value={accountTo} onChange={(e) => setAccountTo(e.target.value.toUpperCase())} onBlur={(e) => setAccountToData(e.target.value)}></Form.Control>
+                <Form.Control type='accountTo' className='form-control-edit-input rounded-0' placeholder='Ingrese alias o CBU a transferir' autoComplete='off' minLength={6} maxLength={22} value={accountTo} onChange={(e) => setAccountTo(e.target.value.toUpperCase())} onBlur={(e) => setAccountToData(e.target.value)}></Form.Control>
 
                 {accountToData && (
                   <GetAccount dataAccountTo={accountToData} onError={clearAccountToData} />
@@ -179,7 +179,7 @@ const TransferMoney = () => {
 
               <Form.Group className='my-2' controlId='description'>
                 <Form.Label className='fw-bold mb-0'>Motivo</Form.Label>
-                <Form.Control type='description' className='form-control-edit-input rounded-0' placeholder='Ingrese motivo' minLength={1} maxLength={50} value={description} onChange={(e) => setDescription(e.target.value.toUpperCase())}></Form.Control>
+                <Form.Control type='description' className='form-control-edit-input rounded-0' placeholder='Ingrese motivo' autoComplete='off' minLength={1} maxLength={50} value={description} onChange={(e) => setDescription(e.target.value.toUpperCase())}></Form.Control>
               </Form.Group>
 
               <hr />

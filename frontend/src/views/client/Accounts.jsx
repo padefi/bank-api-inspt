@@ -98,7 +98,7 @@ const Accounts = () => {
   }
 
   const handleClickAccount = (accountId) => {
-    navigate(`/userAccount/${accountId}`);
+    navigate(`/client/userAccount/${accountId}`);
   };
 
   const handleButtonOpenModal = () => setShow(true);
@@ -137,7 +137,7 @@ const Accounts = () => {
         </div>
         <div className='box px-4 d-flex flex-column'>
           <div className='box d-flex my-2 justify-content-end'>
-            <Button to="/" variant="outline-primary" className="btn btn-custom d-flex align-items-center" onClick={handleButtonOpenModal}>
+            <Button to="/client/" variant="outline-primary" className="btn btn-custom d-flex align-items-center" onClick={handleButtonOpenModal}>
               <span className="plus-icon"><FaPlusCircle className='me-2' /></span>
               <p className='mb-0 txt-btn-default'>Nueva Cuenta</p>
             </Button>
@@ -172,7 +172,7 @@ const Accounts = () => {
                     </div>
                   </div>
                   <div className="my-2">
-                    <LinkContainer to={`/accountOperations/${account._id}`}>
+                    <LinkContainer to={`/client/accountOperations/${account._id}`}>
                       <Nav.Link className="custom-link">Ver todos las operaciones</Nav.Link>
                     </LinkContainer>
                   </div>

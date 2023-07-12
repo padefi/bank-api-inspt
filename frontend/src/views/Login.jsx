@@ -65,11 +65,11 @@ const LoginScreen = () => {
 
           <Form onSubmit={submitHandler}>
             <Form.Group className='my-2' controlId='email'>
-              <Form.Control type='email' placeholder='Ingrese mail' value={email} onChange={(e) => setEmail(e.target.value)}></Form.Control>
+              <Form.Control type='email' placeholder='Ingrese mail' autoComplete='off' value={email} onChange={(e) => setEmail(e.target.value)}></Form.Control>
             </Form.Group>
 
             <Form.Group className='my-2' controlId='password'>
-              <Form.Control type='password' placeholder='Ingrese contraseña' value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
+              <Form.Control type='password' placeholder='Ingrese contraseña' autoComplete='off' value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
             </Form.Group>
 
             <div className='my-2'>

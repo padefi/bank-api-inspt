@@ -116,14 +116,14 @@ const UserAccount = () => {
                   <div className='box d-flex my-2 justify-content-end'>
                     {account.isActive ? (
                       <>
-                        <Button to="/" variant="outline-danger" className="btn btn-custom d-flex align-items-center" onClick={handleCloseAccount}>
+                        <Button to="/client/" variant="outline-danger" className="btn btn-custom d-flex align-items-center" onClick={handleCloseAccount}>
                           <p className='mb-0 txt-btn-default'>Cerrar Cuenta</p>
                         </Button>
                         {isLoadingCloseAccount && <Loader />}
                       </>
                     ) : (
                       <>
-                        <Button to="/" variant="outline-success" className="btn btn-custom d-flex align-items-center" onClick={handleActiveAccount}>
+                        <Button to="/client/" variant="outline-success" className="btn btn-custom d-flex align-items-center" onClick={handleActiveAccount}>
                           <p className='mb-0 txt-btn-default'>Habilitar Cuenta</p>
                         </Button>
                         {isLoadingActiveAccount && <Loader />}
