@@ -4,6 +4,7 @@ import { isAdmin, isEmployee } from "../middlewares/authMiddleware.js";
 import { decrypt, encrypt } from "../utils/crypter.js";
 import Role from "../models/roleModel.js";
 import Customer from "../models/customerModel.js";
+import User from "../models/userModel.js";
 
 // @desc    Ver clients
 // @route   GET /api/customer/
@@ -78,33 +79,35 @@ const getCustomerProfile = asyncHandler(async (req, res) => {
 // @access  Private
 const updateCustomerProfile = asyncHandler(async (req, res) => {
 
-    const user = await User.findById(req.user._id);
+    const { userId, governmentIdType, governmentId, customerType, firstName, lastName, bornDate, email, phoneNumber } = req.body
 
-    if (user) {
-        user.email = req.body.email || user.email;
-        user.role = req.body.role || user.role;
-        user.firstName = req.body.firstName || user.firstName;
-        user.lastName = req.body.lastName || user.lastName;
-        user.phone = req.body.phone || user.phone;
-        user.governmentId = req.body.governmentId || user.governmentId;
-        user.bornDate = req.body.bornDate || user.bornDate;
+    if (!isAdmin(req.user) && !isEmployee(req.user)) {
+        res.status(400);
+        throw new Error('Sin autorización.');
+    }
 
-        if (req.body.password) {
-            user.password = req.body.password;
-        }
+    const dencryptedId = await decrypt(userId);
+
+    const user = await User.findById(dencryptedId);
+    const customer = await Customer.findOne({ user: dencryptedId })
+
+    if (user && customer) {
+        user.email = email || user.email;
+        user.firstName = firstName || user.firstName;
+        user.lastName = lastName || user.lastName;
+        user.phone = phoneNumber || user.phone;
+        user.governmentId.type = governmentIdType || user.governmentId.type;
+        user.governmentId.number = governmentId || user.governmentId.number;
+        user.bornDate = bornDate || user.bornDate;
+
+        customer.type = customerType || customer.type;
 
         const updateUser = await user.save();
+        const updateCustomer = await customer.save();
 
         extendToken(req, res);
         res.json({
-            _id: updateUser._id,
-            email: updateUser.email,
-            role: updateUser.role,
-            firstName: updateUser.firstName,
-            lastName: updateUser.lastName,
-            phone: updateUser.phone,
-            governmentId: updateUser.governmentId,
-            bornDate: updateUser.bornDate
+            message: 'Cliente actualizado con éxito.'
         });
     } else {
         res.status(404);
