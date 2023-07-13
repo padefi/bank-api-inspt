@@ -27,12 +27,14 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to={isClient ? '/client/accounts' : '/bank/clientAccounts'}>
-                                <NavLink className="sidebar-menu-nav-link">
-                                    <FaWallet />
-                                    <Sidebar.Nav.Title>{isClient ? (`Mis cuentas`) : (`Cuentas`)}</Sidebar.Nav.Title>
-                                </NavLink>
-                            </LinkContainer>
+                            {isClient && (
+                                <LinkContainer to='/client/accounts'>
+                                    <NavLink className="sidebar-menu-nav-link">
+                                        <FaWallet />
+                                        <Sidebar.Nav.Title>{isClient ? (`Mis cuentas`) : (`Cuentas`)}</Sidebar.Nav.Title>
+                                    </NavLink>
+                                </LinkContainer>
+                            )}
                             <LinkContainer to={isClient ? '/client/accountSummary' : '/bank/accountSummary'}>
                                 <NavLink className="sidebar-menu-nav-link">
                                     <FaRegChartBar />
@@ -49,7 +51,7 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            {!isClient && (                                
+                            {!isClient && (
                                 <>
                                     <LinkContainer to='/bank/deposit'>
                                         <NavLink className="sidebar-menu-nav-link">

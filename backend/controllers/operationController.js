@@ -13,14 +13,15 @@ const getAllOperations = asyncHandler(async (req, res) => {
     const { id, accountFrom } = req.query;
 
     const dencryptedId = await decrypt(accountFrom);
+    const dencryptedOperationId = await decrypt(id);
 
     // Validación
-    if (!id || !dencryptedId) {
+    if (!dencryptedOperationId || !dencryptedId) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
-    }
+    }    
 
-    const operations = await Operation.findOne({ _id: id }).populate([
+    const operations = await Operation.findOne({ _id: dencryptedOperationId }).populate([
         {
             path: 'accountFrom',
             select: 'accountId',
@@ -72,7 +73,6 @@ const getAllOperations = asyncHandler(async (req, res) => {
 
     extendToken(req, res);
     res.status(201).json({
-        idOperation: operations._id,
         operationDate: operations.operationDate,
         type: operations.type,
         amount,
@@ -142,34 +142,6 @@ const getAccountOperations = asyncHandler(async (req, res) => {
         },
     });
 
-    /* const account = await Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance')
-    .populate('currency')
-    .populate({
-        path: 'operations',
-        populate:
-        {
-            path: '_id',
-            populate: [
-                {
-                    path: 'accountFrom',
-                    select: 'accountId',
-                    populate: {
-                        path: 'accountHolder',
-                        select: 'firstName lastName governmentId',
-                    }
-                },
-                {
-                    path: 'accountTo',
-                    select: 'accountId',
-                    populate: {
-                        path: 'accountHolder',
-                        select: 'firstName lastName governmentId',
-                    }
-                }
-            ]
-        }
-    }); */
-
     const account = await query.exec();
 
     if (!account) {
@@ -204,7 +176,6 @@ const getAccountOperations = asyncHandler(async (req, res) => {
             }
 
             const operationData = {
-                operationId: operation._id._id,
                 operationDate: operation._id.operationDate,
                 type: operation._id.type,
                 amount,

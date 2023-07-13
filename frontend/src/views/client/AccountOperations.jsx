@@ -162,8 +162,8 @@ const AccountOperations = () => {
                 </Row>
               </div>
               {account.operationDataArray.length > 0 ? (
-                account.operationDataArray.slice().reverse().map((operation) => (
-                  <React.Fragment key={operation.operationId}>
+                account.operationDataArray.slice().reverse().map((operation, index) => (
+                  <React.Fragment key={index}>
                     <hr />
                     <Operations data={operation} currency={account.currency.acronym} />
                   </React.Fragment>

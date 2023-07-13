@@ -145,8 +145,8 @@ const CustomerOperations = () => {
                                 </thead>
                                 {paginatedOperations.length > 0 ? (
                                     <tbody>
-                                        {paginatedOperations.map((operation) => (
-                                            <tr key={operation.operationId}>
+                                        {paginatedOperations.map((operation, index) => (
+                                            <tr key={index}>
                                                 <td>{operation.type.toUpperCase()}</td>
                                                 <td className={operation.amount < 0 ? "negative-number mb-0" : "mb-0"}>{operation.amount.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</td>
                                                 <td>{operation.holderDataFrom.toUpperCase().replace("- ", "")}</td>

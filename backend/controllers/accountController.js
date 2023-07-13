@@ -23,7 +23,7 @@ const getUserAccounts = asyncHandler(async (req, res) => {
 
     let accounts = await Account.find(isEmployee(req.user) || isAdmin(req.user) ? { accountHolder: dencryptedId } : { accountHolder: req.user._id })
     .select('accountBalance accountId alias isActive operations type _id')
-    .populate('currency','acronym symbol');
+    .populate('currency','-_id acronym symbol');
 
     if (!accounts) {
         res.status(403);
@@ -32,7 +32,11 @@ const getUserAccounts = asyncHandler(async (req, res) => {
 
     accounts = await Promise.all(accounts.map(async (account) => {
         const encryptedId = await encrypt(account._id.toHexString());
-        return { ...account.toObject(), _id: encryptedId };
+        const operations = await Promise.all(account.operations.map(async (operation) => {
+            const encryptedOperationsId = await encrypt(operation._id.toHexString());
+            return { ...operation.toObject(), _id: encryptedOperationsId };
+        }));
+        return { ...account.toObject(), _id: encryptedId, operations };
     }));
 
     extendToken(req, res);
