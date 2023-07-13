@@ -27,7 +27,8 @@ const getUserAccounts = asyncHandler(async (req, res) => {
 
     if (!accounts) {
         res.status(403);
-        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+        throw new Error('Sin autorización.');
+        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     accounts = await Promise.all(accounts.map(async (account) => {
@@ -59,7 +60,9 @@ const getUserAccount = asyncHandler(async (req, res) => {
 
     const dencryptedId = await decrypt(id);
 
-    const account = await Account.findOne(isAdmin(req.user) ? { _id: id } : { _id: dencryptedId, accountHolder: req.user._id }).populate('currency');
+    const account = await Account.findOne(isAdmin(req.user) ? { _id: id } : { _id: dencryptedId, accountHolder: req.user._id })
+    .select('-_id accountBalance accountId alias isActive type')
+    .populate('currency','-_id acronym symbol');
 
     if (!account) {
         res.status(403);
