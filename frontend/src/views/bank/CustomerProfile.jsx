@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import CardContainer from '../../components/CardContainer';
 import { toast } from 'react-toastify';
 import Loader from '../../components/Loader';
 import { setCredentials } from '../../slices/authSlice';
 import { useGetCustomerProfileQuery, useUpdateCustomerMutation } from '../../slices/customerApiSlice';
-import { useActiveUserMutation, useBlockUserMutation } from '../../slices/usersApiSlice';
+import { useUnlockUserMutation, useLockUserMutation } from '../../slices/usersApiSlice';
 import useCheckCookies from '../../utils/useCheckCookies';
 import useSessionTimeout from '../../utils/useSessionTimeout';
 import UserRole from "../../utils/userRole";
@@ -50,9 +50,9 @@ const CustomerProfile = () => {
     const customerTypes = CustomerTypes();
     const governmentIdTypes = GovernmentIdTypes();
     const [checkProfileCompleted, setCheckProfileCompleted] = useState(false);
-    const { data, error, isLoading, isFetching } = useGetCustomerProfileQuery({ id: id });
-    const [blockUser, { isLoading: isLoadingBlockUser }] = useBlockUserMutation();
-    const [activeUser, { isLoading: isLoadingActiveUser }] = useActiveUserMutation();
+    const { data, error, isLoading, isFetching, refetch } = useGetCustomerProfileQuery({ id: id });
+    const [lockUser, { isLoading: isLoadingLockUser }] = useLockUserMutation();
+    const [unlockUser, { isLoading: isLoadingUnlockUser }] = useUnlockUserMutation();
 
     const dispatch = useDispatch();
     const [updateCustomerProfile, { isLoadingUpdate }] = useUpdateCustomerMutation();
@@ -79,26 +79,26 @@ const CustomerProfile = () => {
         return null;
     }
 
-    const handleBlockUser = async (e) => {
+    const handleLockUser = async (e) => {
         e.preventDefault();
-        /* try {
-            const res = await blockUser({ accountId: id }).unwrap();
+        try {
+            const res = await lockUser({ userId: id }).unwrap();
             toast.success(res.message);
             refetch();
         } catch (err) {
             toast.error(err?.data?.message || err.error);
-        } */
+        }
     };
 
-    const handleActiveuser = async (e) => {
+    const handleUnlockUser = async (e) => {
         e.preventDefault();
-        /* try {
-            const res = await activeUse({ accountId: id }).unwrap();
+        try {
+            const res = await unlockUser({ userId: id }).unwrap();
             toast.success(res.message);
             refetch();
         } catch (err) {
             toast.error(err?.data?.message || err.error);
-        } */
+        }
     };
 
     const submitHandler = async (e) => {
@@ -205,17 +205,17 @@ const CustomerProfile = () => {
                                 </Button>
                                 {customer.user.isActive && isAdmin ? (
                                     <>
-                                        <Button variant="outline-danger" className="btn btn-custom d-flex align-items-center" onClick={handleBlockUser}>
+                                        <Button variant="outline-danger" className="btn btn-custom d-flex align-items-center" onClick={handleLockUser}>
                                             <p className='mb-0 txt-btn-default'>Bloquear usuario</p>
                                         </Button>
-                                        {isLoadingBlockUser && <Loader />}
+                                        {isLoadingLockUser && <Loader />}
                                     </>
                                 ) : (
                                     <>
-                                        <Button variant="outline-success" className="btn btn-custom d-flex align-items-center" onClick={handleActiveuser}>
-                                            <p className='mb-0 txt-btn-default'>Activar usuario</p>
+                                        <Button variant="outline-success" className="btn btn-custom d-flex align-items-center" onClick={handleUnlockUser}>
+                                            <p className='mb-0 txt-btn-default'>Desbloquear usuario</p>
                                         </Button>
-                                        {isLoadingActiveUser && <Loader />}
+                                        {isLoadingUnlockUser && <Loader />}
                                     </>
                                 )}
                             </div>

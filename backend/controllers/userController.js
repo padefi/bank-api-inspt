@@ -4,6 +4,7 @@ import { generateToken, extendToken } from "../utils/generateToken.js";
 import { isAdmin, loginIsClient } from "../middlewares/authMiddleware.js";
 import { endUserExpiration, initialUserExpiration } from "../middlewares/sessionMiddleware.js";
 import UserSession from "../models/userSessionModel.js";
+import { decrypt } from "../utils/crypter.js";
 
 // @desc    Login usuario & get token
 // @route   POST /api/users/auth
@@ -198,10 +199,10 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Activa usuario bloqueado
-// @route   POST /api/users/active
+// @desc    Bloquear usuario
+// @route   POST /api/users/lock
 // @access  Private
-const activeUser = asyncHandler(async (req, res) => {
+const lockUser = asyncHandler(async (req, res) => {
 
     const { userId } = req.body;
 
@@ -216,7 +217,47 @@ const activeUser = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const user = await User.findById(userId);
+    const dencryptedId = await decrypt(userId);
+
+    const user = await User.findById(dencryptedId);
+
+    if (user) {
+        user.isActive = false;
+        user.loginAttempts = 0;
+
+        const updateUser = await user.save();
+
+        extendToken(req, res);
+        res.json({
+            message: 'Usuario bloqueado con éxito.'
+        });
+    } else {
+        res.status(404);
+        throw new Error('Usuario no encontrado.');
+    }
+});
+
+// @desc    Desbloquear usuario
+// @route   POST /api/users/unlock
+// @access  Private
+const unlockUser = asyncHandler(async (req, res) => {
+
+    const { userId } = req.body;
+
+    // Validación
+    if (!isAdmin(req.user)) {
+        res.status(403);
+        throw new Error('Sin autorización.');
+    }
+
+    if (!userId) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const dencryptedId = await decrypt(userId);
+
+    const user = await User.findById(dencryptedId);
 
     if (user) {
         user.isActive = true;
@@ -226,7 +267,7 @@ const activeUser = asyncHandler(async (req, res) => {
 
         extendToken(req, res);
         res.json({
-            message: 'Usuario activado con éxito.'
+            message: 'Usuario desbloqueado con éxito.'
         });
     } else {
         res.status(404);
@@ -240,5 +281,6 @@ export {
     registerUser,
     profileUser,
     updateUserProfile,
-    activeUser
+    lockUser,
+    unlockUser,
 }
