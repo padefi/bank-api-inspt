@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { FaArrowLeft, FaArrowRight, FaUserEdit, FaWallet } from "react-icons/fa";
 import useCheckCookies from '../../utils/useCheckCookies';
 import useSessionTimeout from '../../utils/useSessionTimeout';
-import { useShowCustomersQuery } from '../../slices/clientsApiSlice';
+import { useShowCustomersQuery } from '../../slices/customerApiSlice';
 
 const Dashboard = () => {
   useCheckCookies();
@@ -48,7 +48,7 @@ const Dashboard = () => {
   };
 
   const handleClickCustomer = (customerId) => {
-    navigate(`/bank/customer/${customerId}`);
+    navigate(`/bank/customerProfile/${customerId}`);
   };
 
   let customers = data?.customers || [];

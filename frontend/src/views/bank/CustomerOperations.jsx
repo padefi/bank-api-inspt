@@ -15,7 +15,7 @@ const CustomerOperations = () => {
     useCheckCookies();
     useSessionTimeout();
     const { id } = useParams();
-    const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
+    const [checkOperationsCompleted, setCheckOperationsCompleted] = useState(false);
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [operationType, setOperationType] = useState('');
@@ -59,11 +59,11 @@ const CustomerOperations = () => {
         if (error) {
             toast.error(error.data?.message || error.error);
         } else {
-            setCheckAccountsCompleted(true);
+            setCheckOperationsCompleted(true);
         }
     }, [data, error]);
 
-    if (!checkAccountsCompleted) {
+    if (!checkOperationsCompleted) {
         return null;
     }
 

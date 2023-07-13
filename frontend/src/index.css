@@ -446,3 +446,20 @@
 .detail-table tbody td {
     vertical-align: middle !important;
 }
+
+.customer-number{
+ width: 5rem;
+ text-align: right;
+}
+
+.h6-CardContainer {
+    margin-bottom: 0.75rem;
+}
+
+.input1-CardContainer {
+    width: 13rem;
+}
+
+.input2-CardContainer {
+    width: 9rem;
+}

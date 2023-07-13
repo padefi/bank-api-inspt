@@ -160,7 +160,7 @@ const profileUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Actualizar datos del usuario
-// @route   GET /api/users/profile
+// @route   PUT /api/users/profile
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
 

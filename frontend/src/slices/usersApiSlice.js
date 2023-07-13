@@ -23,11 +23,27 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    blockUser: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/block`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    activeUser: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/active`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
 export const {
   useLoginMutation,
   useLogoutMutation,
-  useUpdateUserMutation
+  useUpdateUserMutation,
+  useBlockUserMutation,
+  useActiveUserMutation,
 } = userApiSlice;
