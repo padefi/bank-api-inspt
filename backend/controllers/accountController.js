@@ -22,8 +22,8 @@ const getUserAccounts = asyncHandler(async (req, res) => {
     const dencryptedId = await decrypt(id);
 
     let accounts = await Account.find(isEmployee(req.user) || isAdmin(req.user) ? { accountHolder: dencryptedId } : { accountHolder: req.user._id })
-    .select('accountBalance accountId alias isActive operations type _id')
-    .populate('currency','-_id acronym symbol');
+        .select('accountBalance accountId alias isActive operations type _id')
+        .populate('currency', '-_id acronym symbol');
 
     if (!accounts) {
         res.status(403);
@@ -53,16 +53,16 @@ const getUserAccount = asyncHandler(async (req, res) => {
 
     const { id } = req.query;
 
-    if (isAdmin(req.user) && !id) {
+    if (!id) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
 
     const dencryptedId = await decrypt(id);
 
-    const account = await Account.findOne(isAdmin(req.user) ? { _id: id } : { _id: dencryptedId, accountHolder: req.user._id })
-    .select('-_id accountBalance accountId alias isActive type')
-    .populate('currency','-_id acronym symbol');
+    const account = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id })
+        .select('-_id accountBalance accountId alias isActive type')
+        .populate('currency', '-_id acronym symbol');
 
     if (!account) {
         res.status(403);
@@ -296,7 +296,7 @@ const closeAccount = asyncHandler(async (req, res) => {
 
     const dencryptedId = await decrypt(accountId);
 
-    const account = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
+    const account = await Account.findOne(isAdmin(req.user) || isEmployee(req.user) ? { _id: dencryptedId } : { _id: dencryptedId, accountHolder: req.user._id });
 
     if (!account) {
         res.status(403);
@@ -308,7 +308,7 @@ const closeAccount = asyncHandler(async (req, res) => {
         throw new Error(`La cuenta no se encuentra activa.`);
     }
 
-    if (account.accountBalance > 0) {
+    if (account.accountBalance > 0 && !isAdmin(req.user)) {
         res.status(400);
         throw new Error(`Para poder cerrar la cuenta no debe tener saldo disponible.`);
     }
@@ -343,7 +343,7 @@ const activeAccount = asyncHandler(async (req, res) => {
 
     const dencryptedId = await decrypt(accountId);
 
-    const account = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
+    const account = await Account.findOne(isAdmin(req.user) || isEmployee(req.user) ? { _id: dencryptedId } : { _id: dencryptedId, accountHolder: req.user._id });
 
     if (!account) {
         res.status(403);

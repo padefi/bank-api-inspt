@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useGetCustomerAccountsQuery } from '../../slices/accountApiSlice';
+import { useActiveAccountMutation, useCloseAccountMutation, useGetCustomerAccountsQuery } from '../../slices/accountApiSlice';
 import CardContainer from '../../components/CardContainer';
 import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
-import { FaShareSquare, FaTimes } from "react-icons/fa";
+import { FaRegCheckCircle, FaShareSquare, FaTimes } from "react-icons/fa";
 import useCheckCookies from '../../utils/useCheckCookies';
 import { Button, Table } from 'react-bootstrap';
 import useSessionTimeout from '../../utils/useSessionTimeout';
@@ -15,7 +15,9 @@ const CustomerAccounts = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
-  const { data, error, isLoading, isFetching } = useGetCustomerAccountsQuery({ id: id }, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching, refetch } = useGetCustomerAccountsQuery({ id: id }, { refetchOnMountOrArgChange: true });
+  const [closeAccount, { isLoading: isLoadingCloseAccount }] = useCloseAccountMutation();
+  const [activeAccount, { isLoading: isLoadingActiveAccount }] = useActiveAccountMutation();
 
   useEffect(() => {
     if (error) {
@@ -28,6 +30,28 @@ const CustomerAccounts = () => {
   if (!checkAccountsCompleted) {
     return null;
   }
+
+  const handleCloseAccount = async (e, accountId) => {
+    e.preventDefault();
+    try {
+      const res = await closeAccount({ accountId }).unwrap();
+      toast.success(res.message);
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
+
+  const handleActiveAccount = async (e, accountId) => {
+    e.preventDefault();
+    try {
+      const res = await activeAccount({ accountId }).unwrap();
+      toast.success(res.message);
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
 
   const handleClickOperation = (accountId) => {
     navigate(`/bank/accountOperations/${accountId}`);
@@ -68,11 +92,21 @@ const CustomerAccounts = () => {
                         </div>
                       </td>
                       <td>{account.accountBalance.toLocaleString("es-AR", { style: "currency", currency: account.currency.acronym })}</td>
-                      <td>{account.isActive ? (`Activo`) : (`Baja`)}</td>
+                      <td>{account.isActive ? (`Activa`) : (`Baja`)}</td>
                       <td>
                         <div className='box d-flex justify-content-center'>
                           <Button variant="outline-primary" title="Ver operaciones" size="sm" className='mr-2' onClick={() => handleClickOperation(account._id)}><FaShareSquare /></Button>
-                          <Button variant="outline-danger" title="Cerrar cuenta" size="sm" onClick={() => handleClickClose(account._id)}><FaTimes /></Button>
+                          {account.isActive ? (
+                            <>
+                              <Button variant="outline-danger" title="Cerrar cuenta" size="sm" onClick={(e) => handleCloseAccount(e, account._id)}><FaTimes /></Button>
+                              {isLoadingCloseAccount && <Loader />}
+                            </>
+                          ) : (
+                            <>
+                              <Button to="/client/" variant="outline-success" title="Activar cuenta" className="btn btn-custom d-flex align-items-center" onClick={(e) => handleActiveAccount(e, account._id)}><FaRegCheckCircle /></Button>
+                              {isLoadingActiveAccount && <Loader />}
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>

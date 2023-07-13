@@ -15,7 +15,6 @@ const UserAccount = () => {
   useCheckCookies();
   useSessionTimeout();
   const { id } = useParams();
-  const { userInfo } = useSelector((state) => state.auth);
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const { data, error, isLoading, isFetching, refetch } = useGetUserAccountQuery({ id }, { refetchOnMountOrArgChange: true });
   const [alias, setAlias] = useState('');
