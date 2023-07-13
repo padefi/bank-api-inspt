@@ -101,7 +101,7 @@ const Dashboard = () => {
               )}
             </Table>
           </div>
-          <div className="box mt-2 text-center">
+          <div className="box mt-2 text-center mb-1">
             <Button variant="outline-primary" onClick={handlePreviousPage} disabled={pageNumber === 1} size='sm' className='mr-2'><FaArrowLeft /></Button>
             <Button variant="outline-primary" onClick={handleNextPage} disabled={pageNumber === Math.ceil(customers.length / itemsPerPage)} size='sm'><FaArrowRight /></Button>
           </div>

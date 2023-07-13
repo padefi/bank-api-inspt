@@ -19,6 +19,7 @@ import TransferMoney from './views/client/Transfer';
 import CustomerAccounts from './views/bank/CustomerAccounts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import CustomerOperations from './views/bank/CustomerOperations';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,8 +36,9 @@ const router = createBrowserRouter(
         <Route path="/client/profile" element={<PrivateRouteClient><Profile /></PrivateRouteClient>} />
 
         <Route path="/bank/dashboard" element={<PrivateRouteEmployeeAdmin><Dashboard /></PrivateRouteEmployeeAdmin>} />
-        <Route path="/bank/customerAccounts/:id" element={<PrivateRouteEmployeeAdmin><CustomerAccounts /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/customer/:id" element={<PrivateRouteEmployeeAdmin><CustomerAccounts /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/customerAccounts/:id" element={<PrivateRouteEmployeeAdmin><CustomerAccounts /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/accountOperations/:id" element={<PrivateRouteEmployeeAdmin><CustomerOperations /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/deposit" element={<PrivateRouteEmployeeAdmin><DepositMoney /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/withdraw" element={<PrivateRouteEmployeeAdmin><WithdrawMoney /></PrivateRouteEmployeeAdmin>} />
 

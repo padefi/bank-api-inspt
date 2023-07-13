@@ -14,12 +14,12 @@ const PrivateRouteClient = ({ children }) => {
 
 const PrivateRouteAdmin = ({ children }) => {
     const { data } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
-    return data?.role === 'admin' ? children : <Navigate to='/bank/dashboard' replace />;
+    return data?.role === 'admin' ? children : <Outlet />;
 };
 
 const PrivateRouteEmployeeAdmin = ({ children }) => {
     const { data } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
-    return data?.role === 'empleado' || data?.role === 'admin' ? children : <Navigate to='/bank/dashboard' replace />;
+    return data?.role === 'empleado' || data?.role === 'admin' ? children : <Outlet />;
 };
 
 export {

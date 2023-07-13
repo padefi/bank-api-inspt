@@ -96,7 +96,7 @@ const getAccountOperations = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const query = Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance').populate('currency');
+    const query = Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance').populate('currency','-_id acronym symbol');
 
     const matchConditions = {};
     const startDate = (dateFrom) ? new Date(new Date(dateFrom).getTime() + new Date().getTimezoneOffset() * 60000) : '';
@@ -404,7 +404,7 @@ const transferMoney = asyncHandler(async (req, res) => {
 
     const dencryptedId = await decrypt(accountFromId);
 
-    const accountFrom = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id }).populate('currency');
+    const accountFrom = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id }).populate('currency','-_id acronym symbol');
 
     if (!accountFrom) {
         res.status(403);
@@ -426,7 +426,7 @@ const transferMoney = asyncHandler(async (req, res) => {
             { accountId: accountTo },
             { alias: accountTo }
         ], isActive: true
-    }).populate('currency');
+    }).populate('currency','-_id acronym symbol');
 
     if (!accountToData) {
         res.status(404);
