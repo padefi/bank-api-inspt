@@ -16,7 +16,7 @@ const SideBarFooter = () => {
 
     const isAdmin = data?.role === 'admin';
     const isEmployee = data?.role === 'empleado';
-    const isClient = data?.role === 'cliente';
+    const isCustomer = data?.role === 'cliente';
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -45,7 +45,7 @@ const SideBarFooter = () => {
                     <Sidebar.Nav.Title id='username'>{fullName}</Sidebar.Nav.Title>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                    <Dropdown.Item href={isClient ? '/client/profile' : '/bank/profile'}>Perfil</Dropdown.Item>
+                    <Dropdown.Item href={isCustomer ? '/customer/profile' : '/bank/profile'}>Perfil</Dropdown.Item>
                     <Dropdown.Item onClick={logoutHandler}>Cerrar sesion</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>

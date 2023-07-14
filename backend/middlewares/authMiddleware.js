@@ -34,11 +34,11 @@ const isEmployee = (user) => {
     return user.role && user.role.name === 'empleado';
 }
 
-const isClient = (user) => {
+const isCustomer = (user) => {
     return user.role && user.role.name === 'cliente';
 }
 
-const loginIsClient = (user) => {
+const loginIsCustomer = (user) => {
     return user === 'cliente';
 }
 
@@ -46,6 +46,6 @@ export {
     protect,
     isAdmin,
     isEmployee,
-    isClient,
-    loginIsClient
+    isCustomer,
+    loginIsCustomer,
 }

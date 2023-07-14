@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import { generateToken, extendToken } from "../utils/generateToken.js";
-import { isAdmin, loginIsClient } from "../middlewares/authMiddleware.js";
+import { isAdmin, loginIsCustomer } from "../middlewares/authMiddleware.js";
 import { endUserExpiration, initialUserExpiration } from "../middlewares/sessionMiddleware.js";
 import UserSession from "../models/userSessionModel.js";
 import { decrypt } from "../utils/crypter.js";
@@ -49,7 +49,7 @@ const loginUser = asyncHandler(async (req, res) => {
             });
 
         } else {
-            if (user.loginAttempts >= 2 && loginIsClient(user.role.name)) user.isActive = false;
+            if (user.loginAttempts >= 2 && loginIsCustomer(user.role.name)) user.isActive = false;
             user.loginAttempts += 1;
             await user.save();
 

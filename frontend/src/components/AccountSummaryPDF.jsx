@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
 const AccountSummaryPDF = ({ holder, dateFrom, dateTo, operations }) => {
   const pageSize = 20;
   const totalOperations = operations.operationDataArray.length;
-  const totalPages = Math.ceil(totalOperations / pageSize);
+  const totalPages = (totalOperations > 0 ) ? Math.ceil(totalOperations / pageSize) : 1;
 
   return (
     <Document>

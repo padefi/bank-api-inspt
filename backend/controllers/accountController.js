@@ -4,7 +4,7 @@ import Currency from "../models/currencyModel.js";
 import { extendToken } from "../utils/generateToken.js";
 import User from "../models/userModel.js";
 import { generateAlias, generateAccountId } from "../utils/generateAccountInfo.js";
-import { isAdmin, isClient, isEmployee } from "../middlewares/authMiddleware.js";
+import { isAdmin, isCustomer, isEmployee } from "../middlewares/authMiddleware.js";
 import { decrypt, encrypt } from "../utils/crypter.js";
 
 // @desc    Ver cuentas bancarias

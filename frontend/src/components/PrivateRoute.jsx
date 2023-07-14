@@ -7,7 +7,7 @@ const PrivateRoute = () => {
     return userInfo ? <Outlet /> : <Navigate to='/login' replace />;
 };
 
-const PrivateRouteClient = ({ children }) => {
+const PrivateRouteCustomer = ({ children }) => {
     const { data } = useUserRoleQuery({}, { refetchOnMountOrArgChange: true });
     return data?.role === 'cliente' ? children : <Outlet />;
 };
@@ -24,7 +24,7 @@ const PrivateRouteEmployeeAdmin = ({ children }) => {
 
 export {
     PrivateRoute,
-    PrivateRouteClient,
+    PrivateRouteCustomer,
     PrivateRouteAdmin,
     PrivateRouteEmployeeAdmin,
 }

@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Account from "../models/accountModel.js";
 import Operation from "../models/operationModel.js"
-import { isAdmin, isClient } from "../middlewares/authMiddleware.js";
+import { isAdmin, isCustomer } from "../middlewares/authMiddleware.js";
 import { extendToken } from "../utils/generateToken.js";
 import { decrypt } from "../utils/crypter.js";
 
