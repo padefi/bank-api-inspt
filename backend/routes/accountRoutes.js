@@ -1,10 +1,11 @@
 import express from "express";
-import { activeAccount, changeAlias, closeAccount, createAccount, getUserAccount, getAccount, getUserAccounts, getCurrencies } from "../controllers/accountController.js";
+import { activeAccount, changeAlias, closeAccount, createAccount, getUserAccount, getAccount, getUserAccounts, getCurrencies, getAllAccounts } from "../controllers/accountController.js";
 import { protect} from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 router.get('/', protect, getUserAccounts);
+router.get('/getAllAccounts', protect, getAllAccounts);
 router.get('/getCustomerAccount', protect, getUserAccounts);
 router.get('/getUserAccount', protect, getUserAccount);
 router.get('/getAccount', protect, getAccount);

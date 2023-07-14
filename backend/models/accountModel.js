@@ -56,16 +56,6 @@ const accountSchema = mongoose.Schema({
 });
 
 accountSchema.index({ accountHolder: 1 });
-/*accountSchema.index({
-    alias: 1
-}, {
-    unique: true,
-    partialFilterExpression: {
-        alias: {
-            $type: 'string'
-        }
-    }
-});*/
 
 const Account = mongoose.model('Account', accountSchema);
 

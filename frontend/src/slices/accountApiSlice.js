@@ -6,6 +6,12 @@ export const accountApiSlice = apiSlice.injectEndpoints({
     showAccounts: builder.query({
       query: () => `${ACCOUNTS_URL}/`,
     }),
+    showAllAccounts: builder.query({
+      query: ({ accountType, currencyId, governmentId, dataAccount }) => ({
+        url: `${ACCOUNTS_URL}/getAllAccounts?accountType=${accountType}&currencyId=${currencyId}&governmentId=${governmentId}&dataAccount=${dataAccount}`,
+        method: 'GET',
+      }),
+    }),
     getCustomerAccounts: builder.query({
       query: ({ id }) => ({
         url: `${ACCOUNTS_URL}/getCustomerAccount?id=${id}`,
@@ -60,6 +66,7 @@ export const accountApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useShowAccountsQuery,
+  useShowAllAccountsQuery,
   useGetCustomerAccountsQuery,
   useGetUserAccountQuery,
   useGetCurrenciesQuery,

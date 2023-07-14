@@ -10,6 +10,89 @@ import { decrypt, encrypt } from "../utils/crypter.js";
 // @desc    Ver cuentas bancarias
 // @route   GET /api/accounts/
 // @access  Private
+const getAllAccounts = asyncHandler(async (req, res) => {
+
+    const { accountType, currencyId, governmentId, dataAccount } = req.query;
+
+    if (isCustomer(req.user)) {
+        res.status(403);
+        throw new Error('Sin autorización.');
+    }
+
+    let query = {};
+    const matchConditionsGovernmentId = [];
+
+    if (accountType !== 'null' || currencyId !== 'null' || dataAccount) {
+
+        if (accountType !== 'null') {
+            query.type = accountType;
+        }
+
+        if (currencyId !== 'null') {
+            query.currency = currencyId;
+        }
+
+        if (dataAccount) {
+            query.$or = [];
+            query.$or.push({
+                $or: [
+                    { 'accountId': { $regex: dataAccount, $options: 'i' } },
+                    { 'alias': { $regex: dataAccount, $options: 'i' } },
+                ]
+            });
+        }
+
+        if (dataAccount) {
+            query.$or.push({ dataAccount: { $regex: dataAccount, $options: 'i' } });
+        }
+    }
+
+    if (governmentId) {
+        matchConditionsGovernmentId.push({
+            $or: [
+                { 'governmentId.number': { $regex: governmentId, $options: 'i' } },
+                { 'firstName': { $regex: governmentId, $options: 'i' } },
+                { 'lastName': { $regex: governmentId, $options: 'i' } }
+            ]
+        });
+    }
+
+    let accounts = await Account.find(query)
+        .select('accountBalance accountId alias isActive type _id')
+        .populate('currency', '-_id acronym symbol')
+        .populate({
+            path: 'accountHolder',
+            match: matchConditionsGovernmentId.length > 0 ? { $and: matchConditionsGovernmentId } : undefined,
+            select: {
+                _id: 0,
+                firstName: 1,
+                lastName: 1,
+                governmentId: 1,
+            },
+        });
+
+    if (!accounts) {
+        res.status(403);
+        throw new Error('No se encontraron cuentas.');
+        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+    }
+
+    let newAccounts = accounts.filter((account) => account.accountHolder !== null);
+
+    newAccounts = await Promise.all(newAccounts.map(async (account) => {
+        const encryptedId = await encrypt(account._id.toHexString());
+        return { ...account.toObject(), _id: encryptedId };
+    }));
+
+    extendToken(req, res);
+    res.status(201).json({
+        accounts: newAccounts
+    });
+});
+
+// @desc    Ver cuentas bancarias
+// @route   GET /api/accounts/
+// @access  Private
 const getUserAccounts = asyncHandler(async (req, res) => {
 
     const { id } = req.query;
@@ -371,6 +454,7 @@ const activeAccount = asyncHandler(async (req, res) => {
 });
 
 export {
+    getAllAccounts,
     getUserAccounts,
     getUserAccount,
     getAccount,

@@ -27,7 +27,7 @@ const SideBarBody = () => {
                     </Sidebar.Sub.Toggle>
                     <Sidebar.Sub.Collapse>
                         <Sidebar.Nav>
-                            <LinkContainer to='/customer/accounts'>
+                            <LinkContainer to={isCustomer ? '/customer/accounts' : '/bank/accounts'}>
                                 <NavLink className="sidebar-menu-nav-link">
                                     <FaWallet />
                                     <Sidebar.Nav.Title>{isCustomer ? (`Mis cuentas`) : (`Ver cuentas`)}</Sidebar.Nav.Title>

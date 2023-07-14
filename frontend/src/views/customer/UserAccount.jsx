@@ -145,7 +145,7 @@ const UserAccount = () => {
                         <div className='flex-fill'>
                           <div className='box form-control-edit d-flex align-items-center'>
                             <div className='form-control-edit bold-text'>
-                              <Form.Control type='alias' className='form-control-edit-input rounded-0' placeholder='Ingrese el alias' minLength={6} maxLength={20} value={alias} onChange={(e) => setAlias(e.target.value.toUpperCase())} disabled={!isAliasEditable}></Form.Control>
+                              <Form.Control type='alias' className='form-control-edit-input rounded-0' placeholder='Ingrese el alias' autoComplete='off' minLength={6} maxLength={20} value={alias} onChange={(e) => setAlias(e.target.value.toUpperCase())} disabled={!isAliasEditable}></Form.Control>
                             </div>
                             {!showSubmitButton && (
                               <Button className="btn px-0 py-0 btn-edit" variant="" onClick={handleEditClick}>
