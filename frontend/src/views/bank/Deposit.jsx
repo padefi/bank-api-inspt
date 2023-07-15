@@ -52,11 +52,10 @@ const DepositMoney = () => {
       setAmountToData(res.amountTo);
       setTax(res.tax);
       setShow(true);
-      setSelectedOptionKey((prevKey) => prevKey + 1);
       setAccount('');
       setAccountData(null);
       setAccountId(null);
-      setAmount(0);
+      setAmount('');
       refetch();
     } catch (err) {
       toast.error(err?.data?.message || err.error);

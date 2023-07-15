@@ -1,29 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CardContainer from '../../components/CardContainer';
 import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
 import useCheckCookies from '../../utils/useCheckCookies';
 import BoxContainer from '../../components/BoxContainer';
 import useSessionTimeout from '../../utils/useSessionTimeout';
-import { useShowAccountsQuery } from '../../slices/accountApiSlice';
 import { Button, Form, InputGroup } from 'react-bootstrap';
-import Select from 'react-select';
 import { useWithdrawMoneyMutation } from '../../slices/operationApiSlice';
-import UserAccounts from '../../utils/userAccounts';
 import ConfirmOperationModal from '../../components/ConfirmOperationModal';
 import amountFormat from '../../utils/amountFormat';
+import GetAccount from '../../components/GetAccount';
 
 const WithdrawMoney = () => {
   useCheckCookies();
   useSessionTimeout();
+  const [account, setAccount] = useState('');
+  const [accountData, setAccountData] = useState(null);
   const [accountId, setAccountId] = useState(null);
   const [currency, setCurrency] = useState('$');
-  const [acronym, setAcronym] = useState(null);
-  const [accountBalance, setAccountBalance] = useState('$ 0,00');
   const [amount, setAmount] = useState('');
+  const [acronym, setAcronym] = useState('');
   const [withdrawMoney, { isLoading }] = useWithdrawMoneyMutation();
-  const { data, error, refetch } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
-  const options = UserAccounts({ data, error });
   const [accountFrom, setAccountFrom] = useState(null);
   const [operationDate, setOperationDate] = useState(null);
   const [amountFromData, setAmountFromData] = useState(null);
@@ -31,24 +28,19 @@ const WithdrawMoney = () => {
   const [tax, setTax] = useState(null);
   const [showModal, setShow] = useState(false);
 
-  const selectStyles = () => ({
-    menuPortal: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-  });
+  const handleData = (data) => {
 
-  const defaultSelectValue = () => ({
-    value: 0,
-    label: "Seleccione una cuenta",
-    currency: '$',
-  });
+    setAccountId(data._id);
+    setCurrency(data.currency.symbol);
+    setAcronym(data.currency.acronym);
+
+    const acountFromData = data.type + data.currency.symbol + data.accountId.substring(3, 7) + ' - ' + data.accountId.substring(11, 21)
+    setAccountFrom(acountFromData);
+  };
 
   const handleCloseModal = () => {
     setShow(false);
   };
-
-  const [selectedOptionKey, setSelectedOptionKey] = useState(0);
 
   const submitDeposit = async (e) => {
     e.preventDefault();
@@ -60,9 +52,9 @@ const WithdrawMoney = () => {
       setAmountToData(res.amountFrom);
       setTax(res.tax);
       setShow(true);
-      setSelectedOptionKey((prevKey) => prevKey + 1);
+      setAccount('');
+      setAccountData(null);
       setAccountId(null);
-      setAccountBalance('$ 0,00');
       setAmount('');
       refetch();
     } catch (err) {
@@ -83,27 +75,28 @@ const WithdrawMoney = () => {
           </div>
           <div className='box px-4 d-flex flex-column box-details '>
             <Form onSubmit={submitDeposit}>
-              <Form.Group className='my-2'>
-                <div className='fw-bold'>Cuenta a debitar</div>
-                <Select key={selectedOptionKey} options={options} onChange={(option) => { setAccountId(option?.value || null); setCurrency(option?.currency || '$'); setAccountFrom(option?.label || null); setAcronym(option?.acronym || null); setAccountBalance(option?.balance || '$ 0,00'); }} styles={selectStyles}
-                  menuPortalTarget={document.body} defaultValue={defaultSelectValue} />
-                <Form.Text className="text-muted">
-                  Saldo: {accountBalance}
-                </Form.Text>
+              <Form.Group className='my-2' controlId='account'>
+                <Form.Label className='fw-bold mb-0'>Cuenta a debitar:</Form.Label>
+                <Form.Control type='text' className='form-control-edit-input rounded-0' placeholder='Ingrese alias o CBU a debitar' autoComplete='off' minLength={6}
+                  maxLength={22} value={account} onChange={(e) => setAccount(e.target.value.toUpperCase())} onBlur={(e) => setAccountData(e.target.value)}></Form.Control>
+
+                {accountData && (
+                  <GetAccount dataAccount={account} onData={handleData} onError={() => { setAccountData(null); setAccountId(null); }} />
+                )}
               </Form.Group>
 
               <Form.Group className='my-2' controlId='amount'>
                 <Form.Label className='fw-bold mb-0'>Importe</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>{currency}</InputGroup.Text>
-                  <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={(e) => setAmount(amountFormat(e.target.value))} disabled={!accountId} />
+                  <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={(e) => setAmount(amountFormat(e.target.value))} disabled={!account} />
                 </InputGroup>
               </Form.Group>
 
               <hr />
 
               <div className='d-flex justify-content-end'>
-                <Button type='submit' variant='success' className='mb-3 ml-auto' disabled={!accountId || !amount}>
+                <Button type='submit' variant='success' className='mb-3 ml-auto' disabled={!account || !amount}>
                   Extraer
                 </Button>
               </div>
