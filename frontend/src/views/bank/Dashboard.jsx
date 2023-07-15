@@ -34,12 +34,6 @@ const Dashboard = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const itemsPerPage = 10;
 
-  const governmentIdChange = (e) => {
-    const inputValue = e.target.value;
-    const sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
-    setGovernmentId(sanitizedValue);
-  };
-
   const handleAdvancedSearch = () => {
     setAdvancedSearch(!advancedSearch);
   };
@@ -124,7 +118,7 @@ const Dashboard = () => {
                     </Form.Group>
                     <Form.Group>
                       <Form.Label htmlFor="governmentId" className='fw-bold detail-text mb-0'>Documento:</Form.Label>
-                      <Form.Control id="governmentId" type='text' className="form-control form-control" value={governmentId} onChange={(e) => { governmentIdChange(e); handleAdvanced; }} />
+                      <Form.Control id="governmentId" type='text' className="form-control form-control" value={governmentId} onChange={(e) => { setGovernmentId(e.target.value); handleAdvanced; }} />
                     </Form.Group>
                     <Form.Group className='ml-2'>
                       <div className='fw-bold detail-text mt-1'>Estado:</div>

@@ -11,6 +11,7 @@ import Select from 'react-select';
 import { useTransferMoneyMutation } from '../../slices/operationApiSlice';
 import ConfirmOperationModal from '../../components/ConfirmOperationModal';
 import UserAccounts from '../../utils/userAccounts';
+import amountFormat from '../../utils/amountFormat';
 
 const GetAccount = ({ dataAccountTo, onError }) => {
   const [checkAccountToCompleted, setCheckAccountToCompleted] = useState(false);
@@ -90,24 +91,6 @@ const TransferMoney = () => {
     currency: '$',
   });
 
-  const amountChange = (e) => {
-    const inputValue = e.target.value;
-    const sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
-    const decimalCount = (sanitizedValue.match(/\./g) || []).length;
-
-    if (decimalCount > 1) {
-      const [integerPart, decimalPart] = sanitizedValue.split('.');
-      const formattedValue = `${integerPart}.${decimalPart.slice(0, 2)}`;
-      setAmount(formattedValue);
-    } else if (decimalCount === 1 && sanitizedValue.split('.')[1].length > 2) {
-      const [integerPart, decimalPart] = sanitizedValue.split('.');
-      const formattedValue = `${integerPart}.${decimalPart.slice(0, 2)}`;
-      setAmount(formattedValue);
-    } else {
-      setAmount(sanitizedValue);
-    }
-  };
-
   const handleCloseModal = () => {
     setShow(false);
   };
@@ -173,7 +156,7 @@ const TransferMoney = () => {
                 <Form.Label className='fw-bold mb-0'>Importe</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>{currency}</InputGroup.Text>
-                  <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={amountChange} disabled={!accountId || !accountToData} />
+                  <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={(e) => setAmount(amountFormat(e.target.value))} disabled={!accountId || !accountToData} />
                 </InputGroup>
               </Form.Group>
 

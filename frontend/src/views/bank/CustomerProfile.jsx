@@ -12,6 +12,7 @@ import useSessionTimeout from '../../utils/useSessionTimeout';
 import UserRole from "../../utils/userRole";
 import { useParams } from 'react-router-dom';
 import Select from 'react-select';
+import numberFormat from '../../utils/numberFormat';
 
 const CustomerTypes = () => {
     const options = [
@@ -74,7 +75,7 @@ const CustomerProfile = () => {
             setLastName(data?.customer.user.lastName.toUpperCase() || '');
             setEmail(data?.customer.user.email.toUpperCase() || '');
             setPhoneNumber(data?.customer.user.phone || '');
-            setBornDate(data?.customer.user.bornDate ? (new Date(data.customer.user.bornDate).toISOString().split("T")[0]) : ( ''));
+            setBornDate(data?.customer.user.bornDate ? (new Date(data.customer.user.bornDate).toISOString().split("T")[0]) : (''));
             setCheckProfileCompleted(true);
         }
     }, [data, error]);
@@ -204,7 +205,7 @@ const CustomerProfile = () => {
                                     <div className="mr-2">
                                         <Form.Group className='my-2' controlId='phoneNumber'>
                                             <Form.Label className='fw-bold'>Telefono</Form.Label>
-                                            <Form.Control type='number' placeholder='Ingrese número de teléfono' autoComplete='off' required value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value.toUpperCase())}></Form.Control>
+                                            <Form.Control type='text' placeholder='Ingrese número de teléfono' autoComplete='off' required value={phoneNumber} onChange={(e) => setPhoneNumber(numberFormat(e.target.value))}></Form.Control>
                                         </Form.Group>
                                     </div>
                                 </div>
