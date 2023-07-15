@@ -11,6 +11,8 @@ import User from "../models/userModel.js";
 // @access  Private
 const getCustomer = asyncHandler(async (req, res) => {
 
+    const { accountHolder, governmentId, accountStatus } = req.query;
+
     if (!isAdmin(req.user) && !isEmployee(req.user)) {
         res.status(400);
         throw new Error('Sin autorización.');
@@ -23,11 +25,59 @@ const getCustomer = asyncHandler(async (req, res) => {
         throw new Error('Rol no encontrado');
     }
 
+    let matchConditions = [];
+
+    if (accountHolder || governmentId || (accountStatus !== '' && accountStatus !== 'null')) {
+        const conditions = [];
+
+        if (governmentId) {
+            conditions.push({ 'governmentId.number': { $regex: new RegExp(governmentId, 'i') } });
+        }
+
+        if (accountHolder) {
+            conditions.push({
+                $or: [
+                    { 'firstName': { $regex: new RegExp(accountHolder, 'i') } },
+                    { 'lastName': { $regex: new RegExp(accountHolder, 'i') } },
+                ]
+            });
+        }
+
+        if ((accountStatus !== '' && accountStatus !== 'null')) {
+            conditions.push({ 'isActive': accountStatus === 'true' });
+        }
+
+        if (conditions.length > 0) {
+            matchConditions.push({ $and: conditions });
+        }
+    }
+
+
     let customers = await Customer.find()
         .select('-_id number type')
-        .populate('user', '_id bornDate email firstName governmentId lastName phone isActive');
+        .populate({
+            path: 'user',
+            match: matchConditions.length > 0 ? { $and: matchConditions } : undefined,
+            select: {
+                _id: 1,
+                bornDate: 1,
+                email: 1,
+                firstName: 1,
+                lastName: 1,
+                governmentId: 1,
+                phone: 1,
+                isActive: 1,
+            },
+        });
 
-    customers = await Promise.all(customers.map(async (customer) => {
+    if (!customers) {
+        res.status(403);
+        throw new Error('No se encontraron clientes.');
+    }
+
+    let newCustomers = customers.filter((customer) => customer.user !== null);
+
+    newCustomers = await Promise.all(newCustomers.map(async (customer) => {
         const encryptedId = await encrypt(customer.user._id.toHexString());
         const updatedUser = { ...customer.user.toObject(), _id: encryptedId };
         return { ...customer.toObject(), user: updatedUser };
@@ -35,7 +85,7 @@ const getCustomer = asyncHandler(async (req, res) => {
 
     extendToken(req, res);
     res.status(201).json({
-        customers
+        customers: newCustomers
     });
 });
 

@@ -4,7 +4,10 @@ const CUSTOMERS_URL = '/api/customers';
 export const customerApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     showCustomers: builder.query({
-      query: () => `${CUSTOMERS_URL}/`,
+      query: ({ accountHolder, governmentId, accountStatus }) => ({
+        url: `${CUSTOMERS_URL}/?accountHolder=${accountHolder}&governmentId=${governmentId}&accountStatus=${accountStatus}`,
+        method: 'GET',
+      }),
     }),
     getCustomerProfile: builder.query({
       query: ({ id }) => ({

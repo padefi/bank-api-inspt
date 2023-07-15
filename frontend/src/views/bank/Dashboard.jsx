@@ -1,22 +1,64 @@
 import React, { useEffect, useState } from 'react';
 import CardContainer from '../../components/CardContainer';
 import { useNavigate } from 'react-router-dom';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Col, Form, Row, Table } from 'react-bootstrap';
 import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
 import { FaArrowLeft, FaArrowRight, FaUserEdit, FaWallet } from "react-icons/fa";
 import useCheckCookies from '../../utils/useCheckCookies';
 import useSessionTimeout from '../../utils/useSessionTimeout';
 import { useShowCustomersQuery } from '../../slices/customerApiSlice';
+import Select from 'react-select';
+
+const AccountStatusOptions = () => {
+  const options = [
+    { value: '', label: 'TODOS' },
+    { value: 'true', label: 'ACTIVO' },
+    { value: 'false', label: 'BAJA' }
+  ]
+
+  return options;
+}
 
 const Dashboard = () => {
   useCheckCookies();
   useSessionTimeout();
   const navigate = useNavigate();
+  const [accountHolder, setAccountHolder] = useState('');
+  const [governmentId, setGovernmentId] = useState('');
+  const [accountStatus, setAccountStatus] = useState('');
+  const accountStatusOptions = AccountStatusOptions();
+  const [advancedSearch, setAdvancedSearch] = useState(false);
   const [checkCustomersCompleted, setCheckCustomersCompleted] = useState(false);
-  const { data, error, isLoading, isFetching } = useShowCustomersQuery({}, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching } = useShowCustomersQuery({ accountHolder, governmentId, accountStatus }, { refetchOnMountOrArgChange: true });
   const [pageNumber, setPageNumber] = useState(1);
   const itemsPerPage = 10;
+
+  const governmentIdChange = (e) => {
+    const inputValue = e.target.value;
+    const sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+    setGovernmentId(sanitizedValue);
+  };
+
+  const handleAdvancedSearch = () => {
+    setAdvancedSearch(!advancedSearch);
+  };
+
+  const selectStyles = {
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+    control: (provided) => ({
+      ...provided,
+      fontSize: '12px',
+      width: '110px',
+    }),
+  };
+
+  const handleAdvanced = () => {
+    refetch();
+  };
 
   useEffect(() => {
     if (error) {
@@ -65,6 +107,34 @@ const Dashboard = () => {
           </div>
           {isLoading || isFetching && <Loader />}
           <div className='box-details'>
+            <div className='box button-container mt-1 px-2 pb-2 pt-1 d-flex justify-content-center'>
+              <div className='box mr-4'>
+                <Button variant="primary" size="sm" className="detail-button" onClick={handleAdvancedSearch}>
+                  <span>Busqueda avanzada</span>
+                </Button>
+              </div>
+            </div>
+            <div className={`box advanced-search d-flex justify-content-center mb-2 ${advancedSearch ? 'advanced-search-visible' : 'advanced-search-hidden'}`}>
+              <Row className='justify-content-center'>
+                <Col>
+                  <div className='box d-flex align-items-center justify-content-between mb-1'>
+                    <Form.Group className='mr-2'>
+                      <Form.Label htmlFor="accountHolder" className='fw-bold detail-text mb-0'>Titular:</Form.Label>
+                      <Form.Control id="accountHolder" type="text" className="form-control form-control" value={accountHolder} onChange={(e) => { setAccountHolder(e.target.value.toUpperCase()); handleAdvanced; }} />
+                    </Form.Group>
+                    <Form.Group>
+                      <Form.Label htmlFor="governmentId" className='fw-bold detail-text mb-0'>Documento:</Form.Label>
+                      <Form.Control id="governmentId" type='text' className="form-control form-control" value={governmentId} onChange={(e) => { governmentIdChange(e); handleAdvanced; }} />
+                    </Form.Group>
+                    <Form.Group className='ml-2'>
+                      <div className='fw-bold detail-text mt-1'>Estado:</div>
+                      <Select options={accountStatusOptions} onChange={(accountStatusOptions) => { setAccountStatus(accountStatusOptions?.value || null); handleAdvanced; }} styles={selectStyles}
+                        menuPortalTarget={document.body} defaultValue={accountStatusOptions[0]} />
+                    </Form.Group>
+                  </div>
+                </Col>
+              </Row>
+            </div>
             <Table striped bordered hover className='mb-0'>
               <thead>
                 <tr>

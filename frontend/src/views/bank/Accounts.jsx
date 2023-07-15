@@ -82,6 +82,7 @@ const AllCustomersAccounts = () => {
         control: (provided) => ({
             ...provided,
             fontSize: '12px',
+            width: '250px',
         }),
     };
 
@@ -169,11 +170,11 @@ const AllCustomersAccounts = () => {
                             <Row className='justify-content-center'>
                                 <Col>
                                     <div className='box d-flex justify-content-between'>
-                                        <Form.Group className='mr-2 mb-2'>
-                                            <Form.Label htmlFor="governmentId" className='fw-bold detail-text'>Titular:</Form.Label>
+                                        <Form.Group className='mr-2 mb-2 flex-grow-1'>
+                                            <Form.Label htmlFor="governmentId" className='fw-bold detail-text'>Titular/Documento:</Form.Label>
                                             <Form.Control id="governmentId" type="text" className="form-control form-control-sm" value={governmentId} onChange={(e) => { setGovernmentId(e.target.value.toUpperCase()); handleAdvanced; }} />
                                         </Form.Group>
-                                        <Form.Group>
+                                        <Form.Group className='flex-grow-1'>
                                             <Form.Label htmlFor="dataAccount" className='fw-bold detail-text'>CBU/Alias:</Form.Label>
                                             <Form.Control id="dataAccount" type="text" className="form-control form-control-sm" value={dataAccount} onChange={(e) => { setDataAccount(e.target.value.toUpperCase()); handleAdvanced; }} />
                                         </Form.Group>
