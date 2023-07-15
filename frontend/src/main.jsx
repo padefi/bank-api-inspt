@@ -20,6 +20,8 @@ import CustomerAccounts from './views/bank/CustomerAccounts';
 import CustomerOperations from './views/bank/CustomerOperations';
 import CustomerProfile from './views/bank/CustomerProfile';
 import AllCustomersAccounts from './views/bank/Accounts';
+import CustomersAccountSummary from './views/bank/AccountSummary';
+import CustomerTransferMoney from './views/bank/Transfer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
@@ -42,8 +44,10 @@ const router = createBrowserRouter(
         <Route path="/bank/customerAccounts/:id" element={<PrivateRouteEmployeeAdmin><CustomerAccounts /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/accountOperations/:id" element={<PrivateRouteEmployeeAdmin><CustomerOperations /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/accounts" element={<PrivateRouteEmployeeAdmin><AllCustomersAccounts /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/AccountSummary" element={<PrivateRouteEmployeeAdmin><CustomersAccountSummary /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/deposit" element={<PrivateRouteEmployeeAdmin><DepositMoney /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/withdraw" element={<PrivateRouteEmployeeAdmin><WithdrawMoney /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/transfer" element={<PrivateRouteEmployeeAdmin><CustomerTransferMoney /></PrivateRouteEmployeeAdmin>} />
 
         {/* <Route index={true} path='/home' element={<Home />} />
         <Route path='/' element={<Home />} />

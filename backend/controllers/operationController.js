@@ -91,7 +91,7 @@ const getAccountOperations = asyncHandler(async (req, res) => {
     const dencryptedId = await decrypt(accountFrom);
 
     // Validación
-    if (!dencryptedId) {
+    if (!accountFrom) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }

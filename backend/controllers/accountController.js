@@ -114,7 +114,9 @@ const getUserAccounts = asyncHandler(async (req, res) => {
         //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
-    accounts = await Promise.all(accounts.map(async (account) => {
+    let newAccounts = accounts;
+
+    newAccounts = await Promise.all(newAccounts.map(async (account) => {
         const encryptedId = await encrypt(account._id.toHexString());
         const operations = await Promise.all(account.operations.map(async (operation) => {
             const encryptedOperationsId = await encrypt(operation._id.toHexString());
@@ -125,7 +127,7 @@ const getUserAccounts = asyncHandler(async (req, res) => {
 
     extendToken(req, res);
     res.status(201).json({
-        accounts
+        accounts: newAccounts,
     });
 });
 
@@ -178,7 +180,7 @@ const getAccount = asyncHandler(async (req, res) => {
             { alias: data }
         ], isActive: true
     }).select({
-        _id: 0,
+        _id: isCustomer(req.user) ? 0 : 1,
         accountId: 1,
         alias: 1
     }).populate({
@@ -203,9 +205,17 @@ const getAccount = asyncHandler(async (req, res) => {
         throw new Error('Cuenta no encontrada.');
     }
 
+    let newAccounts = accounts;
+
+    if (newAccounts._id) {
+        const currentId = newAccounts._id.toHexString();
+        const encryptedId = await encrypt(currentId);
+        newAccounts = { ...newAccounts.toObject(), _id: encryptedId };
+    }
+
     extendToken(req, res);
     res.status(201).json({
-        accounts
+        accounts: newAccounts,
     });
 });
 
