@@ -1,54 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import CardContainer from '../../components/CardContainer';
-import Loader from '../../components/Loader';
 import useCheckCookies from '../../utils/useCheckCookies';
 import BoxContainer from '../../components/BoxContainer';
 import useSessionTimeout from '../../utils/useSessionTimeout';
 import { Button, Col, Form } from 'react-bootstrap';
-import { useGetAccountQuery } from '../../slices/accountApiSlice';
 import AccountSummaryPDF from '../../components/AccountSummaryPDF';
 import { pdf } from '@react-pdf/renderer';
 import { useShowAccountOperationsQuery } from '../../slices/operationApiSlice';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-
-const GetAccount = ({ dataAccount, onDataId, onError }) => {
-  const [checkAccountCompleted, setCheckAccountCompleted] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const { data, error, isLoading, isFetching } = useGetAccountQuery({ data: dataAccount }, { refetchOnMountOrArgChange: true });
-
-  useEffect(() => {
-    if (error) {
-      setIsError(true);
-      onError();
-      toast.error(error.data?.message || error.error);
-    } else if (data) {
-      onDataId(data.accounts._id);
-      setIsError(false);
-      setCheckAccountCompleted(true);
-    }
-  }, [data, error]);
-
-  if (isError) {
-    return null;
-  }
-
-  if (!checkAccountCompleted) {
-    return null;
-  }
-
-  const account = data?.accounts || [];
-
-  return (
-    <>
-      {isLoading || isFetching && <Loader />}
-      <Form.Text className="text-muted">
-        <div className='detail-account'>TITULAR: {account.accountHolder?.lastName?.toUpperCase()} {account.accountHolder?.firsName?.toUpperCase()}</div>
-        <div className='detail-account'>{account.accountHolder?.governmentId?.type?.toUpperCase()}: {account.accountHolder?.governmentId?.number}</div>
-      </Form.Text>
-    </>
-  );
-}
+import GetAccount from '../../components/GetAccount';
 
 const AccountOperations = ({ accountId, dateFrom, dateTo, onDataLoaded }) => {
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
@@ -86,8 +47,8 @@ const CustomerAccountSumarry = () => {
   const [dataAccountOperations, setDataAccountOperations] = useState(false);
   const { userInfo } = useSelector((state) => state.auth);
 
-  const handleDataId = (data) => {
-    setAccountId(data);
+  const handleData = (data) => {
+    setAccountId(data._id);
   };
 
   const handleDataLoaded = (data) => {
@@ -124,12 +85,12 @@ const CustomerAccountSumarry = () => {
           </div>
           <div className='box px-4 d-flex flex-column box-details '>
             <Form.Group className='my-2' controlId='account'>
-              <div className='fw-bold'>Cuenta</div>
+              <Form.Label className='fw-bold mb-0'>Cuenta:</Form.Label>
               <Form.Control type='text' className='form-control-edit-input rounded-0' placeholder='Ingrese alias o CBU a transferir' autoComplete='off' minLength={6}
                 maxLength={22} value={account} onChange={(e) => setAccount(e.target.value.toUpperCase())} onBlur={(e) => setAccountData(e.target.value)}></Form.Control>
 
               {accountData && (
-                <GetAccount dataAccount={account} onDataId={handleDataId} onError={() => { setAccountData(null); setAccountId(null); }} />
+                <GetAccount dataAccount={account} onData={handleData} onError={() => { setAccountData(null); setAccountId(null); }} />
               )}
             </Form.Group>
 

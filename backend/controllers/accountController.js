@@ -182,7 +182,8 @@ const getAccount = asyncHandler(async (req, res) => {
     }).select({
         _id: isCustomer(req.user) ? 0 : 1,
         accountId: 1,
-        alias: 1
+        alias: 1,
+        type: 1,
     }).populate({
         path: 'accountHolder',
         select: {
@@ -197,6 +198,8 @@ const getAccount = asyncHandler(async (req, res) => {
             _id: 0,
             initials: 1,
             name: 1,
+            acronym: 1,
+            symbol: 1,
         },
     });
 

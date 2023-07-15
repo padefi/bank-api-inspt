@@ -21,13 +21,14 @@ const ConfirmOperationModal = ({ state, type, desc, date, origin, destination, a
             acronym={acronym}
             tax={tax}
         />).toBlob();
-        
+
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        window.open(url, '_blank'); // Abre el PDF en una nueva pestaña
+        /* const link = document.createElement('a');
         link.href = url;
         link.download = date + '.pdf';
         link.click();
-        URL.revokeObjectURL(url);
+        URL.revokeObjectURL(url); */
     };
 
     return (

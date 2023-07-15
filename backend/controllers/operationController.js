@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Account from "../models/accountModel.js";
 import Operation from "../models/operationModel.js"
-import { isAdmin, isCustomer } from "../middlewares/authMiddleware.js";
+import { isAdmin, isCustomer, isEmployee } from "../middlewares/authMiddleware.js";
 import { extendToken } from "../utils/generateToken.js";
 import { decrypt } from "../utils/crypter.js";
 
@@ -19,7 +19,7 @@ const getAllOperations = asyncHandler(async (req, res) => {
     if (!dencryptedOperationId || !dencryptedId) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
-    }    
+    }
 
     const operations = await Operation.findOne({ _id: dencryptedOperationId }).populate([
         {
@@ -96,7 +96,7 @@ const getAccountOperations = asyncHandler(async (req, res) => {
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const query = Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance').populate('currency','-_id acronym symbol');
+    const query = Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance').populate('currency', '-_id acronym symbol');
 
     const matchConditions = {};
     const startDate = (dateFrom) ? new Date(new Date(dateFrom).getTime() + new Date().getTimezoneOffset() * 60000) : '';
@@ -217,7 +217,7 @@ const depositMoney = asyncHandler(async (req, res) => {
 
     const dencryptedId = await decrypt(accountId);
 
-    const accountFrom = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
+    const accountFrom = await Account.findOne(isAdmin(req.user) || isEmployee(req.user) ? { _id: dencryptedId } : { _id: dencryptedId, accountHolder: req.user._id });
 
     if (!accountFrom) {
         res.status(403);
@@ -295,7 +295,7 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 
     const dencryptedId = await decrypt(accountId);
 
-    const accountFrom = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id });
+    const accountFrom = await Account.findOne(isAdmin(req.user) || isEmployee(req.user) ? { _id: dencryptedId } : { _id: dencryptedId, accountHolder: req.user._id });
 
     if (!accountFrom) {
         res.status(403);
@@ -375,7 +375,7 @@ const transferMoney = asyncHandler(async (req, res) => {
 
     const dencryptedId = await decrypt(accountFromId);
 
-    const accountFrom = await Account.findOne({ _id: dencryptedId, accountHolder: req.user._id }).populate('currency','-_id acronym symbol');
+    const accountFrom = await Account.findOne(isAdmin(req.user) || isEmployee(req.user) ? { _id: dencryptedId } : { _id: dencryptedId, accountHolder: req.user._id }).populate('currency', '-_id acronym symbol');
 
     if (!accountFrom) {
         res.status(403);
@@ -397,7 +397,7 @@ const transferMoney = asyncHandler(async (req, res) => {
             { accountId: accountTo },
             { alias: accountTo }
         ], isActive: true
-    }).populate('currency','-_id acronym symbol');
+    }).populate('currency', '-_id acronym symbol');
 
     if (!accountToData) {
         res.status(404);
