@@ -83,7 +83,8 @@ const CustomerOperations = () => {
     const account = data || null;
     const startIndex = (pageNumber - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedOperations = account?.operationDataArray?.slice(startIndex, endIndex);
+    let paginatedOperations = account?.operationDataArray?.slice().reverse();
+    paginatedOperations = paginatedOperations?.slice(startIndex, endIndex);
 
     return (
         <div className='box'>

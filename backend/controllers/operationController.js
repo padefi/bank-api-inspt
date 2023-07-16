@@ -368,7 +368,7 @@ const transferMoney = asyncHandler(async (req, res) => {
     let description = req.body.description;
 
     // Validación
-    if (!accountFromId || !accountTo || !amount) {
+    if (!accountFromId || !accountTo || !amount || !description) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }

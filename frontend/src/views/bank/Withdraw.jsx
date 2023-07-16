@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CardContainer from '../../components/CardContainer';
 import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
@@ -89,7 +89,7 @@ const WithdrawMoney = () => {
                 <Form.Label className='fw-bold mb-0'>Importe</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>{currency}</InputGroup.Text>
-                  <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' value={amount} onChange={(e) => setAmount(amountFormat(e.target.value))} disabled={!account} />
+                  <Form.Control type='text' inputMode='decimal' placeholder='Ingrese importe' autoComplete='off' value={amount} onChange={(e) => setAmount(amountFormat(e.target.value))} disabled={!account} />
                 </InputGroup>
               </Form.Group>
 
