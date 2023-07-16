@@ -1,10 +1,103 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
+import Role from "../models/roleModel.js";
 import { generateToken, extendToken } from "../utils/generateToken.js";
-import { isAdmin, loginIsCustomer } from "../middlewares/authMiddleware.js";
+import { isAdmin } from "../middlewares/authMiddleware.js";
 import { endUserExpiration, initialUserExpiration } from "../middlewares/sessionMiddleware.js";
 import UserSession from "../models/userSessionModel.js";
-import { decrypt } from "../utils/crypter.js";
+import { decrypt, encrypt } from "../utils/crypter.js";
+
+// @desc    Ver usuarios
+// @route   GET /api/user/
+// @access  Private
+const getUsers = asyncHandler(async (req, res) => {
+
+    const { userData, userName, userType, userStatus } = req.query;
+
+    if (!isAdmin(req.user)) {
+        res.status(400);
+        throw new Error('Sin autorización.');
+    }
+
+    const role = await Role.findOne({ name: 'cliente' });
+
+    if (!role) {
+        res.status(404);
+        throw new Error('Rol no encontrado');
+    }
+
+    let matchConditions = [];
+
+    if (userData || userName || userType || (userStatus !== '' && userStatus !== 'null')) {
+        const conditions = [];
+
+        if (userName) {
+            conditions.push({ 'userName': { $regex: new RegExp(governmentId, 'i') } });
+        }
+
+        if (userData) {
+            conditions.push({
+                $or: [
+                    { 'firstName': { $regex: new RegExp(userData, 'i') } },
+                    { 'lastName': { $regex: new RegExp(userData, 'i') } },
+                ]
+            });
+        }
+
+        if ((userStatus !== '' && userStatus !== 'null')) {
+            conditions.push({ 'isActive': userStatus === 'true' });
+        }
+
+        if (conditions.length > 0) {
+            matchConditions.push({ $and: conditions });
+        }
+    }
+
+    const users = await User.find({ role: { $ne: role._id }, ...(matchConditions.length > 0 ? { $and: matchConditions } : {}) })
+        .select('_id firstName lastName isActive')
+        .populate('role', '-_id name');
+
+    if (!users) {
+        res.status(403);
+        throw new Error('No se encontraron usuarios.');
+    }
+
+    let newUsers = users.filter((user) => user.user !== null);
+
+    newUsers = await Promise.all(newUsers.map(async (user) => {
+        const encryptedId = await encrypt(user._id.toHexString());
+        return { ...user.toObject(), _id: encryptedId };
+    }));
+
+    extendToken(req, res);
+    res.status(201).json({
+        user: newUsers
+    });
+});
+
+// @desc    Obtener los tipo de usuario
+// @route   POST /api/users/types
+// @access  Private
+const getUserRoles = asyncHandler(async (req, res) => {
+
+    const roles = await Role.find({ name: { $ne: 'cliente' } }).select('_id name');
+
+    if (!roles) {
+        res.status(403);
+        throw new Error('No se encontraron roles.');
+    }
+
+    let newRoles = roles.filter((user) => user.user !== null);
+
+    newRoles = await Promise.all(newRoles.map(async (rol) => {
+        const encryptedId = await encrypt(rol._id.toHexString());
+        return { ...rol.toObject(), _id: encryptedId };
+    }));
+
+    res.status(201).json({
+        roles: newRoles
+    });
+});
 
 // @desc    Login usuario & get token
 // @route   POST /api/users/auth
@@ -276,6 +369,8 @@ const unlockUser = asyncHandler(async (req, res) => {
 });
 
 export {
+    getUsers,
+    getUserRoles,
     loginUser,
     logoutUser,
     registerUser,

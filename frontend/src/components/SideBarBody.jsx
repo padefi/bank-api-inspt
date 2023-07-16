@@ -1,6 +1,6 @@
 import Sidebar from "react-bootstrap-sidebar-menu";
 import { LinkContainer } from 'react-router-bootstrap';
-import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaShareSquare, FaWallet } from "react-icons/fa";
+import { FaArrowCircleDown, FaArrowCircleUp, FaDollarSign, FaHome, FaHotel, FaRegChartBar, FaShareSquare, FaUsers, FaWallet } from "react-icons/fa";
 import { NavLink } from "react-bootstrap";
 import UserRole from "../utils/userRole";
 
@@ -74,6 +74,14 @@ const SideBarBody = () => {
                         </Sidebar.Nav>
                     </Sidebar.Sub.Collapse>
                 </Sidebar.Sub>
+                {isAdmin && (
+                    <LinkContainer to='/bank/userPanel'>
+                        <NavLink className="sidebar-menu-nav-link">
+                            <FaUsers />
+                            <Sidebar.Nav.Title>Panel de usuarios</Sidebar.Nav.Title>
+                        </NavLink>
+                    </LinkContainer>
+                )}
             </Sidebar.Nav>
         </Sidebar.Body>
     );

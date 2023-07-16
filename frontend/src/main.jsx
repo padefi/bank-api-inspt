@@ -22,6 +22,7 @@ import CustomerProfile from './views/bank/CustomerProfile';
 import AllCustomersAccounts from './views/bank/Accounts';
 import CustomersAccountSummary from './views/bank/AccountSummary';
 import CustomerTransferMoney from './views/bank/Transfer';
+import UserPanel from './views/bank/UserPanel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
@@ -48,6 +49,7 @@ const router = createBrowserRouter(
         <Route path="/bank/deposit" element={<PrivateRouteEmployeeAdmin><DepositMoney /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/withdraw" element={<PrivateRouteEmployeeAdmin><WithdrawMoney /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/transfer" element={<PrivateRouteEmployeeAdmin><CustomerTransferMoney /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/userPanel" element={<PrivateRouteEmployeeAdmin><UserPanel /></PrivateRouteEmployeeAdmin>} />
 
         {/* <Route index={true} path='/home' element={<Home />} />
         <Route path='/' element={<Home />} />

@@ -146,7 +146,7 @@ const Dashboard = () => {
                       <td>{customer.number}</td>
                       <td>{customer.user.lastName.toUpperCase()} {customer.user.firstName.toUpperCase()}</td>
                       <td><strong>{customer.user.governmentId.type.toUpperCase()}</strong> - {customer.user.governmentId.number}</td>
-                      <td>{customer.user.isActive ? (`Activo`) : (`Baja`)}</td>
+                      <td>{customer.user.isActive ? (`ACTIVO`) : (`BAJA`)}</td>
                       <td>
                         <div className='box d-flex justify-content-center'>
                           <Button variant="outline-primary" title="Ver cuentas" size="sm" className='mr-2' onClick={() => handleClickAccounts(customer.user._id)}><FaWallet /></Button>

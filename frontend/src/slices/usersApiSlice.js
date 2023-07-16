@@ -16,6 +16,21 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
       }),
     }),
+    showUsers: builder.query({
+      query: ({ userData, userName, userType, userStatus }) => ({
+        url: `${USERS_URL}/?userData=${userData}&userName=${userName}&userType=${userType}&userStatus=${userStatus}`,
+        method: 'GET',
+      }),
+    }),
+    getUserRoles: builder.query({
+      query: () => `${USERS_URL}/roles`,
+    }),
+    getUserProfile: builder.query({
+      query: ({ id }) => ({
+        url: `${USERS_URL}/profile?id=${id}`,
+        method: 'GET',
+      }),
+    }),
     updateUser: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/profile`,
@@ -43,6 +58,9 @@ export const userApiSlice = apiSlice.injectEndpoints({
 export const {
   useLoginMutation,
   useLogoutMutation,
+  useShowUsersQuery,
+  useGetUserRolesQuery,
+  useGetUserProfileQuery,
   useUpdateUserMutation,
   useLockUserMutation,
   useUnlockUserMutation,
