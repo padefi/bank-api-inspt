@@ -24,7 +24,6 @@ const customerSchema = mongoose.Schema(
   {
     number: {
       type: Number,
-      required: true,
       unique: true
     },
     type: {

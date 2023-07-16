@@ -52,8 +52,6 @@ const CustomerProfile = () => {
     const { data, error, isLoading, isFetching, refetch } = useGetCustomerProfileQuery({ id: id });
     const [lockUser, { isLoading: isLoadingLockUser }] = useLockUserMutation();
     const [unlockUser, { isLoading: isLoadingUnlockUser }] = useUnlockUserMutation();
-
-    const dispatch = useDispatch();
     const [updateCustomerProfile, { isLoadingUpdate }] = useUpdateCustomerMutation();
 
     const dataRole = UserRole();
@@ -127,8 +125,7 @@ const CustomerProfile = () => {
                 email,
                 phoneNumber,
             })).unwrap();
-            dispatch(setCredentials({ ...res }));
-            toast.success('Perfil actualizado exitosamente!');
+            toast.success('Cliente actualizado exitosamente!');
         } catch (err) {
             toast.error(err?.data?.message || err.error);
         }
@@ -152,57 +149,53 @@ const CustomerProfile = () => {
                                         <strong>N° cliente: </strong>{customer.number}
                                     </div>
                                 </div>
-                                <hr className='my-1' />
-                                <div className="d-flex justify-content-between">
-                                    <div className="mr-2">
+                                <div className="custom-grid-container">
+                                    <hr className="my-1" />
+                                    <div>
                                         <Form.Group className='my-2'>
                                             <h6 className='fw-bold h6-CardContainer'>Tipo Documento</h6>
-                                            <Select className='input2-CardContainer' options={governmentIdTypes} onChange={(option) => setGovernmentIdType(option?.value || null)} styles={selectStyles} defaultValue={governmentIdTypes.find((option) => option.value === customer.user.governmentId.type)} />
+                                            <Select options={governmentIdTypes} onChange={(option) => setGovernmentIdType(option?.value || null)} styles={selectStyles} defaultValue={governmentIdTypes.find((option) => option.value === customer.user.governmentId.type)} />
                                         </Form.Group>
                                     </div>
-                                    <div className="mr-2">
+                                    <div>
                                         <Form.Group className='my-2' controlId='governmentId'>
                                             <Form.Label className='fw-bold'>N° Documento</Form.Label>
-                                            <Form.Control type='text' className='input2-CardContainer' placeholder='Ingrese n° de documento' autoComplete='off' maxLength={11} required value={governmentId} onChange={(e) => setGovernmentId(e.target.value.toUpperCase())}></Form.Control>
+                                            <Form.Control type='text' placeholder='Ingrese n° de documento' autoComplete='off' maxLength={11} required value={governmentId} onChange={(e) => setGovernmentId(e.target.value.toUpperCase())}></Form.Control>
                                         </Form.Group>
                                     </div>
-                                    <div className="mr-2">
+                                    <div>
                                         <Form.Group className='my-2'>
                                             <h6 className='fw-bold h6-CardContainer'>Tipo de Cliente</h6>
-                                            <Select className='input1-CardContainer' options={customerTypes} onChange={(option) => setCustomerType(option?.value || null)} styles={selectStyles} defaultValue={customerTypes.find((option) => option.value === customer.type)} />
+                                            <Select options={customerTypes} onChange={(option) => setCustomerType(option?.value || null)} styles={selectStyles} defaultValue={customerTypes.find((option) => option.value === customer.type)} />
                                         </Form.Group>
                                     </div>
-                                </div>
-                                <hr className='my-1' />
-                                <div className="d-flex justify-content-between">
-                                    <div className="mr-2">
+                                    <hr className='my-1' />
+                                    <div>
                                         <Form.Group className='my-2' controlId='lastName'>
                                             <Form.Label className='fw-bold'>Apellido</Form.Label>
                                             <Form.Control type='text' placeholder='Ingrese Apellido' autoComplete='off' required value={lastName} onChange={(e) => setLastName(e.target.value.toUpperCase())}></Form.Control>
                                         </Form.Group>
                                     </div>
-                                    <div className="mr-2">
+                                    <div>
                                         <Form.Group className='my-2' controlId='firstName'>
                                             <Form.Label className='fw-bold'>Nombre</Form.Label>
                                             <Form.Control type='text' placeholder='Ingrese Nombre' autoComplete='off' required value={firstName} onChange={(e) => setFirstName(e.target.value.toUpperCase())}></Form.Control>
                                         </Form.Group>
                                     </div>
-                                    <div className="mr-2">
+                                    <div>
                                         <Form.Group className='my-2' controlId='bornDate'>
                                             <Form.Label className='fw-bold'>F. Nacimiento</Form.Label>
                                             <Form.Control type='date' placeholder='Ingrese Nombre' autoComplete='off' required value={bornDate} onChange={(e) => setBornDate(e.target.value.toUpperCase())}></Form.Control>
                                         </Form.Group>
                                     </div>
-                                </div>
-                                <hr className='my-1' />
-                                <div className="d-flex">
-                                    <div className="mr-2">
+                                    <hr className='my-1' />
+                                    <div>
                                         <Form.Group className='my-2' controlId='email'>
                                             <Form.Label className='fw-bold'>Email Address</Form.Label>
                                             <Form.Control type='email' placeholder='Ingrese Mail' autoComplete='off' required value={email} onChange={(e) => setEmail(e.target.value.toUpperCase())}></Form.Control>
                                         </Form.Group>
                                     </div>
-                                    <div className="mr-2">
+                                    <div>
                                         <Form.Group className='my-2' controlId='phoneNumber'>
                                             <Form.Label className='fw-bold'>Telefono</Form.Label>
                                             <Form.Control type='text' placeholder='Ingrese número de teléfono' autoComplete='off' required value={phoneNumber} onChange={(e) => setPhoneNumber(numberFormat(e.target.value))}></Form.Control>

@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 const governmentIdTypes = ['cuil', 'cuit', 'dni', 'pas'];
 
 const userSchema = mongoose.Schema({
-    email: {
+    userName: {
         type: String,
         lowercase: true,
         trim: true,
@@ -21,6 +21,13 @@ const userSchema = mongoose.Schema({
         ref: 'Role',
         required: true,
         default: '000000000000000000000002'
+    },
+    email: {
+        type: String,
+        lowercase: true,
+        trim: true,
+        unique: true,
+        required: true
     },
     firstName: {
         type: String,
@@ -43,7 +50,8 @@ const userSchema = mongoose.Schema({
         },
         number: {
             type: String,
-            trim: true
+            trim: true,
+            unique: true
         }
     },
     bornDate: {
@@ -59,13 +67,6 @@ const userSchema = mongoose.Schema({
     },
 }, {
     timestamps: true
-});
-
-userSchema.index({
-    'governmentId.type': 1,
-    'governmentId.number': 1
-}, {
-    unique: true
 });
 
 // Encriptado de la contraseña

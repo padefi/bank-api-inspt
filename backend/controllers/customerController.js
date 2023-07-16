@@ -6,6 +6,70 @@ import Role from "../models/roleModel.js";
 import Customer from "../models/customerModel.js";
 import User from "../models/userModel.js";
 
+// @desc    Crear un nuevo cliente
+// @route   POST /api/users/create
+// @access  Private
+const createCustomer = asyncHandler(async (req, res) => {
+
+    const { governmentIdType, governmentId, customerType, lastName, firstName, bornDate, email, phoneNumber } = req.body;
+
+    if (!isAdmin(req.user) && !isEmployee(req.user)) {
+        res.status(400);
+        throw new Error('Sin autorización.');
+    }
+
+    // Validación
+    if (!governmentIdType || !governmentId || !customerType || !lastName || !firstName || !bornDate || !email || !phoneNumber) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const userName = governmentId;
+    const governmentIdBD = {
+        type: governmentIdType,
+        number: governmentId
+    }
+
+    const CustomerExists = await User.findOne({ userName });
+
+    if (CustomerExists) {
+        res.status(400);
+        throw new Error('Cliente ya registrado.');
+    }
+
+    const user = await User.create({
+        userName,
+        email,
+        password: userName,
+        firstName,
+        lastName,
+        phone: phoneNumber,
+        governmentId: governmentIdBD,
+        bornDate
+    });
+
+    const customer = await Customer.create({
+        type: customerType,
+        user: user._id
+    });
+
+    if(!customer) {
+        const deleteUser = await User.deleteOne({ _id: user._id });
+        res.status(400);
+        throw new Error('Ha ocurrido un error al crear al cliente.');
+    }
+
+    if (user && customer) {
+        extendToken(req, res);
+        res.status(201).json({
+            message: 'Cliente creado con exito.'
+        });
+    } else {
+        res.status(400);
+        throw new Error('Información invalida.');
+    }
+});
+
 // @desc    Ver clients
 // @route   GET /api/customer/
 // @access  Private
@@ -166,6 +230,7 @@ const updateCustomerProfile = asyncHandler(async (req, res) => {
 });
 
 export {
+    createCustomer,
     getCustomer,
     getCustomerProfile,
     updateCustomerProfile,

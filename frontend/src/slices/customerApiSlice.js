@@ -3,12 +3,19 @@ const CUSTOMERS_URL = '/api/customers';
 
 export const customerApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    createCustomer: builder.mutation({
+      query: (data) => ({
+        url: `${CUSTOMERS_URL}/create`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
     showCustomers: builder.query({
       query: ({ accountHolder, governmentId, accountStatus }) => ({
         url: `${CUSTOMERS_URL}/?accountHolder=${accountHolder}&governmentId=${governmentId}&accountStatus=${accountStatus}`,
         method: 'GET',
       }),
-    }),
+    }),    
     getCustomerProfile: builder.query({
       query: ({ id }) => ({
         url: `${CUSTOMERS_URL}/profile?id=${id}`,
@@ -26,6 +33,7 @@ export const customerApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
+  useCreateCustomerMutation,
   useShowCustomersQuery,
   useGetCustomerProfileQuery,
   useUpdateCustomerMutation,

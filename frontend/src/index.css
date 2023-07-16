@@ -455,19 +455,27 @@
     vertical-align: middle !important;
 }
 
-.customer-number{
- width: 5rem;
- text-align: right;
+.customer-number {
+    width: 5rem;
+    text-align: right;
 }
 
 .h6-CardContainer {
     margin-bottom: 0.75rem;
 }
 
-.input1-CardContainer {
-    width: 13rem;
+#button-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
 }
 
-.input2-CardContainer {
-    width: 9rem;
+.custom-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.custom-grid-container hr {
+    grid-column: 1 / -1;
+    margin: 0.5rem 0;
 }

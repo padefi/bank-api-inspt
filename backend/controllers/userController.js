@@ -176,10 +176,10 @@ const logoutUser = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Registrar un nuevo usuario
-// @route   POST /api/users/register
+// @desc    Crear un nuevo usuario
+// @route   POST /api/users/create
 // @access  Private
-const registerUser = asyncHandler(async (req, res) => {
+const createUser = asyncHandler(async (req, res) => {
 
     const { email, password, firstName, lastName, phone, governmentId, bornDate } = req.body;
 
@@ -373,7 +373,7 @@ export {
     getUserRoles,
     loginUser,
     logoutUser,
-    registerUser,
+    createUser,
     profileUser,
     updateUserProfile,
     lockUser,

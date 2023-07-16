@@ -211,7 +211,7 @@ const Accounts = () => {
               Cancelar
             </Button>
             <Button type='submit' variant='success' disabled={!accountType || !currencyId}>
-              Ingresar
+              Confirmar
             </Button>
           </Modal.Footer>
         </Form>
