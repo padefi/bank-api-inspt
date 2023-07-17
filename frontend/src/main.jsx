@@ -26,6 +26,7 @@ import UserPanel from './views/bank/UserPanel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import UserProfile from './views/bank/UserProfile';
+import ProfileUser from './views/bank/ProfileUser';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -52,6 +53,7 @@ const router = createBrowserRouter(
         <Route path="/bank/transfer" element={<PrivateRouteEmployeeAdmin><CustomerTransferMoney /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/userPanel" element={<PrivateRouteAdmin><UserPanel /></PrivateRouteAdmin>} />
         <Route path="/bank/userProfile/:id" element={<PrivateRouteAdmin><UserProfile /></PrivateRouteAdmin>} />
+        <Route path="/bank/profile" element={<PrivateRouteEmployeeAdmin><ProfileUser /></PrivateRouteEmployeeAdmin>} />
 
         {/* <Route index={true} path='/home' element={<Home />} />
         <Route path='/' element={<Home />} />
