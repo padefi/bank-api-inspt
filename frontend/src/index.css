@@ -479,3 +479,11 @@
     grid-column: 1 / -1;
     margin: 0.5rem 0;
 }
+
+.two-divs-container {
+    grid-column: span 2;
+}
+
+.three-divs-container {
+    grid-column: span 3;
+}

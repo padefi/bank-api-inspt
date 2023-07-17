@@ -175,7 +175,7 @@ const getCustomerProfile = asyncHandler(async (req, res) => {
 
     let customer = await Customer.findOne({ user: dencryptedId })
         .select('-_id number type')
-        .populate('user', '-_id bornDate email firstName governmentId lastName phone isActive');
+        .populate('user', '-_id userName bornDate email firstName governmentId lastName phone isActive');
 
     if (!customer) {
         res.status(404);

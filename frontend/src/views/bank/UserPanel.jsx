@@ -12,18 +12,18 @@ import Select from 'react-select';
 import numberFormat from '../../utils/numberFormat';
 
 const UserRoleOptions = ({ selectStyles, setUserRole }) => {
-  const [getUserTypesCompleted, setGetUserTypesCompleted] = useState(false);
+  const [getUserRolesCompleted, setGetUserRolesCompleted] = useState(false);
   const { data, error } = useGetUserRolesQuery({}, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (error) {
       toast.error(error.data?.message || error.error);
     } else {
-      setGetUserTypesCompleted(true);
+      setGetUserRolesCompleted(true);
     }
   }, [data, error]);
 
-  if (!getUserTypesCompleted) {
+  if (!getUserRolesCompleted) {
     return null;
   }
 
@@ -57,19 +57,18 @@ const UserPanel = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState('');
   const [userName, setUserName] = useState('');
-  const [userType, setUserRole] = useState('');
+  const [userRole, setUserRole] = useState('');
   const [userStatus, setUserStatus] = useState('');
   const userStatusOptions = UserStatusOptions();
   const [advancedSearch, setAdvancedSearch] = useState(false);
   const [showModal, setShow] = useState(false);
-  const [governmentIdTypeModal, setGovernmentIdTypeModal] = useState('cuil');
   const [governmentIdModal, setGovernmentIdModal] = useState('');
   const [firstNameModal, setFirstNameModal] = useState('');
   const [lastNameModal, setLastNameModal] = useState('');
   const [bornDateModal, setBornDateModal] = useState('');
   const [phoneNumberModal, setPhoneNumberModal] = useState('');
   const [checkUsersCompleted, setCheckUsersCompleted] = useState(false);
-  const { data, error, isLoading, isFetching, refetch } = useShowUsersQuery({ userData, userName, userType, userStatus }, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching, refetch } = useShowUsersQuery({ userData, userName, userRole, userStatus }, { refetchOnMountOrArgChange: true });
   const [pageNumber, setPageNumber] = useState(1);
   const itemsPerPage = 10;
   const [createUser, { isLoadingCreateUser }] = useCreateUserMutation();
@@ -95,9 +94,11 @@ const UserPanel = () => {
       ...base,
       zIndex: 9999,
     }),
-    control: (provided) => ({
+    control: (provided, state) => ({
       ...provided,
       fontSize: '12px',
+      backgroundColor: state.isDisabled ? '#f9f9f9' : 'white',
+      cursor: state.isDisabled ? 'not-allowed' : 'pointer',
     }),
   };
 
@@ -135,7 +136,6 @@ const UserPanel = () => {
   };
 
   const handleButtonOpenModal = () => {
-    setGovernmentIdTypeModal('cuil');
     setGovernmentIdModal('');
     setFirstNameModal('');
     setLastNameModal('');
@@ -150,14 +150,13 @@ const UserPanel = () => {
     e.preventDefault();
     try {
       const res = await createUser(({
-        governmentIdType: governmentIdTypeModal,
         governmentId: governmentIdModal,
         lastName: lastNameModal,
         firstName: firstNameModal,
         bornDate: bornDateModal,
         phoneNumber: phoneNumberModal,
       })).unwrap();
-      toast.success('Cliente creado exitosamente!');
+      toast.success('Usuario creado exitosamente!');
       setShow(false);
       refetch();
     } catch (err) {
@@ -273,7 +272,7 @@ const UserPanel = () => {
                 <div>
                   <Form.Group className='my-2'>
                     <h6 className='fw-bold h6-CardContainer'>Tipo Documento</h6>
-                    <Select options={[{ value: 'cuil', label: 'CUIL' }]} styles={selectStylesModal} defaultValue={{ value: 'cuil', label: 'CUIL' }}/>
+                    <Select options={[{ value: 'cuil', label: 'CUIL' }]} styles={selectStylesModal} defaultValue={{ value: 'cuil', label: 'CUIL' }} isDisabled={true} />
                   </Form.Group>
                 </div>
                 <div>
@@ -281,14 +280,14 @@ const UserPanel = () => {
                     <Form.Label className='fw-bold'>N° Documento</Form.Label>
                     <Form.Control type='text' placeholder='Ingrese n° de documento' autoComplete='off' minLength={11} maxLength={11} required value={governmentIdModal} onChange={(e) => setGovernmentIdModal(numberFormat(e.target.value))}></Form.Control>
                   </Form.Group>
-                </div>                
+                </div>
                 <div>
                   <Form.Group className='my-2' controlId='bornDate'>
                     <Form.Label className='fw-bold'>F. Nacimiento</Form.Label>
                     <Form.Control type='date' placeholder='Ingrese Nombre' autoComplete='off' required value={bornDateModal} onChange={(e) => setBornDateModal(e.target.value.toUpperCase())}></Form.Control>
                   </Form.Group>
                 </div>
-                <hr className="my-1" />                
+                <hr className="my-1" />
                 <div>
                   <Form.Group className='my-2' controlId='lastName'>
                     <Form.Label className='fw-bold'>Apellido</Form.Label>

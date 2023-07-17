@@ -23,7 +23,7 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (userInfo) {
-      if (userInfo.role === 'employee' || userInfo.role === 'admin') navigate('/bank/dashboard');
+      if (userInfo.role === 'empleado' || userInfo.role === 'admin') navigate('/bank/dashboard');
       else navigate('/customer/home');
     }
   }, [navigate, userInfo]);
@@ -33,7 +33,7 @@ const LoginScreen = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      if (res.role === 'employee' || res.role === 'admin') navigate('/bank/dashboard');
+      if (res.role === 'empleado' || res.role === 'admin') navigate('/bank/dashboard');
       else navigate('/customer/home');
     } catch (err) {
       toast.error(err?.data?.message || err.error);

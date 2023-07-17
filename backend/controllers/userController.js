@@ -12,13 +12,15 @@ import { decrypt, encrypt } from "../utils/crypter.js";
 // @access  Private
 const createUser = asyncHandler(async (req, res) => {
 
-    const { governmentIdType, governmentId, lastName, firstName, bornDate, phoneNumber } = req.body;
+    const { governmentId, lastName, firstName, bornDate, phoneNumber } = req.body;
 
     // Validación
-    if (!governmentIdType || !governmentId || !lastName || !firstName || !bornDate || !phoneNumber) {
+    if (!governmentId || !lastName || !firstName || !bornDate || !phoneNumber) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
+
+    const governmentIdType = 'cuil';
 
     let userExists = await User.findOne({
         "governmentId.type": governmentIdType,
@@ -80,7 +82,7 @@ const createUser = asyncHandler(async (req, res) => {
 // @access  Private
 const getUsers = asyncHandler(async (req, res) => {
 
-    const { userData, userName, userType, userStatus } = req.query;
+    const { userData, userName, userRole, userStatus } = req.query;
 
     if (!isAdmin(req.user)) {
         res.status(400);
@@ -96,24 +98,28 @@ const getUsers = asyncHandler(async (req, res) => {
 
     let matchConditions = [];
 
-    if (userData || userName || userType || (userStatus !== '' && userStatus !== 'null')) {
+    if (userData || userName || (userRole !== '' && userRole !== 'null') || (userStatus !== '' && userStatus !== 'null')) {
         const conditions = [];
-
-        if (userName) {
-            conditions.push({ 'userName': { $regex: new RegExp(userName, 'i') } });
-        }
 
         if (userData) {
             conditions.push({
                 $or: [
-                    { 'firstName': { $regex: new RegExp(userData, 'i') } },
-                    { 'lastName': { $regex: new RegExp(userData, 'i') } },
+                    { firstName: { $regex: new RegExp(userData, 'i') } },
+                    { lastName: { $regex: new RegExp(userData, 'i') } },
                 ]
             });
         }
 
+        if (userName) {
+            conditions.push({ userName: { $regex: new RegExp(userName, 'i') } });
+        }
+
+        if (userRole !== '' && userRole !== 'null') {
+            conditions.push({ role: decrypt(userRole) });
+        }
+
         if ((userStatus !== '' && userStatus !== 'null')) {
-            conditions.push({ 'isActive': userStatus === 'true' });
+            conditions.push({ isActive: userStatus === 'true' });
         }
 
         if (conditions.length > 0) {
@@ -247,6 +253,96 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @desc    Datos del usuario
 // @route   GET /api/users/profile
 // @access  Private
+const userProfile = asyncHandler(async (req, res) => {
+
+    const { id } = req.query;
+
+    // Validación
+    if (!id) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    if (!isAdmin(req.user)) {
+        res.status(400);
+        throw new Error('Sin autorización.');
+    }
+
+    const dencryptedId = await decrypt(id);
+
+    const user = await User.findById(dencryptedId)
+        .select('-_id userName bornDate email firstName governmentId lastName phone isActive')
+        .populate('role', '_id name');
+
+    if (!user) {
+        res.status(404);
+        throw new Error('Usuario no encontrado.');
+    }
+
+    let newUser = user;
+
+    const roleId = newUser.role._id.toHexString();
+    const encryptedRoleId = await encrypt(roleId);
+    newUser = { ...newUser.toObject(), role: { ...user.role.toObject(), _id: encryptedRoleId } };
+
+    extendToken(req, res);
+    res.status(201).json({
+        user: newUser
+    });
+});
+
+// @desc    Actualizar datos del usuario
+// @route   PUT /api/users/profile
+// @access  Private
+const updateUserProfile = asyncHandler(async (req, res) => {
+
+    const { userId, governmentId, bornDate, lastName, firstName, phoneNumber, userRole } = req.body;
+
+    // Validación
+    if (!userId || !governmentId || !bornDate || !lastName || !firstName || !phoneNumber || !userRole) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    if (!isAdmin(req.user)) {
+        res.status(400);
+        throw new Error('Sin autorización.');
+    }
+
+    const dencryptedId = await decrypt(userId);
+
+    const user = await User.findById(dencryptedId);
+
+    if (!user) {
+        res.status(404);
+        throw new Error('Usuario no encontrado.');
+    }
+
+    const dencryptedRoleId = await decrypt(userRole);
+
+    if (user) {
+        user.role = dencryptedRoleId || user.role;
+        user.firstName = firstName || user.firstName;
+        user.lastName = lastName || user.lastName;
+        user.phone = phoneNumber || user.phone;
+        user.governmentId.number = governmentId || user.governmentId.number;
+        user.bornDate = bornDate || user.bornDate;
+
+        const updateUser = await user.save();
+
+        extendToken(req, res);
+        res.json({
+            message: 'Usuario actualizado con éxito.'
+        });
+    } else {
+        res.status(404);
+        throw new Error('Usuario no encontrado.');
+    }
+});
+
+// @desc    Datos del usuario
+// @route   GET /api/users/profileUser
+// @access  Private
 const profileUser = asyncHandler(async (req, res) => {
 
     if (req.user) {
@@ -268,9 +364,9 @@ const profileUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Actualizar datos del usuario
-// @route   PUT /api/users/profile
+// @route   PUT /api/users/profileUser
 // @access  Private
-const updateUserProfile = asyncHandler(async (req, res) => {
+const updateProfileUser = asyncHandler(async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
@@ -388,8 +484,10 @@ export {
     getUserRoles,
     loginUser,
     logoutUser,
-    profileUser,
+    userProfile,
     updateUserProfile,
+    profileUser,
+    updateProfileUser,
     lockUser,
     unlockUser,
 }

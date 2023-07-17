@@ -24,8 +24,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     showUsers: builder.query({
-      query: ({ userData, userName, userType, userStatus }) => ({
-        url: `${USERS_URL}/?userData=${userData}&userName=${userName}&userType=${userType}&userStatus=${userStatus}`,
+      query: ({ userData, userName, userRole, userStatus }) => ({
+        url: `${USERS_URL}/?userData=${userData}&userName=${userName}&userRole=${userRole}&userStatus=${userStatus}`,
         method: 'GET',
       }),
     }),
@@ -41,6 +41,16 @@ export const userApiSlice = apiSlice.injectEndpoints({
     updateUser: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/profile`,
+        method: 'PUT',
+        body: data,
+      }),
+    }),
+    getProfileUser: builder.query({
+      query: () => `${USERS_URL}/profileUser`
+    }),
+    updateProfileUser: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/profileUser`,
         method: 'PUT',
         body: data,
       }),
@@ -70,6 +80,8 @@ export const {
   useGetUserRolesQuery,
   useGetUserProfileQuery,
   useUpdateUserMutation,
+  useGetProfileUserQuery,
+  useUpdateProfileUserMutation,
   useLockUserMutation,
   useUnlockUserMutation,
 } = userApiSlice;
