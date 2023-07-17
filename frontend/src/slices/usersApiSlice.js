@@ -3,6 +3,13 @@ const USERS_URL = '/api/users';
 
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    createUser: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/create`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
     login: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/login`,
@@ -56,6 +63,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
+  useCreateUserMutation,
   useLoginMutation,
   useLogoutMutation,
   useShowUsersQuery,

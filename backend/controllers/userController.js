@@ -7,6 +7,74 @@ import { endUserExpiration, initialUserExpiration } from "../middlewares/session
 import UserSession from "../models/userSessionModel.js";
 import { decrypt, encrypt } from "../utils/crypter.js";
 
+// @desc    Crear un nuevo usuario
+// @route   POST /api/users/create
+// @access  Private
+const createUser = asyncHandler(async (req, res) => {
+
+    const { governmentIdType, governmentId, lastName, firstName, bornDate, phoneNumber } = req.body;
+
+    // Validación
+    if (!governmentIdType || !governmentId || !lastName || !firstName || !bornDate || !phoneNumber) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    let userExists = await User.findOne({
+        "governmentId.type": governmentIdType,
+        "governmentId.number": governmentId,
+        role: { $ne: "000000000000000000000002" },
+    });
+
+    if (userExists) {
+        res.status(400);
+        throw new Error('Usuario ya registrado.');
+    }
+
+    const initials = firstName.split(" ").map((name) => name.charAt(0).toLowerCase()).join("");
+    const formattedLastName = lastName.toLowerCase().replace(/\s/g, '');
+    let userName = initials.toLowerCase() + formattedLastName.toLowerCase();
+    let email = userName + "@bancoinsptutn.com.ar";
+    const governmentIdBD = {
+        type: governmentIdType,
+        number: governmentId
+    }
+
+    userExists = await User.findOne({ userName });
+
+    if (userExists) {
+        let count = 1;
+        while (userExists) {
+            userName = `${initials}${formattedLastName}${count}`;
+            email = userName + "@bancoinsptutn.com.ar";
+            userExists = await User.findOne({ userName });
+            count++;
+        }
+    }
+
+    const user = await User.create({
+        userName,
+        email,
+        password: governmentId,
+        role: "000000000000000000000001",
+        firstName,
+        lastName,
+        phone: phoneNumber,
+        governmentId: governmentIdBD,
+        bornDate
+    });
+
+    if (user) {
+        extendToken(req, res);
+        res.status(201).json({
+            message: 'Usuario creado con exito.',
+        });
+    } else {
+        res.status(400);
+        throw new Error('Información invalida.');
+    }
+});
+
 // @desc    Ver usuarios
 // @route   GET /api/user/
 // @access  Private
@@ -32,7 +100,7 @@ const getUsers = asyncHandler(async (req, res) => {
         const conditions = [];
 
         if (userName) {
-            conditions.push({ 'userName': { $regex: new RegExp(governmentId, 'i') } });
+            conditions.push({ 'userName': { $regex: new RegExp(userName, 'i') } });
         }
 
         if (userData) {
@@ -54,7 +122,7 @@ const getUsers = asyncHandler(async (req, res) => {
     }
 
     const users = await User.find({ role: { $ne: role._id }, ...(matchConditions.length > 0 ? { $and: matchConditions } : {}) })
-        .select('_id firstName lastName isActive')
+        .select('_id userName firstName lastName isActive')
         .populate('role', '-_id name');
 
     if (!users) {
@@ -174,60 +242,6 @@ const logoutUser = asyncHandler(async (req, res) => {
     res.status(200).json({
         message: 'Usuario deslogueado.'
     });
-});
-
-// @desc    Crear un nuevo usuario
-// @route   POST /api/users/create
-// @access  Private
-const createUser = asyncHandler(async (req, res) => {
-
-    const { email, password, firstName, lastName, phone, governmentId, bornDate } = req.body;
-
-    // Validación
-    if (!email || !password || !firstName || !lastName || !governmentId) {
-        res.status(400);
-        throw new Error('Por favor, complete todos los campos.');
-    }
-
-    if (password.length < 6) {
-        res.status(400);
-        throw new Error('La contraseña debe contener al menos 6 caracteres.');
-    }
-
-    const userExists = await User.findOne({ email });
-
-    if (userExists) {
-        res.status(400);
-        throw new Error('Usuario ya registrado.');
-    }
-
-    const user = await User.create({
-        email,
-        password,
-        firstName,
-        lastName,
-        phone,
-        governmentId,
-        bornDate
-    });
-
-    if (user) {
-        extendToken(req, res);
-        res.status(201).json({
-            message: 'Usuario creado con exito.',
-            _id: user._id,
-            email: user.email,
-            role: user.role,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            phone: user.phone,
-            governmentId: user.governmentId,
-            bornDate: user.bornDate
-        });
-    } else {
-        res.status(400);
-        throw new Error('Información invalida.');
-    }
 });
 
 // @desc    Datos del usuario
@@ -369,11 +383,11 @@ const unlockUser = asyncHandler(async (req, res) => {
 });
 
 export {
+    createUser,
     getUsers,
     getUserRoles,
     loginUser,
     logoutUser,
-    createUser,
     profileUser,
     updateUserProfile,
     lockUser,

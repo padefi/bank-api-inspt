@@ -138,7 +138,7 @@ const CustomerProfile = () => {
             <div className="d-flex justify-content-around mt-5">
                 <CardContainer>
                     <div className='box bg-dark text-white p-2 px-4 rounded-top-2'>
-                        <h2 className='card-title'>Perfil del cliente</h2>
+                        <h2 className='card-title'>Perfil del Cliente</h2>
                     </div>
                     {isLoading || isFetching && <Loader />}
                     {customer && (
@@ -146,7 +146,7 @@ const CustomerProfile = () => {
                             <div className="box">
                                 <div className="d-flex align-items-end justify-content-center">
                                     <div className="mr-2 mt-2">
-                                        <strong>N° cliente: </strong>{customer.number}
+                                        <strong>N° Cliente: </strong>{customer.number}
                                     </div>
                                 </div>
                                 <div className="custom-grid-container">
@@ -203,6 +203,8 @@ const CustomerProfile = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            <hr className='my-1' />
 
                             <div className='d-flex align-items-center justify-content-between mt-2'>
                                 <Button type='submit' variant='primary'>

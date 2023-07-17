@@ -5,10 +5,10 @@ import { protect } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 router.get('/', protect, getUsers);
-router.get('/roles', protect, getUserRoles)
+router.post('/create', protect, createUser);
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
-router.get('/create', protect, createUser);
+router.get('/roles', protect, getUserRoles);
 router.route('/profile').get(protect, profileUser).put(protect, updateUserProfile);
 router.post('/lock', protect, lockUser);
 router.post('/unlock', protect, unlockUser);

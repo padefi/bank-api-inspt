@@ -51,7 +51,6 @@ const userSchema = mongoose.Schema({
         number: {
             type: String,
             trim: true,
-            unique: true
         }
     },
     bornDate: {
@@ -67,6 +66,14 @@ const userSchema = mongoose.Schema({
     },
 }, {
     timestamps: true
+});
+
+userSchema.index({
+    'governmentId.type': 1,
+    'governmentId.number': 1,
+    userName: 1
+}, {
+    unique: true
 });
 
 // Encriptado de la contraseña
