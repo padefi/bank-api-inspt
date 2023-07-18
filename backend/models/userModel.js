@@ -64,6 +64,10 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: true
     },
+    isPasswordResetRequired: {
+        type: Boolean,
+        default: true,
+    },
 }, {
     timestamps: true
 });

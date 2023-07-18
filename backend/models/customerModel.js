@@ -16,6 +16,8 @@ const autoIncrementSchema = new mongoose.Schema({
     required: true,
     default: 1
   }
+}, {
+  timestamps: true
 });
 
 const AutoIncrement = mongoose.model('AutoIncrement', autoIncrementSchema);
