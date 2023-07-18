@@ -21,7 +21,17 @@ const AccountStatusOptions = () => {
   return options;
 }
 
-const CustomerTypes = () => {
+const AccountCustomerTypesOptions = () => {
+  const options = [
+    { value: '', label: 'TODOS' },
+    { value: 'PC', label: 'PERSONA FISICA' },
+    { value: 'BC', label: 'PERSONA JURIDICA' }
+  ]
+
+  return options;
+}
+
+const CustomerTypesModal = () => {
   const options = [
     { value: 'PC', label: 'PERSONA FISICA' },
     { value: 'BC', label: 'PERSONA JURIDICA' }
@@ -48,7 +58,9 @@ const Dashboard = () => {
   const [accountHolder, setAccountHolder] = useState('');
   const [governmentId, setGovernmentId] = useState('');
   const [accountStatus, setAccountStatus] = useState('');
+  const [customerTypes, setCustomerTypes] = useState('');
   const accountStatusOptions = AccountStatusOptions();
+  const accountCustomerTypesOptions = AccountCustomerTypesOptions();
   const [advancedSearch, setAdvancedSearch] = useState(false);
   const [showModal, setShow] = useState(false);
   const [governmentIdTypeModal, setGovernmentIdTypeModal] = useState('');
@@ -59,10 +71,10 @@ const Dashboard = () => {
   const [bornDateModal, setBornDateModal] = useState('');
   const [emailModal, setEmailModal] = useState('');
   const [phoneNumberModal, setPhoneNumberModal] = useState('');
-  const customerTypesModal = CustomerTypes();
+  const customerTypesModal = CustomerTypesModal();
   const governmentIdTypesModal = GovernmentIdTypes();
   const [checkCustomersCompleted, setCheckCustomersCompleted] = useState(false);
-  const { data, error, isLoading, isFetching, refetch } = useShowCustomersQuery({ accountHolder, governmentId, accountStatus }, { refetchOnMountOrArgChange: true });
+  const { data, error, isLoading, isFetching, refetch } = useShowCustomersQuery({ accountHolder, governmentId, customerTypes, accountStatus }, { refetchOnMountOrArgChange: true });
   const [pageNumber, setPageNumber] = useState(1);
   const itemsPerPage = 10;
   const [createCustomer, { isLoadingCreateCustomer }] = useCreateCustomerMutation();
@@ -79,7 +91,7 @@ const Dashboard = () => {
     control: (provided) => ({
       ...provided,
       fontSize: '12px',
-      width: '110px',
+      width: '250px',
     }),
   };
 
@@ -204,19 +216,26 @@ const Dashboard = () => {
             <div className={`box advanced-search d-flex justify-content-center mb-2 ${advancedSearch ? 'advanced-search-visible' : 'advanced-search-hidden'}`}>
               <Row className='justify-content-center'>
                 <Col>
-                  <div className='box d-flex align-items-center justify-content-between mb-1'>
-                    <Form.Group className='mr-2'>
+                  <div className='box d-flex justify-content-between'>
+                    <Form.Group className='mr-2 mb-2 flex-grow-1'>
                       <Form.Label htmlFor="accountHolder" className='fw-bold detail-text mb-0'>Titular:</Form.Label>
                       <Form.Control id="accountHolder" type="text" className="form-control form-control" value={accountHolder} onChange={(e) => { setAccountHolder(e.target.value.toUpperCase()); handleAdvanced; }} />
                     </Form.Group>
-                    <Form.Group>
+                    <Form.Group className='flex-grow-1'>
                       <Form.Label htmlFor="governmentId" className='fw-bold detail-text mb-0'>Documento:</Form.Label>
                       <Form.Control id="governmentId" type='text' className="form-control form-control" value={governmentId} onChange={(e) => { setGovernmentId(e.target.value); handleAdvanced; }} />
                     </Form.Group>
-                    <Form.Group className='ml-2'>
+                  </div>
+                  <div className='box d-flex justify-content-between'>
+                    <Form.Group className='flex-grow-1 mr-1'>
                       <div className='fw-bold detail-text mt-1'>Estado:</div>
                       <Select options={accountStatusOptions} onChange={(accountStatusOptions) => { setAccountStatus(accountStatusOptions?.value || null); handleAdvanced; }} styles={selectStyles}
                         menuPortalTarget={document.body} defaultValue={accountStatusOptions[0]} />
+                    </Form.Group>
+                    <Form.Group className='flex-grow-1 ml-1'>
+                      <div className='fw-bold detail-text mt-1'>Estado:</div>
+                      <Select options={accountCustomerTypesOptions} onChange={(accountCustomerTypesOptions) => { setCustomerTypes(accountCustomerTypesOptions?.value || null); handleAdvanced; }} styles={selectStyles}
+                        menuPortalTarget={document.body} defaultValue={accountCustomerTypesOptions[0]} />
                     </Form.Group>
                   </div>
                 </Col>
@@ -227,6 +246,7 @@ const Dashboard = () => {
                 <tr>
                   <th>N°</th>
                   <th>Cliente</th>
+                  <th>Tipo Cliente</th>
                   <th>Documento</th>
                   <th>Estado</th>
                   <th>Acciones</th>
@@ -238,6 +258,7 @@ const Dashboard = () => {
                     <tr key={customer.user._id}>
                       <td>{customer.number}</td>
                       <td>{customer.user.lastName.toUpperCase()} {customer.user.firstName.toUpperCase()}</td>
+                      <td>{customer.type === 'PC' ? (`PERSONA FÍSICA`) : (`PERSONA JURÍDICA`)}</td>
                       <td><strong>{customer.user.governmentId.type.toUpperCase()}</strong> - {customer.user.governmentId.number}</td>
                       <td>{customer.user.isActive ? (`ACTIVO`) : (`BAJA`)}</td>
                       <td>
@@ -252,7 +273,7 @@ const Dashboard = () => {
               ) : (
                 <tbody>
                   <tr>
-                    <td colSpan={5}><h5 className="h-striped">No se encontraron clientes</h5></td>
+                    <td colSpan={6}><h5 className="h-striped">No se encontraron clientes</h5></td>
                   </tr>
                 </tbody>
               )}
@@ -295,18 +316,29 @@ const Dashboard = () => {
                   </Form.Group>
                 </div>
                 <hr className="my-1" />
-                <div>
-                  <Form.Group className='my-2' controlId='lastName'>
-                    <Form.Label className='fw-bold'>Apellido</Form.Label>
-                    <Form.Control type='text' placeholder='Ingrese Apellido' autoComplete='off' required value={lastNameModal} onChange={(e) => setLastNameModal(e.target.value.toUpperCase())}></Form.Control>
-                  </Form.Group>
-                </div>
-                <div>
-                  <Form.Group className='my-2' controlId='firstName'>
-                    <Form.Label className='fw-bold'>Nombre</Form.Label>
-                    <Form.Control type='text' placeholder='Ingrese Nombre' autoComplete='off' required value={firstNameModal} onChange={(e) => setFirstNameModal(e.target.value.toUpperCase())}></Form.Control>
-                  </Form.Group>
-                </div>
+                {customerTypeModal != 'BC' ? (
+                  <>
+                    <div>
+                      <Form.Group className='my-2' controlId='lastName'>
+                        <Form.Label className='fw-bold'>Apellido</Form.Label>
+                        <Form.Control type='text' placeholder='Ingrese Apellido' autoComplete='off' required value={lastNameModal} onChange={(e) => setLastNameModal(e.target.value.toUpperCase())}></Form.Control>
+                      </Form.Group>
+                    </div>
+                    <div>
+                      <Form.Group className='my-2' controlId='firstName'>
+                        <Form.Label className='fw-bold'>Nombre</Form.Label>
+                        <Form.Control type='text' placeholder='Ingrese Nombre' autoComplete='off' required value={firstNameModal} onChange={(e) => setFirstNameModal(e.target.value.toUpperCase())}></Form.Control>
+                      </Form.Group>
+                    </div>
+                  </>
+                ) : (
+                  <div className='two-divs-container'>
+                    <Form.Group className='my-2' controlId='lastName'>
+                      <Form.Label className='fw-bold'>Razón Social</Form.Label>
+                      <Form.Control type='text' placeholder='Ingrese Razón Social' autoComplete='off' required value={lastNameModal} onChange={(e) => setLastNameModal(e.target.value.toUpperCase())}></Form.Control>
+                    </Form.Group>
+                  </div>
+                )}
                 <div>
                   <Form.Group className='my-2' controlId='bornDate'>
                     <Form.Label className='fw-bold'>F. Nacimiento</Form.Label>

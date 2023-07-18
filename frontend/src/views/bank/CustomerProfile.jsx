@@ -154,34 +154,45 @@ const CustomerProfile = () => {
                                     <div>
                                         <Form.Group className='my-2'>
                                             <h6 className='fw-bold h6-CardContainer'>Tipo Documento</h6>
-                                            <Select options={governmentIdTypes} onChange={(option) => setGovernmentIdType(option?.value || null)} styles={selectStyles} defaultValue={governmentIdTypes.find((option) => option.value === customer.user.governmentId.type)} />
+                                            <Select options={governmentIdTypes} onChange={(option) => setGovernmentIdType(option?.value || null)} styles={selectStyles} defaultValue={governmentIdTypes.find((option) => option.value === customer.user.governmentId.type)} isDisabled={!isAdmin} />
                                         </Form.Group>
                                     </div>
                                     <div>
                                         <Form.Group className='my-2' controlId='governmentId'>
                                             <Form.Label className='fw-bold'>N° Documento</Form.Label>
-                                            <Form.Control type='text' placeholder='Ingrese n° de documento' autoComplete='off' maxLength={11} required value={governmentId} onChange={(e) => setGovernmentId(e.target.value.toUpperCase())}></Form.Control>
+                                            <Form.Control type='text' placeholder='Ingrese n° de documento' autoComplete='off' maxLength={11} required value={governmentId} onChange={(e) => setGovernmentId(e.target.value.toUpperCase())} disabled={!isAdmin}></Form.Control>
                                         </Form.Group>
                                     </div>
                                     <div>
                                         <Form.Group className='my-2'>
                                             <h6 className='fw-bold h6-CardContainer'>Tipo de Cliente</h6>
-                                            <Select options={customerTypes} onChange={(option) => setCustomerType(option?.value || null)} styles={selectStyles} defaultValue={customerTypes.find((option) => option.value === customer.type)} />
+                                            <Select options={customerTypes} onChange={(option) => setCustomerType(option?.value || null)} styles={selectStyles} defaultValue={customerTypes.find((option) => option.value === customer.type)} isDisabled={!isAdmin} />
                                         </Form.Group>
                                     </div>
                                     <hr className='my-1' />
-                                    <div>
-                                        <Form.Group className='my-2' controlId='lastName'>
-                                            <Form.Label className='fw-bold'>Apellido</Form.Label>
-                                            <Form.Control type='text' placeholder='Ingrese Apellido' autoComplete='off' required value={lastName} onChange={(e) => setLastName(e.target.value.toUpperCase())}></Form.Control>
-                                        </Form.Group>
-                                    </div>
-                                    <div>
-                                        <Form.Group className='my-2' controlId='firstName'>
-                                            <Form.Label className='fw-bold'>Nombre</Form.Label>
-                                            <Form.Control type='text' placeholder='Ingrese Nombre' autoComplete='off' required value={firstName} onChange={(e) => setFirstName(e.target.value.toUpperCase())}></Form.Control>
-                                        </Form.Group>
-                                    </div>
+                                    {customerType != 'BC' ? (
+                                        <>
+                                            <div>
+                                                <Form.Group className='my-2' controlId='lastName'>
+                                                    <Form.Label className='fw-bold'>Apellido</Form.Label>
+                                                    <Form.Control type='text' placeholder='Ingrese Apellido' autoComplete='off' required value={lastName} onChange={(e) => setLastName(e.target.value.toUpperCase())}></Form.Control>
+                                                </Form.Group>
+                                            </div>
+                                            <div>
+                                                <Form.Group className='my-2' controlId='firstName'>
+                                                    <Form.Label className='fw-bold'>Nombre</Form.Label>
+                                                    <Form.Control type='text' placeholder='Ingrese Nombre' autoComplete='off' required value={firstName} onChange={(e) => setFirstName(e.target.value.toUpperCase())}></Form.Control>
+                                                </Form.Group>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className='two-divs-container'>
+                                            <Form.Group className='my-2' controlId='lastName'>
+                                                <Form.Label className='fw-bold'>Razón Social</Form.Label>
+                                                <Form.Control type='text' placeholder='Ingrese Razón Social' autoComplete='off' required value={lastName} onChange={(e) => setLastName(e.target.value.toUpperCase())}></Form.Control>
+                                            </Form.Group>
+                                        </div>
+                                    )}
                                     <div>
                                         <Form.Group className='my-2' controlId='bornDate'>
                                             <Form.Label className='fw-bold'>F. Nacimiento</Form.Label>

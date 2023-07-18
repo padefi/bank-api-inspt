@@ -11,8 +11,8 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     showCustomers: builder.query({
-      query: ({ accountHolder, governmentId, accountStatus }) => ({
-        url: `${CUSTOMERS_URL}/?accountHolder=${accountHolder}&governmentId=${governmentId}&accountStatus=${accountStatus}`,
+      query: ({ accountHolder, governmentId, customerTypes, accountStatus }) => ({
+        url: `${CUSTOMERS_URL}/?accountHolder=${accountHolder}&governmentId=${governmentId}&customerTypes=${customerTypes}&accountStatus=${accountStatus}`,
         method: 'GET',
       }),
     }),    

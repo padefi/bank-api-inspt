@@ -75,7 +75,7 @@ const createCustomer = asyncHandler(async (req, res) => {
 // @access  Private
 const getCustomer = asyncHandler(async (req, res) => {
 
-    const { accountHolder, governmentId, accountStatus } = req.query;
+    const { accountHolder, governmentId, customerTypes, accountStatus } = req.query;
 
     if (!isAdmin(req.user) && !isEmployee(req.user)) {
         res.status(400);
@@ -89,7 +89,12 @@ const getCustomer = asyncHandler(async (req, res) => {
         throw new Error('Rol no encontrado');
     }
 
+    let query = {};
     let matchConditions = [];
+
+    if (customerTypes !== '' && customerTypes !== 'null') {
+        query.type = customerTypes;
+    }
 
     if (accountHolder || governmentId || (accountStatus !== '' && accountStatus !== 'null')) {
         const conditions = [];
@@ -117,7 +122,7 @@ const getCustomer = asyncHandler(async (req, res) => {
     }
 
 
-    let customers = await Customer.find()
+    let customers = await Customer.find(query)
         .select('-_id number type')
         .populate({
             path: 'user',
