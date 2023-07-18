@@ -11,7 +11,7 @@ import Loader from '../components/Loader';
 import loginImg from '../img/login.jpg';
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ const LoginScreen = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await login({ email, password }).unwrap();
+      const res = await login({ userName, password }).unwrap();
       dispatch(setCredentials({ ...res }));
       if (res.role === 'empleado' || res.role === 'admin') navigate('/bank/dashboard');
       else navigate('/customer/home');
@@ -64,8 +64,8 @@ const LoginScreen = () => {
           <h5 className="fw-normal my-4 text-login">Inicio de sesión</h5>
 
           <Form onSubmit={submitHandler}>
-            <Form.Group className='my-2' controlId='email'>
-              <Form.Control type='email' placeholder='Ingrese mail' autoComplete='off' value={email} onChange={(e) => setEmail(e.target.value)}></Form.Control>
+            <Form.Group className='my-2' controlId='userName'>
+              <Form.Control type='text' placeholder='Ingrese usuario' autoComplete='off' value={userName} onChange={(e) => setUserName(e.target.value)}></Form.Control>
             </Form.Group>
 
             <Form.Group className='my-2' controlId='password'>
@@ -73,7 +73,7 @@ const LoginScreen = () => {
             </Form.Group>
 
             <div className='my-2'>
-              <Button type='submit' className="mt-2 px-5 w-100" variant='dark' disabled={!email || !password}>
+              <Button type='submit' className="mt-2 px-5 w-100" variant='dark' disabled={!userName || !password}>
                 Ingresar
               </Button>
             </div>

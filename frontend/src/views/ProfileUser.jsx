@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import Loader from '../../components/Loader';
-import { useGetProfileUserQuery, useUpdateProfileUserMutation } from '../../slices/usersApiSlice';
-import UserRole from "../../utils/userRole";
+import Loader from '../components/Loader';
+import { useGetProfileUserQuery, useUpdateProfileUserMutation } from '../slices/usersApiSlice';
+import UserRole from "../utils/userRole";
 import Select from 'react-select';
-import CardContainer from '../../components/CardContainer';
+import CardContainer from '../components/CardContainer';
 
 const ProfileUser = () => {
     const [governmentId, setGovernmentId] = useState('');
@@ -21,7 +21,7 @@ const ProfileUser = () => {
     const [updateProfile, { isLoadingUpdate }] = useUpdateProfileUserMutation();
 
     const dataRole = UserRole();
-    const isCustomer = dataRole?.role === 'customer';
+    const isCustomer = dataRole?.role === 'cliente';
 
     const selectStyles = {
         menuPortal: (base) => ({
@@ -49,9 +49,13 @@ const ProfileUser = () => {
         }
     }, [data, error]);
 
+    if (!checkProfileCompleted) {
+        return null;
+    }
+
     const submitHandler = async (e) => {
         e.preventDefault();
-        if(password.length < 6){
+        if(password && password.length < 6){
             toast.error('La contraseña debe tener al menos 6 caracteres');
         }else if (password !== confirmPassword) {
             toast.error('Las contraseñas no coinciden');
@@ -137,7 +141,8 @@ const ProfileUser = () => {
                                     <div>
                                         <Form.Group className='my-2' controlId='email'>
                                             <Form.Label className='fw-bold'>Email Address</Form.Label>
-                                            <Form.Control type='email' placeholder='Ingrese Mail' autoComplete='off' required defaultValue={user.email.toUpperCase()} disabled={!isCustomer}></Form.Control>
+                                            <Form.Control type='email' placeholder='Ingrese Mail' autoComplete='off' required value={email} onChange={(e) => setEmail(e.target.value.toUpperCase())}
+                                             disabled={!isCustomer}></Form.Control>
                                         </Form.Group>
                                     </div>
                                     <div>
@@ -163,7 +168,7 @@ const ProfileUser = () => {
                                 </Button>
                             </div>
 
-                            {isLoading && <Loader />}
+                            {isLoadingUpdate && <Loader />}
                         </Form>
                     )}
                 </CardContainer>

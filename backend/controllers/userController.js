@@ -178,15 +178,15 @@ const getUserRoles = asyncHandler(async (req, res) => {
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
 
-    const { email, password } = req.body;
+    const { userName, password } = req.body;
 
     // Validación
-    if (!email || !password) {
+    if (!userName || !password) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const user = await User.findOne({ email }).populate('role');
+    const user = await User.findOne({ userName }).populate('role');
 
     if (user) {
         if (!user.isActive) {
@@ -209,9 +209,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
             res.status(200).json({
                 message: 'Usuario logueado.',
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
+                userName: user.userName,
                 role: user.role.name,
             });
 
