@@ -125,7 +125,7 @@ const CustomerProfile = () => {
                 email,
                 phoneNumber,
             })).unwrap();
-            toast.success('Cliente actualizado exitosamente!');
+            toast.success(res.message);
         } catch (err) {
             toast.error(err?.data?.message || err.error);
         }

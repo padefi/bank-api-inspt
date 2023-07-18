@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import Role from "../models/roleModel.js";
 import { generateToken, extendToken } from "../utils/generateToken.js";
-import { isAdmin } from "../middlewares/authMiddleware.js";
+import { isAdmin, isCustomer } from "../middlewares/authMiddleware.js";
 import { endUserExpiration, initialUserExpiration } from "../middlewares/sessionMiddleware.js";
 import UserSession from "../models/userSessionModel.js";
 import { decrypt, encrypt } from "../utils/crypter.js";
@@ -348,9 +348,8 @@ const profileUser = asyncHandler(async (req, res) => {
     if (req.user) {
         extendToken(req, res);
         res.status(201).json({
-            _id: req.user._id,
+            userName: req.user.userName,
             email: req.user.email,
-            role: req.user.role,
             firstName: req.user.firstName,
             lastName: req.user.lastName,
             phone: req.user.phone,
@@ -371,12 +370,10 @@ const updateProfileUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
 
     if (user) {
-        user.email = req.body.email || user.email;
-        user.role = req.body.role || user.role;
-        user.firstName = req.body.firstName || user.firstName;
-        user.lastName = req.body.lastName || user.lastName;
+        if (isCustomer(req.user)) {
+            user.email = req.body.email || user.email;
+        }
         user.phone = req.body.phone || user.phone;
-        user.governmentId = req.body.governmentId || user.governmentId;
         user.bornDate = req.body.bornDate || user.bornDate;
 
         if (req.body.password) {
@@ -387,18 +384,11 @@ const updateProfileUser = asyncHandler(async (req, res) => {
 
         extendToken(req, res);
         res.json({
-            _id: updateUser._id,
-            email: updateUser.email,
-            role: updateUser.role,
-            firstName: updateUser.firstName,
-            lastName: updateUser.lastName,
-            phone: updateUser.phone,
-            governmentId: updateUser.governmentId,
-            bornDate: updateUser.bornDate
+            message: 'Perfil actualizado con éxito.'
         });
     } else {
         res.status(404);
-        throw new Error('Usuario no encontrado.');
+        throw new Error('Perfil no encontrado.');
     }
 });
 

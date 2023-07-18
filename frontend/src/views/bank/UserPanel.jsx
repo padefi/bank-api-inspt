@@ -156,7 +156,7 @@ const UserPanel = () => {
         bornDate: bornDateModal,
         phoneNumber: phoneNumberModal,
       })).unwrap();
-      toast.success('Usuario creado exitosamente!');
+      toast.success(res.message);
       setShow(false);
       refetch();
     } catch (err) {
