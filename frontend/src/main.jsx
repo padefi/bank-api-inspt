@@ -8,7 +8,6 @@ import Login from './views/Login.jsx';
 import Home from './views/customer/Home.jsx';
 import Dashboard from './views/bank/Dashboard.jsx';
 import Accounts from './views/customer/Accounts.jsx';
-import Profile from './views/customer/Profile.jsx';
 import AccountOperations from './views/customer/AccountOperations.jsx';
 import AccountSummary from './views/customer/AccountSummary';
 import { PrivateRoute, PrivateRouteAdmin, PrivateRouteCustomer, PrivateRouteEmployeeAdmin } from './components/PrivateRoute.jsx';
@@ -40,7 +39,6 @@ const router = createBrowserRouter(
         <Route path="/customer/userAccount/:id" element={<PrivateRouteCustomer><UserAccount /></PrivateRouteCustomer>} />
         <Route path="/customer/accountSummary" element={<PrivateRouteCustomer><AccountSummary /></PrivateRouteCustomer>} />
         <Route path="/customer/transfer" element={<PrivateRouteCustomer><TransferMoney /></PrivateRouteCustomer>} />
-        <Route path="/customer/profile" element={<PrivateRouteCustomer><Profile /></PrivateRouteCustomer>} />
 
         <Route path="/bank/dashboard" element={<PrivateRouteEmployeeAdmin><Dashboard /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/customerProfile/:id" element={<PrivateRouteEmployeeAdmin><CustomerProfile /></PrivateRouteEmployeeAdmin>} />
