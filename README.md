@@ -39,30 +39,26 @@ npm run dev (este comando ejecuta las migraciones e inicia ambos servidores)
 ### Caracteristicas:
 
 > El sistema cuenta con 2 interfaces:
-*Bank
-*Customer
+* Bank
+* Customer
 
 > Bank es todo lo relacionado a la gestión de clientes, cuentas y operaciones del lado del banco. Se puede ingresar con los siguientes usuarios:
-```
-**Usuario**: admin   
-**Contraseña**: administrador    
-**Perfil**: Admin
+> **Usuario**: admin   
+> **Contraseña**: administrador    
+> **Perfil**: Admin
 
-**Usuario**: jperez
-**Contraseña**: 20342114335    
-**Perfil**: Admin
-```
+> **Usuario**: jperez
+> **Contraseña**: 20342114335    
+> **Perfil**: Admin
 
 > Customer es todo lo relacionado a la gestión de cuentas y operaciones del lado del cliente. Se puede ingresar con los siguientes usuarios:
-```
-**Usuario**: 27280335148
-**Contraseña**: 27280335148
-**Tipo cliente**: Persona Física
+> **Usuario**: 27280335148
+> **Contraseña**: 27280335148
+> **Tipo cliente**: Persona Física
 
-**Usuario**: 30715925083
-**Contraseña**: 30715925083
-**Tipo cliente**: Persona Juridica
-```
+> **Usuario**: 30715925083
+> **Contraseña**: 30715925083
+> **Tipo cliente**: Persona Juridica
 
 > **IMPORTANTE**: Una vez iniciada la sesión, se generará un token de 10 minutos, el cual se irá renovando cada vez que el usuario ingrese a los diferentes menús/opciones. Junto con este se ejecutará una función definida con un setTimeout, la cual deslogueará al usuario automaticamente si este no interacciona con el sistema transcurridos los 10 minutos.
 
