@@ -29,12 +29,12 @@ const userSchema = mongoose.Schema({
         unique: true,
         required: true
     },
-    firstName: {
+    lastName: {
         type: String,
         lowercase: true,
         required: true
     },
-    lastName: {
+    firstName: {
         type: String,
         lowercase: true,
         required: true

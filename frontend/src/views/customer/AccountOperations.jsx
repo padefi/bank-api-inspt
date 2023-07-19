@@ -172,7 +172,7 @@ const AccountOperations = () => {
                 <>
                   <hr />
                   <div className='box button-container py-0 d-flex justify-content-center'>
-                    <h5 className="h-striped">No existen en el rango indicado</h5>
+                    <h5 className="h-striped">No existen operaciones en el rango indicado</h5>
                   </div>
                 </>
               )}

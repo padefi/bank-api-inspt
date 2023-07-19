@@ -1,6 +1,6 @@
-const mongodb = require('mongodb')
+import mongoose from 'mongoose';
 
-const { ObjectId } = mongodb
+const { ObjectId } = mongoose.Types;
 
 const createAccounts = [
     {
@@ -35,6 +35,45 @@ const createAccounts = [
         type: 'CA',
         alias: 'ANA.MARIA.GOM.CA.USD',
         accountHolder: new ObjectId('000000000000000000000002'),
+        accountBalance: 5000,
+        currency: new ObjectId('000000000000000000000001'),
+        operations: [],
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        _id: new ObjectId('000000000000000000000003'),
+        accountId: '9990001801268891900443',
+        type: 'CA',
+        alias: 'EMPRESA.ANONI.CA.ARS',
+        accountHolder: new ObjectId('000000000000000000000003'),
+        accountBalance: 5000,
+        currency: new ObjectId('000000000000000000000000'),
+        operations: [],
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        _id: new ObjectId('000000000000000000000004'),
+        accountId: '9990001802526204340594',
+        type: 'CC',
+        alias: 'EMPRESA.ANONI.CC.ARS',
+        accountHolder: new ObjectId('000000000000000000000003'),
+        accountBalance: 5000,
+        currency: new ObjectId('000000000000000000000000'),
+        operations: [],
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        _id: new ObjectId('000000000000000000000005'),
+        accountId: '9990001801113684202203',
+        type: 'CA',
+        alias: 'EMPRESA.ANONI.CA.USD',
+        accountHolder: new ObjectId('000000000000000000000003'),
         accountBalance: 5000,
         currency: new ObjectId('000000000000000000000001'),
         operations: [],

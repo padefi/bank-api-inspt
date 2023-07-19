@@ -1,6 +1,6 @@
-const mongodb = require('mongodb')
+import mongoose from 'mongoose';
 
-const { ObjectId } = mongodb
+const { ObjectId } = mongoose.Types;
 
 const createUsers = [
     {
@@ -9,8 +9,8 @@ const createUsers = [
         email: 'admin@bancoinsptutn.com.ar',
         password: '$2a$10$OLb1CwJaw56Vq8unFQXxPOUIK6ldsVl8DHcd6gm4OutnSrUwxRDge',
         role: new ObjectId('000000000000000000000000'),
-        firstName: 'Admin',
         lastName: 'Banco INSPT-UTN',
+        firstName: 'Admin',
         phone: '1112345678',
         governmentId: {
             type: 'cuil',
@@ -30,8 +30,8 @@ const createUsers = [
         email: 'jperez@bancoinsptutn.com.ar',
         password: '$2a$10$OLb1CwJaw56Vq8unFQXxPOUIK6ldsVl8DHcd6gm4OutnSrUwxRDge',
         role: new ObjectId('000000000000000000000001'),
-        firstName: 'Juan',
         lastName: 'Perez',
+        firstName: 'Juan',
         phone: '1198765432',
         governmentId: {
             type: 'cuil',
@@ -51,14 +51,14 @@ const createUsers = [
         email: 'anamariagomez@gmail.com',
         password: '$2a$10$pczNfQD4Xwya.E.lrpzXeuJXwWBhMHwcGCEO.42RAFPHsmiUsor4u',
         role: new ObjectId('000000000000000000000002'),
-        firstName: 'Ana Maria',
         lastName: 'Gomez',
+        firstName: 'Ana Maria',
         phone: '1198765432',
         governmentId: {
             type: 'cuil',
             number: '27280335148'
         },
-        bornDate: new Date(1988, 3, 25),
+        bornDate: new Date(1955, 5, 14),
         isActive: true,
         isPasswordResetRequired: false,
         createdAt: new Date(),
@@ -72,14 +72,14 @@ const createUsers = [
         email: 'empresa@anonima.com.ar',
         password: '$2a$10$8nyYPJ0WuP0i84/wRQi6UuwjyK0x7f/krFPvBSvmqKQGtwzAr.ON2',
         role: new ObjectId('000000000000000000000002'),
+        lastName: 'Empresa Anonima S.A.',
         firstName: 'Empresa Anonima S.A.',
-        lastName: '',
         phone: '1145623789',
         governmentId: {
             type: 'cuil',
             number: '30715925083'
         },
-        bornDate: new Date(1988, 3, 25),
+        bornDate: new Date(1980, 1, 1),
         isActive: true,
         isPasswordResetRequired: false,
         createdAt: new Date(),

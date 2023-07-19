@@ -335,7 +335,7 @@ const Dashboard = () => {
                   <div className='two-divs-container'>
                     <Form.Group className='my-2' controlId='lastName'>
                       <Form.Label className='fw-bold'>Razón Social</Form.Label>
-                      <Form.Control type='text' placeholder='Ingrese Razón Social' autoComplete='off' required value={lastNameModal} onChange={(e) => setLastNameModal(e.target.value.toUpperCase())}></Form.Control>
+                      <Form.Control type='text' placeholder='Ingrese Razón Social' autoComplete='off' required value={lastNameModal} onChange={(e) => {setLastNameModal(e.target.value.toUpperCase()); setFirstNameModal(e.target.value.toUpperCase())}}></Form.Control>
                     </Form.Group>
                   </div>
                 )}

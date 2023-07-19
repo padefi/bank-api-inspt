@@ -1,6 +1,6 @@
-const mongodb = require('mongodb')
+import mongoose from 'mongoose';
 
-const { ObjectId } = mongodb
+const { ObjectId } = mongoose.Types;
 
 const createCurrencies = [
     {

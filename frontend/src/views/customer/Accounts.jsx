@@ -180,7 +180,7 @@ const Accounts = () => {
               ))}
             </div>
           ) : (
-            <div className='box button-container py-0 d-flex justify-content-between'>
+            <div className='box button-container p-3 d-flex justify-content-between'>
               <h5 className="h-striped">No se encontraron cuentas bancarias</h5>
             </div>
           )}
