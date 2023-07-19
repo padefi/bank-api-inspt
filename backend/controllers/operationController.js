@@ -88,15 +88,15 @@ const getAccountOperations = asyncHandler(async (req, res) => {
 
     const { accountFrom, dateFrom, dateTo, operationType } = req.query;
 
-    const dencryptedId = await decrypt(accountFrom);
-
     // Validación
     if (!accountFrom) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const query = Account.findOne({ _id: dencryptedId }).select('-_id accountId type currency accountBalance').populate('currency', '-_id acronym symbol');
+    const dencryptedId = await decrypt(accountFrom);
+
+    const query = Account.findOne(isAdmin(req.user) && accountFrom === 'undefined' ? {_id : '000000000000000000000000'} : { _id: dencryptedId }).select('-_id accountId type currency accountBalance').populate('currency', '-_id acronym symbol');
 
     const matchConditions = {};
     const startDate = (dateFrom) ? new Date(new Date(dateFrom).getTime() + new Date().getTimezoneOffset() * 60000) : '';
@@ -167,6 +167,8 @@ const getAccountOperations = asyncHandler(async (req, res) => {
             if (operation._id.type === 'extraccion') amount *= -1;
             else if (operation._id.type === 'deposito') amount = operation._id.amountTo;
             else if (operation._id.type === 'transferencia' && operation._id.accountTo._id.toString() !== dencryptedId) amount *= -1;
+
+            if(isAdmin(req.user) && accountFrom === 'undefined' && operation._id.type === 'transferencia') amount *= -1;
 
             let holderDataFrom = '';
             if (operation._id.type === 'transferencia') {
@@ -261,6 +263,10 @@ const depositMoney = asyncHandler(async (req, res) => {
 
         await accountFrom.save();
 
+        if (tax > 0) {
+            taxBankAccount(dencryptedId, tax, operation._id)
+        }
+
         extendToken(req, res);
         res.status(200).json({
             message: 'Deposito realizado con exito.',
@@ -343,6 +349,10 @@ const withdrawMoney = asyncHandler(async (req, res) => {
         });
 
         await accountFrom.save();
+
+        if (tax > 0) {
+            taxBankAccount(dencryptedId, tax, operation._id)
+        }
 
         extendToken(req, res);
         res.status(200).json({
@@ -453,6 +463,10 @@ const transferMoney = asyncHandler(async (req, res) => {
 
         await Promise.all([accountFrom.save(), accountToData.save()]);
 
+        if (tax > 0) {
+            taxBankAccount(dencryptedId, tax, operation._id)
+        }
+
         extendToken(req, res);
         res.status(200).json({
             message: 'Transferencia realizada con exito.',
@@ -465,6 +479,38 @@ const transferMoney = asyncHandler(async (req, res) => {
     } else {
         res.status(400);
         throw new Error('Ha ocurrido un error al realizar la transferencia.');
+    }
+});
+
+// insert tax into bank account
+const taxBankAccount = asyncHandler(async (dencryptedId, tax, operationId) => {
+
+    const operation = await Operation.create({
+        type: 'transferencia',
+        accountFrom: dencryptedId,
+        accountTo: '000000000000000000000000',
+        amountFrom: tax,
+        amountTo: tax,
+        operationDate: new Date(),
+        description: `Impuesto del 0.5% sobre la operación ${operationId}`
+    });
+
+    if (operation) {
+
+        const bankAccount = await Account.findById('000000000000000000000000');
+
+        const newBalanceFrom = bankAccount.accountBalance + tax;
+        const roundedBalanceFrom = Number(newBalanceFrom.toFixed(2));
+        bankAccount.accountBalance = roundedBalanceFrom;
+        bankAccount.operations.push({
+            _id: operation._id,
+            balanceSnapshot: roundedBalanceFrom
+        });
+
+        await bankAccount.save();
+    } else {
+        res.status(400);
+        throw new Error('Ha ocurrido un error al realizar la transferencia de los impuestos a la cuenta del banco');
     }
 });
 

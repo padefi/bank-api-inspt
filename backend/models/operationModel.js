@@ -19,12 +19,12 @@ const operationSchema = new mongoose.Schema({
     },
     amountFrom: {
         type: Number,
-        min: 1,
+        min: 0.01,
         required: true
     },
     amountTo: {
         type: Number,
-        min: 1
+        min: 0.01
     },
     operationDate: {
         type: Date,

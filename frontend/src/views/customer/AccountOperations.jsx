@@ -171,8 +171,8 @@ const AccountOperations = () => {
               ) : (
                 <>
                   <hr />
-                  <div className='box button-container py-0 d-flex justify-content-center'>
-                    <h5 className="h-striped">No existen operaciones en el rango indicado</h5>
+                  <div className='box button-container pb-3 px-3 d-flex justify-content-between'>
+                    <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
                   </div>
                 </>
               )}
@@ -180,7 +180,7 @@ const AccountOperations = () => {
           ) : (
             <>
               <hr />
-              <div className='box button-container py-0 d-flex justify-content-between'>
+              <div className='box button-container pb-3 px-3 d-flex justify-content-between'>
                 <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
               </div>
             </>

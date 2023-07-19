@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useGetCustomerAccountsQuery } from '../../slices/accountApiSlice';
 import CardContainer from '../../components/CardContainer';
 import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
-import { FaArrowLeft, FaArrowRight, FaShareSquare, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import useCheckCookies from '../../utils/useCheckCookies';
 import { Button, Col, Form, Row, Table } from 'react-bootstrap';
 import useSessionTimeout from '../../utils/useSessionTimeout';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useShowAccountOperationsQuery } from '../../slices/operationApiSlice';
 import Select from 'react-select';
 
@@ -172,7 +171,7 @@ const CustomerOperations = () => {
                     ) : (
                         <>
                             <hr />
-                            <div className='box button-container py-0 d-flex justify-content-between'>
+                            <div className='box button-container pb-3 px-3 d-flex justify-content-between'>
                                 <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
                             </div>
                         </>

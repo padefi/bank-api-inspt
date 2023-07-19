@@ -44,6 +44,7 @@ const router = createBrowserRouter(
         <Route path="/bank/customerProfile/:id" element={<PrivateRouteEmployeeAdmin><CustomerProfile /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/customerAccounts/:id" element={<PrivateRouteEmployeeAdmin><CustomerAccounts /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/accountOperations/:id" element={<PrivateRouteEmployeeAdmin><CustomerOperations /></PrivateRouteEmployeeAdmin>} />
+        <Route path="/bank/accountBankOperations" element={<PrivateRouteEmployeeAdmin><CustomerOperations /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/accounts" element={<PrivateRouteEmployeeAdmin><AllCustomersAccounts /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/AccountSummary" element={<PrivateRouteEmployeeAdmin><CustomersAccountSummary /></PrivateRouteEmployeeAdmin>} />
         <Route path="/bank/deposit" element={<PrivateRouteEmployeeAdmin><DepositMoney /></PrivateRouteEmployeeAdmin>} />

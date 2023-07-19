@@ -9,6 +9,7 @@ import { Button, Col, Form, Row, Table } from 'react-bootstrap';
 import useSessionTimeout from '../../utils/useSessionTimeout';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
+import UserRole from "../../utils/userRole";
 
 const AccountTypeOptions = () => {
     const options = [
@@ -45,7 +46,7 @@ const CurrenciesOptions = ({ accountType, selectStyles, setCurrencyId, currencyI
     }));
 
     /* if (accountType === 'CA' || accountType === null) { */
-        options = [{ value: '', label: 'TODAS' }, ...options];
+    options = [{ value: '', label: 'TODAS' }, ...options];
     /* } */
 
     return (
@@ -69,6 +70,9 @@ const AllCustomersAccounts = () => {
     const itemsPerPage = 10;
     const [closeAccount, { isLoading: isLoadingCloseAccount }] = useCloseAccountMutation();
     const [activeAccount, { isLoading: isLoadingActiveAccount }] = useActiveAccountMutation();
+    const dataRole = UserRole();
+
+    const isAdmin = dataRole?.role === 'admin';
 
     const handleAdvancedSearch = () => {
         setAdvancedSearch(!advancedSearch);
@@ -145,6 +149,10 @@ const AllCustomersAccounts = () => {
         navigate(`/bank/accountOperations/${accountId}`);
     };
 
+    const handleClickBankOperation = () => {
+        navigate(`/bank/accountBankOperations`);
+    };
+
     const accounts = data?.accounts || [];
     const startIndex = (pageNumber - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -159,12 +167,20 @@ const AllCustomersAccounts = () => {
                     </div>
                     {isLoading || isFetching && <Loader />}
                     <div className='box-details'>
-                        <div className='box button-container mt-1 px-2 pb-2 pt-1 d-flex justify-content-center'>
-                            <div className='box mr-4'>
+                        <div className='box button-container mt-1 px-2 pb-2 pt-1' id='button-container'>
+                            <div className='box d-flex justify-content-center'>
                                 <Button variant="primary" size="sm" className="detail-button" onClick={handleAdvancedSearch}>
                                     <span>Busqueda avanzada</span>
                                 </Button>
                             </div>
+                            {isAdmin && (
+                                <div className='box d-flex justify-content-end'>
+                                    <Button to="/customer/" variant="outline-primary" className="btn btn-custom d-flex align-items-center" size='sm' title="Ver operaciones"  onClick={() => handleClickBankOperation()}>
+                                        <span className="plus-icon"><FaShareSquare className='me-2' /></span>
+                                        <p className='mb-0 txt-btn-default'>CC del banco</p>
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                         <div className={`box advanced-search d-flex justify-content-center mb-2 ${advancedSearch ? 'advanced-search-visible' : 'advanced-search-hidden'}`}>
                             <Row className='justify-content-center'>
