@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import Role from "../models/roleModel.js";
 import { generateToken, extendToken } from "../utils/generateToken.js";
-import { isAdmin, isCustomer } from "../middlewares/authMiddleware.js";
+import { isAdmin, isCustomer, loginIsCustomer } from "../middlewares/authMiddleware.js";
 import { endUserExpiration, initialUserExpiration } from "../middlewares/sessionMiddleware.js";
 import UserSession from "../models/userSessionModel.js";
 import { decrypt, encrypt } from "../utils/crypter.js";

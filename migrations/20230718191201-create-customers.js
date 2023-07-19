@@ -1,6 +1,6 @@
-const mongodb = require('mongodb')
+import mongoose from 'mongoose';
 
-const { ObjectId } = mongodb
+const { ObjectId } = mongoose.Types;
 
 const createCustomers = [
     {
@@ -26,7 +26,7 @@ export const up = async (db, client) => {
 };
 
 export const down = async (db, client) => {
-    await db.collection('currencies').deleteMany({
+    await db.collection('customers').deleteMany({
         _id: {
             $in: createCustomers.map((currency) => currency._id),
         },

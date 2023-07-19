@@ -28,7 +28,7 @@ const createUsers = [
         _id: new ObjectId('000000000000000000000001'),
         userName: 'jperez',
         email: 'jperez@bancoinsptutn.com.ar',
-        password: '$2a$10$OLb1CwJaw56Vq8unFQXxPOUIK6ldsVl8DHcd6gm4OutnSrUwxRDge',
+        password: '$2a$10$7lckTLnTrvpI7jBBLhN84u50orPXPr0.Odyta06vEfxbabfkTKuVe',
         role: new ObjectId('000000000000000000000001'),
         lastName: 'Perez',
         firstName: 'Juan',

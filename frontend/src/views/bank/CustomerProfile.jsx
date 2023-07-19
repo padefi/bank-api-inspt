@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
 import CardContainer from '../../components/CardContainer';
 import { toast } from 'react-toastify';
 import Loader from '../../components/Loader';
-import { setCredentials } from '../../slices/authSlice';
 import { useGetCustomerProfileQuery, useUpdateCustomerMutation } from '../../slices/customerApiSlice';
 import { useUnlockUserMutation, useLockUserMutation } from '../../slices/usersApiSlice';
 import useCheckCookies from '../../utils/useCheckCookies';
@@ -69,6 +67,7 @@ const CustomerProfile = () => {
             toast.error(error.data?.message || error.error);
         } else {
             setGovernmentId(data?.customer.user.governmentId.number || '');
+            setCustomerType(data?.customer.type || '');
             setFirstName(data?.customer.user.firstName.toUpperCase() || '');
             setLastName(data?.customer.user.lastName.toUpperCase() || '');
             setEmail(data?.customer.user.email.toUpperCase() || '');
