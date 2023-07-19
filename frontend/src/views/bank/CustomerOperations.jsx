@@ -158,7 +158,7 @@ const CustomerOperations = () => {
                                 ) : (
                                     <tbody>
                                         <tr>
-                                            <td colSpan={6} className="text-center"><h5 className="h-striped">No se encontraron cuentas</h5></td>
+                                            <td colSpan={6} className="text-center"><h5 className="h-striped">No se encontraron operaciones en esta cuenta</h5></td>
                                         </tr>
                                     </tbody>
                                 )}
@@ -172,7 +172,7 @@ const CustomerOperations = () => {
                         <>
                             <hr />
                             <div className='box button-container pb-3 px-3 d-flex justify-content-between'>
-                                <h5 className="h-striped">No existen operaciones en esta cuenta</h5>
+                                <h5 className="h-striped">No se encontraron operaciones en esta cuenta</h5>
                             </div>
                         </>
                     )}
