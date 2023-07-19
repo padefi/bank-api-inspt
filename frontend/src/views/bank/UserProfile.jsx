@@ -10,6 +10,7 @@ import UserRole from "../../utils/userRole";
 import { useParams } from 'react-router-dom';
 import Select from 'react-select';
 import numberFormat from '../../utils/numberFormat';
+import { useSelector } from 'react-redux';
 
 const UserRoleOptions = () => {
     const [getUserTypesCompleted, setGetUserTypesCompleted] = useState(false);
@@ -53,6 +54,7 @@ const UserProfile = () => {
     const [lockUser, { isLoading: isLoadingLockUser }] = useLockUserMutation();
     const [unlockUser, { isLoading: isLoadingUnlockUser }] = useUnlockUserMutation();
     const [updateUserProfile, { isLoadingUpdate }] = useUpdateUserMutation();
+    const { userInfo } = useSelector((state) => state.auth);
 
     const dataRole = UserRole();
     const isAdmin = dataRole?.role === 'admin';
@@ -196,7 +198,7 @@ const UserProfile = () => {
                                         <Form.Group className='my-2' controlId='userRol'>
                                             <h6 className='fw-bold h6-CardContainer'>Tipo Usuario</h6>
                                             <Select options={userRoleOptions} onChange={(option) => setUserRole(option?.value)} styles={selectStyles} menuPortalTarget={document.body}
-                                                defaultValue={userRoleOptions.find((option) => option.label === user.role.name.toUpperCase())} />
+                                                defaultValue={userRoleOptions.find((option) => option.label === user.role.name.toUpperCase())} isDisabled={user.userName === userInfo.userName}/>
                                         </Form.Group>
                                     </div>
                                 </div>

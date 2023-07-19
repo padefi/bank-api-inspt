@@ -26,7 +26,8 @@
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.0",
     "migrate-mongo": "^10.0.0",
-    "mongoose": "^7.3.4"
+    "mongoose": "^7.3.4",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",

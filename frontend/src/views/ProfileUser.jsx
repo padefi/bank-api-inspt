@@ -6,6 +6,7 @@ import { useGetProfileUserQuery, useUpdateProfileUserMutation } from '../slices/
 import UserRole from "../utils/userRole";
 import Select from 'react-select';
 import CardContainer from '../components/CardContainer';
+import numberFormat from '../utils/numberFormat';
 
 const ProfileUser = () => {
     const [governmentId, setGovernmentId] = useState('');

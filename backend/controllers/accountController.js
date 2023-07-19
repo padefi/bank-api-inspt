@@ -91,7 +91,7 @@ const getAllAccounts = asyncHandler(async (req, res) => {
 });
 
 // @desc    Ver cuentas bancarias
-// @route   GET /api/accounts/
+// @route   GET /api/accounts/ && /api/accounts/getCustomerAccount
 // @access  Private
 const getUserAccounts = asyncHandler(async (req, res) => {
 
