@@ -247,12 +247,14 @@ const createAccount = asyncHandler(async (req, res) => {
 
     const { accountType, currencyId } = req.body;
 
-    if (!accountType || !currencyId) {
+    const userId = (isCustomer(req.user)) ? req.user._id : decrypt(req.body.userId);
+
+    if (!userId || !accountType || !currencyId) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(userId);
 
     if (!user) {
         res.status(404);

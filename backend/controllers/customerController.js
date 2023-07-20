@@ -53,7 +53,7 @@ const createCustomer = asyncHandler(async (req, res) => {
         user: user._id
     });
 
-    if(!customer) {
+    if (!customer) {
         const deleteUser = await User.deleteOne({ _id: user._id });
         res.status(400);
         throw new Error('Ha ocurrido un error al crear al cliente.');
@@ -89,7 +89,7 @@ const getCustomer = asyncHandler(async (req, res) => {
         throw new Error('Rol no encontrado');
     }
 
-    let query = {};
+    let query = { user: { $ne: '000000000000000000000000' } };
     let matchConditions = [];
 
     if (customerTypes !== '' && customerTypes !== 'null') {

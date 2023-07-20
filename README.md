@@ -56,7 +56,7 @@ npm run dev (este comando ejecuta las migraciones e inicia ambos servidores)
 > 
 > **Contraseña**: 20342114335
 >   
-> **Perfil**: Admin
+> **Perfil**: Empleado
 
 > Customer es todo lo relacionado a la gestión de cuentas y operaciones del lado del cliente. Se puede ingresar con los siguientes usuarios:
 > 
