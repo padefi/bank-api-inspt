@@ -7,7 +7,7 @@ const createCurrencies = [
         _id: new ObjectId('000000000000000000000000'),
         name: 'Pesos Argentinos',
         acronym: 'ARS',
-        symbols: '$',
+        symbol: '$',
         createdAt: new Date(),
         updatedAt: new Date(),
     },
@@ -15,7 +15,7 @@ const createCurrencies = [
         _id: new ObjectId('000000000000000000000001'),
         name: 'Dolares Americanos',
         acronym: 'USD',
-        symbols: 'U$S',
+        symbol: 'U$S',
         createdAt: new Date(),
         updatedAt: new Date(),
     }
