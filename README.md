@@ -79,6 +79,6 @@ npm run dev (este comando ejecuta las migraciones e inicia ambos servidores)
 > 
 > **Tipo cliente**: Persona Juridica
 
-> :rotating_light: **IMPORTANTE**: Una vez iniciada la sesión, se generará un token de 10 minutos, el cual se irá renovando cada vez que el usuario ingrese a los diferentes menús/opciones. Junto con este se ejecutará una función definida con un setTimeout, la cual deslogueará al usuario automaticamente si este no interacciona con el sistema transcurridos los 10 minutos. :rotating_light:
+:rotating_light: **IMPORTANTE**: Una vez iniciada la sesión, se generará un token de 10 minutos, el cual se irá renovando cada vez que el usuario ingrese a los diferentes menús/opciones. Junto con este se ejecutará una función definida con un setTimeout, la cual deslogueará al usuario automaticamente si este no interacciona con el sistema transcurridos los 10 minutos. :rotating_light:
 
 **Desarrollado por Pablo De Filpo**
