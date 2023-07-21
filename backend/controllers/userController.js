@@ -375,13 +375,17 @@ const getUserClearPassword = asyncHandler(async (req, res) => {
     if (!user) {
         res.status(404);
         throw new Error('Enlace invalido.');
-    }
+    }    
 
     let newUser = user;
 
     const userId = newUser.userId.toHexString();
     const encryptedUserId = await encrypt(userId);
     newUser = { ...newUser.toObject(), userId: encryptedUserId };
+
+    if (user) {
+        await ResetPassword.deleteOne();
+    }
 
     res.status(200).json({
         user: newUser
