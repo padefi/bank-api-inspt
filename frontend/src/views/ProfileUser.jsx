@@ -148,14 +148,14 @@ const ProfileUser = () => {
                                     </div>
                                     <div>
                                         <Form.Group className='my-2' controlId='password'>
-                                            <Form.Label>Password</Form.Label>
-                                            <Form.Control type='password' placeholder='Enter password' autoComplete='off' value={password} minLength={6} onChange={(e) => setPassword(e.target.value)}></Form.Control>
+                                            <Form.Label>Nueva Contraseña</Form.Label>
+                                            <Form.Control type='password' placeholder='Ingrese nueva contraseña' autoComplete='off' value={password} minLength={6} onChange={(e) => setPassword(e.target.value)}></Form.Control>
                                         </Form.Group>
                                     </div>
                                     <div>
                                         <Form.Group className='my-2' controlId='confirmPassword'>
-                                            <Form.Label>Confirm Password</Form.Label>
-                                            <Form.Control type='password' placeholder='Confirm password' autoComplete='off' value={confirmPassword} minLength={6} onChange={(e) => setConfirmPassword(e.target.value)}></Form.Control>
+                                            <Form.Label>Confirmar nueva contraseña</Form.Label>
+                                            <Form.Control type='password' placeholder='Confirmar nueva contraseña' autoComplete='off' value={confirmPassword} minLength={6} onChange={(e) => setConfirmPassword(e.target.value)}></Form.Control>
                                         </Form.Group>
                                     </div>
                                 </div>

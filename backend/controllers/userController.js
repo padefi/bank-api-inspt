@@ -201,18 +201,27 @@ const loginUser = asyncHandler(async (req, res) => {
                 throw new Error('El usuario ya se encuentra logueado.');
             }
 
-            req.session.userId = user._id;
-            user.loginAttempts = 0;
-            await user.save();
-            initialUserExpiration(user._id, req.sessionID);
-            generateToken(res, user._id);
+            if (user.isPasswordResetRequired) {
+                const userId = encrypt(user._id);
+                res.status(401).json({
+                    message: 'Debe cambiar su contraseña.',
+                    userId,
+                    resetRequired: user.isPasswordResetRequired,
+                });
+            } else {
 
-            res.status(200).json({
-                message: 'Usuario logueado.',
-                userName: user.userName,
-                role: user.role.name,
-            });
+                req.session.userId = user._id;
+                user.loginAttempts = 0;
+                await user.save();
+                initialUserExpiration(user._id, req.sessionID);
+                generateToken(res, user._id);
 
+                res.status(200).json({
+                    message: 'Usuario logueado.',
+                    userName: user.userName,
+                    role: user.role.name,
+                });
+            }
         } else {
             if (user.loginAttempts >= 2 && loginIsCustomer(user.role.name)) user.isActive = false;
             user.loginAttempts += 1;
@@ -246,6 +255,43 @@ const logoutUser = asyncHandler(async (req, res) => {
     res.status(200).json({
         message: 'Usuario deslogueado.'
     });
+});
+
+// @desc    Actualizar datos del usuario
+// @route   PUT /api/users/updatePassword
+// @access  Private
+const updateUserPassword = asyncHandler(async (req, res) => {
+
+    const { userId, password } = req.body;
+
+    // Validación
+    if (!userId || !password ) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const dencryptedId = await decrypt(userId);
+
+    const user = await User.findById(dencryptedId);
+
+    if (!user) {
+        res.status(404);
+        throw new Error('Usuario no encontrado.');
+    }
+
+    if (user) {
+        user.password = req.body.password;
+        user.isPasswordResetRequired = false;
+
+        const updateUser = await user.save();
+
+        res.json({
+            message: 'Contraseña actualizada con exito.'
+        });
+    } else {
+        res.status(404);
+        throw new Error('Usuario no encontrado.');
+    }
 });
 
 // @desc    Datos del usuario
@@ -472,6 +518,7 @@ export {
     getUserRoles,
     loginUser,
     logoutUser,
+    updateUserPassword,
     userProfile,
     updateUserProfile,
     profileUser,

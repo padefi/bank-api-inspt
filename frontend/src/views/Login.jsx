@@ -5,14 +5,17 @@ import { Form, Button, Col, Card } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoginMutation } from '../slices/usersApiSlice';
-import { setCredentials, userMessage } from '../slices/authSlice';
+import { setCredentials } from '../slices/authSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import loginImg from '../img/login.jpg';
+import ChangePasswordModal from '../components/ChangePasswordModal';
 
 const LoginScreen = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [userId, setUserId] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -28,6 +31,10 @@ const LoginScreen = () => {
     }
   }, [navigate, userInfo]);
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -36,6 +43,12 @@ const LoginScreen = () => {
       if (res.role === 'empleado' || res.role === 'admin') navigate('/bank/dashboard');
       else navigate('/customer/home');
     } catch (err) {
+      if (err?.data?.resetRequired) {
+        setUserId(err.data.userId);
+        setUserName('');
+        setPassword('');
+        setShowModal(true);
+      }
       toast.error(err?.data?.message || err.error);
     }
   };
@@ -87,6 +100,7 @@ const LoginScreen = () => {
 
       {isLoading && <Loader />}
 
+      <ChangePasswordModal show={showModal} onHide={handleCloseModal} userId={userId} />
     </FormContainer>
 
   );
