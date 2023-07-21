@@ -37,6 +37,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getUserClearPassword: builder.query({
+      query: ({ token }) => ({
+        url: `${USERS_URL}/clearPassword?token=${token}`,
+        method: 'GET',
+      }),
+    }),
     showUsers: builder.query({
       query: ({ userData, userName, userRole, userStatus }) => ({
         url: `${USERS_URL}/?userData=${userData}&userName=${userName}&userRole=${userRole}&userStatus=${userStatus}`,
@@ -92,6 +98,7 @@ export const {
   useLogoutMutation,
   useUpdateUserPasswordMutation,
   useForgotUserPasswordMutation,
+  useGetUserClearPasswordQuery,
   useShowUsersQuery,
   useGetUserRolesQuery,
   useGetUserProfileQuery,

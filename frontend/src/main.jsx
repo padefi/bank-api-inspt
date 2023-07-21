@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import App from './App.jsx';
 import Login from './views/Login.jsx';
+import ClearUserPassword from './views/ClearUserPassword.jsx';
 import Home from './views/customer/Home.jsx';
 import Dashboard from './views/bank/Dashboard.jsx';
 import Accounts from './views/customer/Accounts.jsx';
@@ -31,6 +32,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
       <Route path='/login' element={<Login />} />
+      <Route path='/resetPassword/:token' element={<ClearUserPassword />} />
       <Route path='' element={<PrivateRoute />}>
 
         <Route path="/customer/home" element={<PrivateRouteCustomer><Home /></PrivateRouteCustomer>} />

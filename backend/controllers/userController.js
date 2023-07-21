@@ -297,8 +297,8 @@ const updateUserPassword = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Actualizar datos del usuario
-// @route   PUT /api/users/forgotPassword
+// @desc    Envía mail para restablecer la contraseña del usuario
+// @route   POST /api/users/forgotPassword
 // @access  Private
 const forgotUserPassword = asyncHandler(async (req, res) => {
 
@@ -355,6 +355,37 @@ const forgotUserPassword = asyncHandler(async (req, res) => {
             message: 'Email enviado con exito.'
         });
     }
+});
+
+// @desc    Datos del usuario para restablecer la contraseña
+// @route   POST /api/users/clearPassword
+// @access  Private
+const getUserClearPassword = asyncHandler(async (req, res) => {
+
+    const { token } = req.query;
+
+    // Validación
+    if (!token) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const user = await ResetPassword.findOne({ token }).select('-_id userId');
+
+    if (!user) {
+        res.status(404);
+        throw new Error('Enlace invalido.');
+    }
+
+    let newUser = user;
+
+    const userId = newUser.userId.toHexString();
+    const encryptedUserId = await encrypt(userId);
+    newUser = { ...newUser.toObject(), userId: encryptedUserId };
+
+    res.status(200).json({
+        user: newUser
+    });
 });
 
 // @desc    Datos del usuario
@@ -583,6 +614,7 @@ export {
     logoutUser,
     updateUserPassword,
     forgotUserPassword,
+    getUserClearPassword,
     userProfile,
     updateUserProfile,
     profileUser,
