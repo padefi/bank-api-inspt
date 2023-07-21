@@ -10,12 +10,14 @@ import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import loginImg from '../img/login.jpg';
 import ChangePasswordModal from '../components/ChangePasswordModal';
+import ForgotPasswordModal from '../components/ForgotPasswordModal';
 
 const LoginScreen = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [userId, setUserId] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -31,8 +33,16 @@ const LoginScreen = () => {
     }
   }, [navigate, userInfo]);
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleCloseChangePasswordModal = () => {
+    setShowChangePasswordModal(false);
+  };
+
+  const handleForgotPasswordModal = () => {
+    setShowForgotPasswordModal(true);
+  };
+
+  const handleCloseForgotPasswordModal = () => {
+    setShowForgotPasswordModal(false);
   };
 
   const submitHandler = async (e) => {
@@ -47,7 +57,7 @@ const LoginScreen = () => {
         setUserId(err.data.userId);
         setUserName('');
         setPassword('');
-        setShowModal(true);
+        setShowChangePasswordModal(true);
       }
       toast.error(err?.data?.message || err.error);
     }
@@ -78,11 +88,11 @@ const LoginScreen = () => {
 
           <Form onSubmit={submitHandler}>
             <Form.Group className='my-2' controlId='userName'>
-              <Form.Control type='text' placeholder='Ingrese usuario' autoComplete='off' value={userName} onChange={(e) => setUserName(e.target.value)}></Form.Control>
+              <Form.Control type='text' placeholder='Ingrese usuario' autoComplete='off' required value={userName} onChange={(e) => setUserName(e.target.value)}></Form.Control>
             </Form.Group>
 
             <Form.Group className='my-2' controlId='password'>
-              <Form.Control type='password' placeholder='Ingrese contraseña' autoComplete='off' value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
+              <Form.Control type='password' placeholder='Ingrese contraseña' autoComplete='off' required value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
             </Form.Group>
 
             <div className='my-2'>
@@ -93,14 +103,15 @@ const LoginScreen = () => {
           </Form>
 
           <div>
-            <a className="small text-muted" href="#!">¿Ha olvidado la contraseña?</a>
+            <a type='button' className="small text-muted" onClick={handleForgotPasswordModal}>¿Ha olvidado la contraseña?</a>
           </div>
         </Card.Body>
       </Col>
 
       {isLoading && <Loader />}
 
-      <ChangePasswordModal show={showModal} onHide={handleCloseModal} userId={userId} />
+      <ChangePasswordModal show={showChangePasswordModal} onHide={handleCloseChangePasswordModal} userId={userId} />
+      <ForgotPasswordModal show={showForgotPasswordModal} onHide={handleCloseForgotPasswordModal} />
     </FormContainer>
 
   );

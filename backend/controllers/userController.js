@@ -6,6 +6,9 @@ import { isAdmin, isCustomer, loginIsCustomer } from "../middlewares/authMiddlew
 import { endUserExpiration, initialUserExpiration } from "../middlewares/sessionMiddleware.js";
 import UserSession from "../models/userSessionModel.js";
 import { decrypt, encrypt } from "../utils/crypter.js";
+import sendEmail from "../utils/sendEmail.js";
+import { v4 as uuidv4 } from "uuid";
+import ResetPassword from "../models/resetPasswordModel.js";
 
 // @desc    Crear un nuevo usuario
 // @route   POST /api/users/create
@@ -265,7 +268,7 @@ const updateUserPassword = asyncHandler(async (req, res) => {
     const { userId, password } = req.body;
 
     // Validación
-    if (!userId || !password ) {
+    if (!userId || !password) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
     }
@@ -291,6 +294,66 @@ const updateUserPassword = asyncHandler(async (req, res) => {
     } else {
         res.status(404);
         throw new Error('Usuario no encontrado.');
+    }
+});
+
+// @desc    Actualizar datos del usuario
+// @route   PUT /api/users/forgotPassword
+// @access  Private
+const forgotUserPassword = asyncHandler(async (req, res) => {
+
+    const { userName } = req.body;
+
+    // Validación
+    if (!userName) {
+        res.status(400);
+        throw new Error('Por favor, complete todos los campos.');
+    }
+
+    const user = await User.findOne({ userName });
+
+    if (user) {
+
+        let token = await ResetPassword.findOne({ userId: user._id })
+
+        if (token) {
+            await ResetPassword.deleteOne();
+        }
+
+        let resetToken = uuidv4();
+
+        await new ResetPassword({
+            userId: user._id,
+            token: resetToken,
+            expirationTime: new Date(Date.now() + 1000 * 60 * 30)
+        }).save();
+
+        const resetUrl = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
+        const userData = (user.lastName === user.firstName) ? user.lastName : user.lastName + ', ' + user.firstName;
+
+        const message = `
+        <h2>Hola ${userData}</h2>
+        <p>Por favor, acceda al siguiente enlance para restablecer su contraseña.</p>
+        <p>Este es valido por 30 minutos.</p>
+
+        <a href="${resetUrl}" clicktracking=off>${resetUrl}</a>
+
+        <p>Banco INSPT UTN</p>
+        `;
+
+        const subject = "Restablecer contraseña";
+        const send_to = user.email;
+        const sent_from = process.env.EMAIL_USER;
+
+        await sendEmail(subject, message, send_to, sent_from);
+
+        res.status(200).json({
+            message: 'Email enviado con éxito.'
+        });
+    } else {
+        res.status(200).json({
+            message: 'Email enviado con exito.'
+        });
     }
 });
 
@@ -519,6 +582,7 @@ export {
     loginUser,
     logoutUser,
     updateUserPassword,
+    forgotUserPassword,
     userProfile,
     updateUserProfile,
     profileUser,

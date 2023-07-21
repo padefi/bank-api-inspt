@@ -18,7 +18,7 @@ const ChangePasswordModal = ({ show, onHide, userId }) => {
             try {
                 const res = await updatePassword({ userId, password }).unwrap();
                 toast.success(res.message);
-                onHide(false);
+                onHide();
             } catch (err) {
                 toast.error(err?.data?.message || err.error);
             }
@@ -34,11 +34,11 @@ const ChangePasswordModal = ({ show, onHide, userId }) => {
                 <Modal.Body>
                     <Form.Group className='my-2' controlId='password'>
                         <Form.Label>Nueva Contraseña</Form.Label>
-                        <Form.Control type='password' placeholder='Ingrese nueva contraseña' autoComplete='off' value={password} minLength={6} onChange={(e) => setPassword(e.target.value)}></Form.Control>
+                        <Form.Control type='password' placeholder='Ingrese nueva contraseña' autoComplete='off' required value={password} minLength={6} onChange={(e) => setPassword(e.target.value)}></Form.Control>
                     </Form.Group>
                     <Form.Group className='my-2' controlId='confirmPassword'>
                         <Form.Label>Confirmar nueva Contraseña</Form.Label>
-                        <Form.Control type='password' placeholder='Confirmar nueva contraseña' autoComplete='off' value={confirmPassword} minLength={6} onChange={(e) => setConfirmPassword(e.target.value)}></Form.Control>
+                        <Form.Control type='password' placeholder='Confirmar nueva contraseña' autoComplete='off' required value={confirmPassword} minLength={6} onChange={(e) => setConfirmPassword(e.target.value)}></Form.Control>
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
