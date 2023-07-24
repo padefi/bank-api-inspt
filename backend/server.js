@@ -1,4 +1,5 @@
 import express from "express";
+import logger from "./utils/logger.js";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -53,4 +54,7 @@ app.get('/', (req, res) => res.send('API corriendo'));
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(port, () => console.log(`El servidor se encuentra corriendo en el puerto: ${port}`));
+app.listen(port, () => {
+    console.log(`El servidor se encuentra corriendo en el puerto: ${port}`);
+    logger.info(`El servidor se encuentra corriendo en el puerto: ${port}`);
+});

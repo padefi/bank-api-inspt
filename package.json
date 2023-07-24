@@ -28,7 +28,8 @@
     "migrate-mongo": "^10.0.0",
     "mongoose": "^7.3.4",
     "nodemailer": "^6.9.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
