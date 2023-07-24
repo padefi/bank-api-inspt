@@ -247,8 +247,13 @@ const createAccount = asyncHandler(async (req, res) => {
 
     const { accountType, currencyId } = req.body;
 
-    const userId = (isCustomer(req.user)) ? req.user._id : decrypt(req.body.userId);
+    if (!isAdmin(req.user) && !isEmployee(req.user)) {
+        res.status(400);
+        throw new Error('Sin autorización.');
+    }
 
+    const userId = (isCustomer(req.user)) ? req.user._id : await decrypt(req.body.userId);
+    
     if (!userId || !accountType || !currencyId) {
         res.status(400);
         throw new Error('Por favor, complete todos los campos.');
@@ -273,7 +278,7 @@ const createAccount = asyncHandler(async (req, res) => {
         throw new Error('No es posible crear el tipo de cuenta con la moneda indicada');
     }
 
-    const accountExist = await Account.findOne({ accountHolder: req.user._id, type: accountType, currency: currencyId });
+    const accountExist = await Account.findOne({ accountHolder: userId, type: accountType, currency: currencyId });
 
     if (accountExist) {
         res.status(400);
@@ -310,7 +315,7 @@ const createAccount = asyncHandler(async (req, res) => {
         accountId,
         type: accountType,
         alias,
-        accountHolder: req.user._id,
+        accountHolder: userId,
         currency: currency._id
     });
 

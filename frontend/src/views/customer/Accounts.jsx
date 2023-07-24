@@ -12,7 +12,7 @@ import useSessionTimeout from '../../utils/useSessionTimeout';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
-const AccountTypeOptions = () => {
+/* const AccountTypeOptions = () => {
   const options = [
     { value: 'CA', label: 'CAJA DE AHORRO' },
     { value: 'CC', label: 'CUENTA CORRIENTE' }
@@ -48,18 +48,19 @@ const CurrenciesOptions = ({ accountType, selectStyles, defaultSelectValueCurren
   return (
     <Select key={accountType} options={options} onChange={(option) => setCurrencyId(option?.value || null)} styles={selectStyles} defaultValue={defaultSelectValueCurrency} />
   );
-}
+} */
 
 const Accounts = () => {
   useCheckCookies();
   useSessionTimeout();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
-  const [showModal, setShow] = useState(false);
   const [accountType, setAccountType] = useState(null);
   const [currencyId, setCurrencyId] = useState(null);
-  const accountTypeOptions = AccountTypeOptions();
   const navigate = useNavigate();
   const { data, error, isLoading, isFetching, refetch } = useShowAccountsQuery({}, { refetchOnMountOrArgChange: true });
+
+  /* const [showModal, setShow] = useState(false);
+  const accountTypeOptions = AccountTypeOptions();
   const [createAccount, { isLoading: isLoadingCreateAccount }] = useCreateAccountMutation();
 
   const selectStyles = () => ({
@@ -81,26 +82,6 @@ const Accounts = () => {
 
   const [selectedOptionKeyAccountType, setSelectedOptionKeyAccountType] = useState(0);
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error.data?.message || error.error);
-    } else {
-      setCheckAccountsCompleted(true);
-    }
-  }, [data, error]);
-
-  useEffect(() => {
-    setCurrencyId(null);
-  }, [accountType]);
-
-  if (!checkAccountsCompleted) {
-    return null;
-  }
-
-  const handleClickAccount = (accountId) => {
-    navigate(`/customer/userAccount/${accountId}`);
-  };
-
   const handleButtonOpenModal = () => setShow(true);
   const handleCloseModal = () => {
     setShow(false);
@@ -121,7 +102,27 @@ const Accounts = () => {
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
-  };
+  }; */
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.data?.message || error.error);
+    } else {
+      setCheckAccountsCompleted(true);
+    }
+  }, [data, error]);
+
+  useEffect(() => {
+    setCurrencyId(null);
+  }, [accountType]);
+
+  if (!checkAccountsCompleted) {
+    return null;
+  }
+
+  const handleClickAccount = (accountId) => {
+    navigate(`/customer/userAccount/${accountId}`);
+  }; 
 
   const accounts = data?.accounts || [];
 
@@ -135,14 +136,14 @@ const Accounts = () => {
             </div>
           </div>
         </div>
-        <div className='box px-4 d-flex flex-column'>
+        {/* <div className='box px-4 d-flex flex-column'>
           <div className='box d-flex my-2 justify-content-end'>
             <Button to="/customer/" variant="outline-primary" className="btn btn-custom d-flex align-items-center" onClick={handleButtonOpenModal}>
               <span className="plus-icon"><FaPlusCircle className='me-2' /></span>
               <p className='mb-0 txt-btn-default'>Nueva Cuenta</p>
             </Button>
           </div>
-        </div>
+        </div> */}
         <div className='box px-4 d-flex flex-column box-details'>
           {isLoading || isFetching && <Loader />}
           {accounts.length > 0 ? (
@@ -188,7 +189,7 @@ const Accounts = () => {
       </CardContainer>
       <br />
 
-      <Modal show={showModal} onHide={handleCloseModal} backdrop="static">
+      {/* <Modal show={showModal} onHide={handleCloseModal} backdrop="static">
         <Form onSubmit={submitNewAccount}>
           <Modal.Header closeButton className='bg-dark text-white justify-content-center'>
             <Modal.Title>Nueva Cuenta</Modal.Title>
@@ -216,7 +217,7 @@ const Accounts = () => {
           </Modal.Footer>
         </Form>
         {isLoadingCreateAccount && <Loader />}
-      </Modal>
+      </Modal> */}
     </BoxContainer >
   );
 };
