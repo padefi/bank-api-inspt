@@ -5,6 +5,8 @@ import { extendToken } from "../utils/generateToken.js";
 // @route   GET /api/auth/check-cookies
 // @access  Private
 const userIsLog = asyncHandler(async (req, res) => {
+    logger.info(`userIsLog por el usuario: ${req.user._id}`);
+
     if (req.cookies) {
         extendToken(req, res);
         res.status(201).json({
@@ -16,6 +18,7 @@ const userIsLog = asyncHandler(async (req, res) => {
             message: 'Cookies no encontradas.',
             checkCookiesData: false
         });;
+        logger.error('Cookies no encontradas.');
         throw new Error('Cookies no encontradas.');
     }
 });
@@ -24,6 +27,7 @@ const userIsLog = asyncHandler(async (req, res) => {
 // @route   GET /auth/users/role
 // @access  Private
 const userRole = asyncHandler(async (req, res) => {
+    logger.info(`userRole por el usuario: ${req.user._id}`);
 
     if (req.user.role.name) {
         res.status(201).json({
@@ -33,6 +37,7 @@ const userRole = asyncHandler(async (req, res) => {
         res.status(400).json({
             role: false
         });;
+        logger.error('Rol no encontradas.');
         throw new Error('Rol no encontrado.');
     }
 });

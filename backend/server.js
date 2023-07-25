@@ -1,4 +1,5 @@
 import express from "express";
+import figletText from "./utils/figlettext.js";
 import logger from "./utils/logger.js";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
@@ -11,6 +12,8 @@ import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import { extendUserExpiration } from "./middlewares/sessionMiddleware.js";
+
+await figletText();
 
 dotenv.config();
 connectDB();

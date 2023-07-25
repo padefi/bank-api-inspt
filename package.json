@@ -24,6 +24,7 @@
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "express-session": "^1.17.3",
+    "figlet": "^1.6.0",
     "jsonwebtoken": "^9.0.0",
     "migrate-mongo": "^10.0.0",
     "mongoose": "^7.3.4",

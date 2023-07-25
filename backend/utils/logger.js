@@ -1,34 +1,24 @@
 import winston from "winston";
 const { createLogger, format, transports } = winston;
-const { combine, timestamp, label, printf, prettyPrint } = format;
+const { combine, timestamp, printf } = format;
 
-const myFormat = printf(({ level, message, label, timestamp }) => {
-    return `${timestamp} [${label}] ${level}: ${message}`;
+const myFormat = printf(({ level, message, timestamp }) => {
+    const date = new Date(timestamp);
+    const formattedTimestamp = `${date.toDateString()} ${date.toTimeString().split(' ')[0]}`;
+    return `[${formattedTimestamp}] [${level}]: ${message}`;
 });
-
-/* const logger = createLogger({
-    transports: [
-        /* new transports.Cosole({
-            level: 'info',
-            format: format.combine(format.timestamp(), format.json())
-        }), */
-/* new transports.File({
-     filename: 'server.log',
-     format: format.combine(format.timestamp(), format.json())
- })
-]
-}); */
 
 const logger = createLogger({
     format: combine(
-        /* label({ label: 'right meow!' }), */
         timestamp(),
         myFormat
     ),
     transports: [
+        /* new winston.transports.Console(), */
         new transports.File({
             filename: 'server.log'
         })
     ]
 });
+
 export default logger;

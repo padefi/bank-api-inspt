@@ -6,16 +6,19 @@ import User from "../models/userModel.js";
 import { generateAlias, generateAccountId } from "../utils/generateAccountInfo.js";
 import { isAdmin, isCustomer, isEmployee } from "../middlewares/authMiddleware.js";
 import { decrypt, encrypt } from "../utils/crypter.js";
+import logger from '../utils/logger.js';
 
 // @desc    Ver cuentas bancarias
 // @route   GET /api/accounts/
 // @access  Private
 const getAllAccounts = asyncHandler(async (req, res) => {
+    logger.info(`getAllAccounts por el usuario: ${req.user._id}`);
 
     const { accountType, currencyId, governmentId, dataAccount } = req.query;
 
     if (isCustomer(req.user)) {
         res.status(403);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
@@ -73,8 +76,8 @@ const getAllAccounts = asyncHandler(async (req, res) => {
 
     if (!accounts) {
         res.status(403);
+        logger.warn(`Cuentas no encontradas`);
         throw new Error('No se encontraron cuentas.');
-        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     let newAccounts = accounts.filter((account) => account.accountHolder !== null);
@@ -94,22 +97,25 @@ const getAllAccounts = asyncHandler(async (req, res) => {
 // @route   GET /api/accounts/ && /api/accounts/getCustomerAccount
 // @access  Private
 const getUserAccounts = asyncHandler(async (req, res) => {
+    logger.info(`getUserAccounts por el usuario: ${req.user._id}`);
 
     const { id } = req.query;
 
     if ((isEmployee(req.user) || isAdmin(req.user)) && !id) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
-    const dencryptedId = await decrypt(id);
+    const dencryptedId = isEmployee(req.user) || isAdmin(req.user) ? await decrypt(id) : req.user._id;
 
-    let accounts = await Account.find(isEmployee(req.user) || isAdmin(req.user) ? { accountHolder: dencryptedId } : { accountHolder: req.user._id })
+    let accounts = await Account.find({ accountHolder: dencryptedId })
         .select('accountBalance accountId alias isActive operations type _id')
         .populate('currency', '-_id acronym symbol');
 
     if (!accounts) {
         res.status(403);
+        logger.warn(`Cuenta no encontrada: ${dencryptedId}`);
         throw new Error('Sin autorización.');
         //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
@@ -135,11 +141,13 @@ const getUserAccounts = asyncHandler(async (req, res) => {
 // @route   GET /api/accounts/
 // @access  Private
 const getUserAccount = asyncHandler(async (req, res) => {
+    logger.info(`getUserAccount por el usuario: ${req.user._id}`);
 
     const { id } = req.query;
 
     if (!id) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -151,6 +159,7 @@ const getUserAccount = asyncHandler(async (req, res) => {
 
     if (!account) {
         res.status(403);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
         //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
@@ -165,12 +174,14 @@ const getUserAccount = asyncHandler(async (req, res) => {
 // @route   GET /api/accounts/
 // @access  Private
 const getAccount = asyncHandler(async (req, res) => {
+    logger.info(`getAccount por el usuario: ${req.user._id}`);
 
     const { data } = req.query;
 
     // Validación
     if (!data) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete uno de los campos.');
     }
 
@@ -205,6 +216,7 @@ const getAccount = asyncHandler(async (req, res) => {
 
     if (!accounts) {
         res.status(404);
+        logger.warn('Cuenta no encontrada.');
         throw new Error('Cuenta no encontrada.');
     }
 
@@ -226,6 +238,7 @@ const getAccount = asyncHandler(async (req, res) => {
 // @route   POST /api/accounts/currencies
 // @access  Private
 const getCurrencies = asyncHandler(async (req, res) => {
+    logger.info(`getCurrencies por el usuario: ${req.user._id}`);
 
     const currency = await Currency.find();
 
@@ -236,6 +249,7 @@ const getCurrencies = asyncHandler(async (req, res) => {
 
     } else {
         res.status(400);
+        logger.error('Ha ocurrido un error al obtener los datos.');
         throw new Error('Ha ocurrido un error al obtener los tipos de monedas.');
     }
 });
@@ -244,18 +258,21 @@ const getCurrencies = asyncHandler(async (req, res) => {
 // @route   POST /api/accounts/create
 // @access  Private
 const createAccount = asyncHandler(async (req, res) => {
+    logger.info(`createAccount por el usuario: ${req.user._id}`);
 
     const { accountType, currencyId } = req.body;
 
     if (!isAdmin(req.user) && !isEmployee(req.user)) {
         res.status(400);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
     const userId = (isCustomer(req.user)) ? req.user._id : await decrypt(req.body.userId);
-    
+
     if (!userId || !accountType || !currencyId) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -263,6 +280,7 @@ const createAccount = asyncHandler(async (req, res) => {
 
     if (!user) {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${userId}`);
         throw new Error('Usuario no encontrado.');
     }
 
@@ -270,11 +288,13 @@ const createAccount = asyncHandler(async (req, res) => {
 
     if (!currency) {
         res.status(404);
+        logger.error('Ha ocurrido un error al obtener los datos.');
         throw new Error('Tipo de moneda encontrada.');
     }
 
     if (accountType === 'CC' && currency.acronym === 'USD') {
         res.status(400);
+        logger.warn('Cuentas seleccionada en un tipo de moneda no permitida.');
         throw new Error('No es posible crear el tipo de cuenta con la moneda indicada');
     }
 
@@ -282,6 +302,7 @@ const createAccount = asyncHandler(async (req, res) => {
 
     if (accountExist) {
         res.status(400);
+        logger.warn(`El cliente ${userId} ya posee la cuenta.`);
         throw new Error('El cliente ya posee la cuenta que se le intenta crear.');
     }
 
@@ -327,6 +348,7 @@ const createAccount = asyncHandler(async (req, res) => {
 
     } else {
         res.status(400);
+        logger.error(`Ha ocurrido un error al crear la cuenta del usuario: ${userId}`);
         throw new Error('Ha ocurrido un error al crear la cuenta.');
     }
 });
@@ -335,17 +357,20 @@ const createAccount = asyncHandler(async (req, res) => {
 // @route   PUT /api/accounts/changeAlias
 // @access  Private
 const changeAlias = asyncHandler(async (req, res) => {
+    logger.info(`changeAlias por el usuario: ${req.user._id}`);
 
     const { accountId, alias } = req.body;
 
     // Validación
     if (!accountId || !alias) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
     if (!alias.match(/^[0-9a-zA-Z.]{6,20}$/)) {
         res.status(400);
+        logger.warn('El campo no cumple con los requisitos.');
         throw new Error('El Alias debe tener entre 6 y 20 caracteres alfanuméricos.');
     }
 
@@ -355,17 +380,21 @@ const changeAlias = asyncHandler(async (req, res) => {
 
     if (!account) {
         res.status(403);
-        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+        logger.warn(`Cuenta no encontrada: ${dencryptedId}`);
+        throw new Error('Sin autorización.');
+        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     if (!account.isActive) {
         res.status(400);
+        logger.warn(`Cuenta ${dencryptedId} no activa.`);
         throw new Error(`La cuenta no se encuentra activa.`);
     }
 
     let aliasExist = await Account.findOne({ alias });
     if (aliasExist) {
         res.status(400);
+        logger.warn(`Alias de la cuenta ${dencryptedId} ya registrado.`);
         throw new Error('El Alias ya existe.');
     }
 
@@ -380,7 +409,8 @@ const changeAlias = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
-        throw new Error('Cuenta no encontrada.');
+        logger.error(`Error al actualizar el Alias de la cuenta: ${dencryptedId}`);
+        throw new Error('Error al actualizar el Alias.');
     }
 });
 
@@ -388,12 +418,14 @@ const changeAlias = asyncHandler(async (req, res) => {
 // @route   POST /api/accounts/close
 // @access  Private
 const closeAccount = asyncHandler(async (req, res) => {
+    logger.info(`closeAccount por el usuario: ${req.user._id}`);
 
     const { accountId } = req.body
 
     // Validación
     if (!accountId) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -403,16 +435,20 @@ const closeAccount = asyncHandler(async (req, res) => {
 
     if (!account) {
         res.status(403);
-        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+        logger.warn(`Cuenta no encontrada: ${dencryptedId}`);
+        throw new Error('Sin autorización.');
+        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     if (!account.isActive) {
         res.status(400);
+        logger.warn(`Cuenta ${dencryptedId} no activa.`);
         throw new Error(`La cuenta no se encuentra activa.`);
     }
 
     if (account.accountBalance > 0 && !isAdmin(req.user)) {
         res.status(400);
+        logger.warn(`No es posible cerrar la Cuenta ${dencryptedId}`);
         throw new Error(`Para poder cerrar la cuenta no debe tener saldo disponible.`);
     }
 
@@ -427,7 +463,8 @@ const closeAccount = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
-        throw new Error('Cuenta no encontrada.');
+        logger.error(`Error al cerrar la cuenta: ${dencryptedId}`);
+        throw new Error('Error al cerrar la cuenta.');
     }
 });
 
@@ -435,6 +472,7 @@ const closeAccount = asyncHandler(async (req, res) => {
 // @route   POST /api/accounts/active
 // @access  Private
 const activeAccount = asyncHandler(async (req, res) => {
+    logger.info(`activeAccount por el usuario: ${req.user._id}`);
 
     const { accountId } = req.body
 
@@ -450,11 +488,14 @@ const activeAccount = asyncHandler(async (req, res) => {
 
     if (!account) {
         res.status(403);
-        throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
+        logger.warn(`Cuenta no encontrada: ${dencryptedId}`);
+        throw new Error('Sin autorización.');
+        //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     if (account.isActive) {
         res.status(400);
+        logger.warn(`No es posible activar la Cuenta ${dencryptedId}`);
         throw new Error(`La cuenta se encuentra activa.`);
     }
 
@@ -469,7 +510,8 @@ const activeAccount = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
-        throw new Error('Cuenta no encontrada.');
+        logger.error(`Error al activar la cuenta: ${dencryptedId}`);
+        throw new Error('Error al activar la cuenta.');
     }
 });
 
