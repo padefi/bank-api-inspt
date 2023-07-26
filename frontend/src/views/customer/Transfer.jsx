@@ -169,7 +169,7 @@ const TransferMoney = () => {
 
               <div className='d-flex justify-content-end'>
                 <Button type='submit' variant='success' className='mb-3 ml-auto' disabled={!accountId || !amount || !accountToData || !description}>
-                  Depositar
+                  Transferir
                 </Button>
               </div>
             </Form>

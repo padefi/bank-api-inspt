@@ -22,7 +22,7 @@ const getAllAccounts = asyncHandler(async (req, res) => {
         throw new Error('Sin autorización.');
     }
 
-    let query = {};
+    let query = { accountHolder: { $ne: '000000000000000000000000' } };
     const matchConditionsGovernmentId = [];
 
     if (accountType !== 'null' || currencyId !== 'null' || dataAccount) {
@@ -302,7 +302,7 @@ const createAccount = asyncHandler(async (req, res) => {
 
     if (accountExist) {
         res.status(400);
-        logger.warn(`El cliente ${userId} ya posee la cuenta.`);
+        logger.warn(`El cliente ${userId} ya posee la cuenta que se le intenta crear.`);
         throw new Error('El cliente ya posee la cuenta que se le intenta crear.');
     }
 

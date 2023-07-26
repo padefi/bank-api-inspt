@@ -65,7 +65,7 @@ const AccountSumarry = () => {
 
   const handleDownloadPDF = async () => {    
     const blob = await pdf(<AccountSummaryPDF
-      holder={userInfo.firstName + ' ' + userInfo.lastName}
+      holder={userInfo.userData}
       dateFrom={dateFrom}
       dateTo={dateTo}
       operations={dataAccountOperations}

@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
+import logger from './logger.js';
 
 const generateToken = (res, userId) => {
+    logger.info(`generateToken por el usuario: ${userId}`);
+
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
         expiresIn: '10m',
     });
@@ -16,6 +19,8 @@ const generateToken = (res, userId) => {
 const extendToken = (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    logger.info(`extendToken por el usuario: ${decoded.userId}`);
 
     const newToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_SECRET, {
         expiresIn: '10m',

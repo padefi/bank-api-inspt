@@ -8,7 +8,6 @@ import AccountSummaryPDF from '../../components/AccountSummaryPDF';
 import { pdf } from '@react-pdf/renderer';
 import { useShowAccountOperationsQuery } from '../../slices/operationApiSlice';
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
 import GetAccount from '../../components/GetAccount';
 
 const AccountOperations = ({ accountId, dateFrom, dateTo, onDataLoaded }) => {
@@ -40,15 +39,17 @@ const CustomerAccountSumarry = () => {
   const [account, setAccount] = useState('');
   const [accountData, setAccountData] = useState(null);
   const [accountId, setAccountId] = useState(null);
+  const [holderData, setHolderData] = useState(null);
   const [dateFromData, setDateFromData] = useState(null);
   const [dateToData, setDateToData] = useState(null);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [dataAccountOperations, setDataAccountOperations] = useState(false);
-  const { userInfo } = useSelector((state) => state.auth);
 
   const handleData = (data) => {
     setAccountId(data._id);
+    const userData = (data.accountHolder.lastName === data.accountHolder.firstName) ? data.accountHolder.lastName : data.accountHolder.lastName + ' ' + data.accountHolder.firstName;
+    setHolderData(userData);
   };
 
   const handleDataLoaded = (data) => {
@@ -57,7 +58,7 @@ const CustomerAccountSumarry = () => {
 
   const handleDownloadPDF = async () => {
     const blob = await pdf(<AccountSummaryPDF
-      holder={userInfo.firstName + ' ' + userInfo.lastName}
+      holder={holderData}
       dateFrom={dateFrom}
       dateTo={dateTo}
       operations={dataAccountOperations}
@@ -90,7 +91,7 @@ const CustomerAccountSumarry = () => {
                 maxLength={22} value={account} onChange={(e) => setAccount(e.target.value.toUpperCase())} onBlur={(e) => setAccountData(e.target.value)}></Form.Control>
 
               {accountData && (
-                <GetAccount dataAccount={account} onData={handleData} onError={() => { setAccountData(null); setAccountId(null); }} />
+                <GetAccount dataAccount={account} onData={handleData} onError={() => { setAccountData(null); setAccountId(null); setHolderData(null); }} />
               )}
             </Form.Group>
 

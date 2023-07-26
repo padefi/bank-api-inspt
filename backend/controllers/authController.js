@@ -5,7 +5,6 @@ import { extendToken } from "../utils/generateToken.js";
 // @route   GET /api/auth/check-cookies
 // @access  Private
 const userIsLog = asyncHandler(async (req, res) => {
-    logger.info(`userIsLog por el usuario: ${req.user._id}`);
 
     if (req.cookies) {
         extendToken(req, res);
@@ -27,7 +26,6 @@ const userIsLog = asyncHandler(async (req, res) => {
 // @route   GET /auth/users/role
 // @access  Private
 const userRole = asyncHandler(async (req, res) => {
-    logger.info(`userRole por el usuario: ${req.user._id}`);
 
     if (req.user.role.name) {
         res.status(201).json({

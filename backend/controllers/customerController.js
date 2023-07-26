@@ -5,22 +5,26 @@ import { decrypt, encrypt } from "../utils/crypter.js";
 import Role from "../models/roleModel.js";
 import Customer from "../models/customerModel.js";
 import User from "../models/userModel.js";
+import logger from '../utils/logger.js';
 
 // @desc    Crear un nuevo cliente
 // @route   POST /api/users/create
 // @access  Private
 const createCustomer = asyncHandler(async (req, res) => {
+    logger.info(`createCustomer por el usuario: ${req.user._id}`);
 
     const { governmentIdType, governmentId, customerType, lastName, firstName, bornDate, email, phoneNumber } = req.body;
 
     if (!isAdmin(req.user) && !isEmployee(req.user)) {
         res.status(400);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
     // Validación
     if (!governmentIdType || !governmentId || !customerType || !lastName || !firstName || !bornDate || !email || !phoneNumber) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -30,11 +34,22 @@ const createCustomer = asyncHandler(async (req, res) => {
         number: governmentId
     }
 
-    const CustomerExists = await User.findOne({ userName });
+    const CustomerExists = await User.findOne({
+        $or: [
+            { userName },
+            { email }
+        ]
+    });
 
     if (CustomerExists) {
         res.status(400);
-        throw new Error('Cliente ya registrado.');
+        if (CustomerExists.userName === userName) {
+            logger.warn(`Cliente ya registrado: ${userName}.`);
+            throw new Error('Cliente ya registrado.');
+        } else {
+            logger.warn(`Email ya registrado: ${email}.`);
+            throw new Error('Email ya registrado.');
+        }
     }
 
     const user = await User.create({
@@ -54,8 +69,9 @@ const createCustomer = asyncHandler(async (req, res) => {
     });
 
     if (!customer) {
-        const deleteUser = await User.deleteOne({ _id: user._id });
+        await User.deleteOne({ _id: user._id });
         res.status(400);
+        logger.error(`Ha ocurrido un error al crear al cliente.`);
         throw new Error('Ha ocurrido un error al crear al cliente.');
     }
 
@@ -66,6 +82,7 @@ const createCustomer = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(400);
+        logger.error(`Ha ocurrido un error al crear al cliente.`);
         throw new Error('Información invalida.');
     }
 });
@@ -74,11 +91,13 @@ const createCustomer = asyncHandler(async (req, res) => {
 // @route   GET /api/customer/
 // @access  Private
 const getCustomer = asyncHandler(async (req, res) => {
+    logger.info(`getCustomer por el usuario: ${req.user._id}`);
 
     const { accountHolder, governmentId, customerTypes, accountStatus } = req.query;
 
     if (!isAdmin(req.user) && !isEmployee(req.user)) {
         res.status(400);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
@@ -86,6 +105,7 @@ const getCustomer = asyncHandler(async (req, res) => {
 
     if (!role) {
         res.status(404);
+        logger.error('Ha ocurrido un error al obtener los datos.');
         throw new Error('Rol no encontrado');
     }
 
@@ -141,6 +161,7 @@ const getCustomer = asyncHandler(async (req, res) => {
 
     if (!customers) {
         res.status(403);
+        logger.error('Clientes no encontrados.');
         throw new Error('No se encontraron clientes.');
     }
 
@@ -162,12 +183,14 @@ const getCustomer = asyncHandler(async (req, res) => {
 // @route   GET /api/customer/profile
 // @access  Private
 const getCustomerProfile = asyncHandler(async (req, res) => {
+    logger.info(`getCustomerProfile por el usuario: ${req.user._id}`);
 
     const { id } = req.query
 
     // Validación
     if (!id) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -175,6 +198,7 @@ const getCustomerProfile = asyncHandler(async (req, res) => {
 
     if (!isAdmin(req.user) && !isEmployee(req.user)) {
         res.status(400);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
@@ -184,6 +208,7 @@ const getCustomerProfile = asyncHandler(async (req, res) => {
 
     if (!customer) {
         res.status(404);
+        logger.error('Cliente no encontrado.');
         throw new Error('Cliente no encontrado.');
     }
 
@@ -197,11 +222,13 @@ const getCustomerProfile = asyncHandler(async (req, res) => {
 // @route   PUT /api/customer/profile
 // @access  Private
 const updateCustomerProfile = asyncHandler(async (req, res) => {
+    logger.info(`updateCustomerProfile por el usuario: ${req.user._id}`);
 
     const { userId, governmentIdType, governmentId, customerType, firstName, lastName, bornDate, email, phoneNumber } = req.body
 
     if (!isAdmin(req.user) && !isEmployee(req.user)) {
         res.status(400);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
@@ -230,6 +257,7 @@ const updateCustomerProfile = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
+        logger.error('Clientes no encontrados.');
         throw new Error('Usuario no encontrado.');
     }
 });

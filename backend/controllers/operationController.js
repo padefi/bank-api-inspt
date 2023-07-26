@@ -4,11 +4,13 @@ import Operation from "../models/operationModel.js"
 import { isAdmin, isCustomer, isEmployee } from "../middlewares/authMiddleware.js";
 import { extendToken } from "../utils/generateToken.js";
 import { decrypt } from "../utils/crypter.js";
+import logger from '../utils/logger.js';
 
 // @desc    Visualizar operaciones
 // @route   GET /api/operations/allOperations
 // @access  Private
 const getAllOperations = asyncHandler(async (req, res) => {
+    logger.info(`getAllOperations por el usuario: ${req.user._id}`);
 
     const { id, accountFrom } = req.query;
 
@@ -18,6 +20,7 @@ const getAllOperations = asyncHandler(async (req, res) => {
     // Validación
     if (!dencryptedOperationId || !dencryptedId) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -46,6 +49,7 @@ const getAllOperations = asyncHandler(async (req, res) => {
 
     if (!operations) {
         res.status(403);
+        logger.warn(`Operaciónes no encontradas: ${dencryptedOperationId}`);
         throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
@@ -85,12 +89,14 @@ const getAllOperations = asyncHandler(async (req, res) => {
 // @route   GET /api/operations/accountOperations
 // @access  Private
 const getAccountOperations = asyncHandler(async (req, res) => {
+    logger.info(`getAllOperations por el usuario: ${req.user._id}`);
 
     const { accountFrom, dateFrom, dateTo, operationType } = req.query;
 
     // Validación
     if (!accountFrom) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -146,6 +152,7 @@ const getAccountOperations = asyncHandler(async (req, res) => {
 
     if (!account) {
         res.status(403);
+        logger.warn(`Operaciónes no encontradas: ${dencryptedOperationId}`);
         throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
@@ -204,16 +211,20 @@ const getAccountOperations = asyncHandler(async (req, res) => {
 // @route   POST /api/operations/deposit
 // @access  Private
 const depositMoney = asyncHandler(async (req, res) => {
+    logger.info(`getAllOperations por el usuario: ${req.user._id}`);
+
     const { accountId, amount } = req.body;
 
     // Validación
     if (!accountId || !amount) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
     if (amount <= 0) {
         res.status(400);
+        logger.warn('El monto a depositar debe ser mayor a cero.');
         throw new Error('El monto a depositar debe ser mayor a cero.');
     }
 
@@ -223,12 +234,14 @@ const depositMoney = asyncHandler(async (req, res) => {
 
     if (!accountFrom) {
         res.status(403);
+        logger.warn(`Cuenta no encontrada: ${dencryptedId}`);
         throw new Error('Sin autorización.');
         //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     if (!accountFrom.isActive) {
         res.status(400);
+        logger.warn(`Cuenta ${dencryptedId} no activa.`);
         throw new Error(`La cuenta no se encuentra activa.`);
     }
 
@@ -239,7 +252,8 @@ const depositMoney = asyncHandler(async (req, res) => {
     if (accountFrom.type == 'CC') {
         tax = amount * 0.005;
         amountTo -= tax;
-        description = `Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
+        description = `Esta operación tiene un impuesto del 0.5% (importe: ${tax})`;
+        logger.info(`Esta operación tiene un impuesto del 0.5% (importe: ${tax}). Cuenta: ${dencryptedId}`);
     }
 
     const operation = await Operation.create({
@@ -278,6 +292,7 @@ const depositMoney = asyncHandler(async (req, res) => {
 
     } else {
         res.status(400);
+        logger.error(`Ha ocurrido un error al realizar el depósito a la cuenta ${dencryptedId}.`);
         throw new Error('Ha ocurrido un error al realizar el depósito');
     }
 });
@@ -286,11 +301,14 @@ const depositMoney = asyncHandler(async (req, res) => {
 // @route   POST /api/operations/withdraw
 // @access  Private
 const withdrawMoney = asyncHandler(async (req, res) => {
+    logger.info(`getAllOperations por el usuario: ${req.user._id}`);
+
     const { accountId, amount } = req.body;
 
     // Validación
     if (!accountId || !amount) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -305,18 +323,21 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 
     if (!accountFrom) {
         res.status(403);
+        logger.warn(`Cuenta no encontrada: ${dencryptedId}`);
         throw new Error('Sin autorización.');
         //throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     if (!accountFrom.isActive) {
         res.status(400);
+        logger.warn(`Cuenta ${dencryptedId} no activa.`);
         throw new Error(`La cuenta no se encuentra activa.`);
     }
 
     if (accountFrom.accountBalance < amount) {
         res.status(400);
-        throw new Error(`La cuenta no dispone de fondo suficiente para realizar la extracción.`);
+        logger.warn(`La cuenta ${dencryptedId} no dispone de fondos suficientes para realizar la extracción.`);
+        throw new Error(`La cuenta no dispone de fondos suficientes para realizar la extracción.`);
     }
 
     let description = '';
@@ -326,7 +347,8 @@ const withdrawMoney = asyncHandler(async (req, res) => {
     if (accountFrom.type == 'CC') {
         tax = amount * 0.005;
         amountFrom += tax;
-        description = `Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
+        description = `Esta operación tiene un impuesto del 0.5% (importe: ${tax})`;
+        logger.info(`Esta operación tiene un impuesto del 0.5% (importe: ${tax}). Cuenta: ${dencryptedId}`);
     }
 
     const operation = await Operation.create({
@@ -365,6 +387,7 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 
     } else {
         res.status(400);
+        logger.error(`Ha ocurrido un error al realizar la extracción de la cuenta ${dencryptedId}.`);
         throw new Error('Ha ocurrido un error al realizar la extracción.');
     }
 });
@@ -373,6 +396,7 @@ const withdrawMoney = asyncHandler(async (req, res) => {
 // @route   POST /api/operations/transfer
 // @access  Private
 const transferMoney = asyncHandler(async (req, res) => {
+    logger.info(`getAllOperations por el usuario: ${req.user._id}`);
 
     const { accountFromId, accountTo, amount } = req.body;
     let description = req.body.description;
@@ -380,6 +404,7 @@ const transferMoney = asyncHandler(async (req, res) => {
     // Validación
     if (!accountFromId || !accountTo || !amount || !description) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -389,17 +414,20 @@ const transferMoney = asyncHandler(async (req, res) => {
 
     if (!accountFrom) {
         res.status(403);
+        logger.warn(`Cuenta no encontrada: ${dencryptedId}`);
         throw new Error('Sin autorización. La cuenta no pertenece al usuario logueado.');
     }
 
     if (!accountFrom.isActive) {
         res.status(400);
+        logger.warn(`Cuenta ${dencryptedId} no activa.`);
         throw new Error(`La cuenta ${accountFrom.accountId} no se encuentra activa.`);
     }
 
     if (accountFrom.accountBalance < amount) {
         res.status(400);
-        throw new Error(`La cuenta ${accountFrom.accountId} no dispone de fondo suficiente para realizar la transferencia.`);
+        logger.warn(`La cuenta ${accountFrom.accountId} no dispone de fondos suficientes para realizar la transferencia.`);
+        throw new Error(`La cuenta de origen no dispone de fondos suficientes para realizar la transferencia.`);
     }
 
     const accountToData = await Account.findOne({
@@ -411,16 +439,19 @@ const transferMoney = asyncHandler(async (req, res) => {
 
     if (!accountToData) {
         res.status(404);
+        logger.warn(`Cuenta no encontrada: ${dencryptedId}`);
         throw new Error('La cuenta no ha sido encontrada.');
     }
 
     if (accountFrom.accountId === accountToData.accountId) {
         res.status(400);
+        logger.warn(`No puede realizarse una transferencia a la misma cuenta: ${accountFrom.accountId}`);
         throw new Error('No puede realizarse una transferencia a la misma cuenta.');
     }
 
     if (accountFrom.currency.acronym !== accountToData.currency.acronym) {
         res.status(400);
+        logger.warn(`La operación no puede realizarse ya que las cuentas no son de la misma moneda: ${accountFrom.accountId} a ${accountToData.accountId}`);
         throw new Error('La operación no puede realizarse ya que las cuentas no son de la misma moneda.');
     }
 
@@ -430,7 +461,8 @@ const transferMoney = asyncHandler(async (req, res) => {
         tax = amount * 0.005;
         if (accountToData.type == 'CA') amountFrom += tax;
         else if (accountToData.type == 'CC') amountTo = amount - tax;
-        description += `. Esta operación tiene un impuesto del 0.5% (importe: ${tax})`
+        description += `. Esta operación tiene un impuesto del 0.5% (importe: ${tax})`;
+        logger.info(`Esta operación tiene un impuesto del 0.5% (importe: ${tax}).`);
     }
 
     const operation = await Operation.create({
@@ -484,7 +516,7 @@ const transferMoney = asyncHandler(async (req, res) => {
 
 // insert tax into bank account
 const taxBankAccount = asyncHandler(async (dencryptedId, tax, operationId) => {
-
+    
     const operation = await Operation.create({
         type: 'transferencia',
         accountFrom: dencryptedId,
@@ -510,7 +542,8 @@ const taxBankAccount = asyncHandler(async (dencryptedId, tax, operationId) => {
         await bankAccount.save();
     } else {
         res.status(400);
-        throw new Error('Ha ocurrido un error al realizar la transferencia de los impuestos a la cuenta del banco');
+        logger.error(`Ha ocurrido un error al realizar la transferencia de los impuestos a la cuenta del banco.`);
+        throw new Error('Ha ocurrido un error al realizar la transferencia de los impuestos a la cuenta del banco.');
     }
 });
 

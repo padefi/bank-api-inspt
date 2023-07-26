@@ -9,17 +9,20 @@ import { decrypt, encrypt } from "../utils/crypter.js";
 import sendEmail from "../utils/sendEmail.js";
 import { v4 as uuidv4 } from "uuid";
 import ResetPassword from "../models/resetPasswordModel.js";
+import logger from '../utils/logger.js';
 
 // @desc    Crear un nuevo usuario
 // @route   POST /api/users/create
 // @access  Private
 const createUser = asyncHandler(async (req, res) => {
+    logger.info(`createUser por el usuario: ${req.user._id}`);
 
     const { governmentId, lastName, firstName, bornDate, phoneNumber } = req.body;
 
     // Validación
     if (!governmentId || !lastName || !firstName || !bornDate || !phoneNumber) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -33,6 +36,7 @@ const createUser = asyncHandler(async (req, res) => {
 
     if (userExists) {
         res.status(400);
+        logger.warn('Usuario ya registrado.');
         throw new Error('Usuario ya registrado.');
     }
 
@@ -76,6 +80,7 @@ const createUser = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(400);
+        logger.error(`Ha ocurrido un error al crear el usuario.`);
         throw new Error('Información invalida.');
     }
 });
@@ -84,11 +89,13 @@ const createUser = asyncHandler(async (req, res) => {
 // @route   GET /api/user/
 // @access  Private
 const getUsers = asyncHandler(async (req, res) => {
+    logger.info(`getUsers por el usuario: ${req.user._id}`);
 
     const { userData, userName, userRole, userStatus } = req.query;
 
     if (!isAdmin(req.user)) {
         res.status(400);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
@@ -96,6 +103,7 @@ const getUsers = asyncHandler(async (req, res) => {
 
     if (!role) {
         res.status(404);
+        logger.error('Ha ocurrido un error al obtener los datos.');
         throw new Error('Rol no encontrado');
     }
 
@@ -136,6 +144,7 @@ const getUsers = asyncHandler(async (req, res) => {
 
     if (!users) {
         res.status(403);
+        logger.error('Usuarios no encontrados.');
         throw new Error('No se encontraron usuarios.');
     }
 
@@ -156,11 +165,13 @@ const getUsers = asyncHandler(async (req, res) => {
 // @route   POST /api/users/types
 // @access  Private
 const getUserRoles = asyncHandler(async (req, res) => {
+    logger.info(`getUserRoles por el usuario: ${req.user._id}`);
 
     const roles = await Role.find({ name: { $ne: 'cliente' } }).select('_id name');
 
     if (!roles) {
         res.status(403);
+        logger.error('Ha ocurrido un error al obtener los datos.');
         throw new Error('No se encontraron roles.');
     }
 
@@ -180,12 +191,14 @@ const getUserRoles = asyncHandler(async (req, res) => {
 // @route   POST /api/users/auth
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
+    logger.info(`loginUser por el usuario: ${req.body.userName}`);
 
     const { userName, password } = req.body;
 
     // Validación
     if (!userName || !password) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -194,6 +207,7 @@ const loginUser = asyncHandler(async (req, res) => {
     if (user) {
         if (!user.isActive) {
             res.status(403);
+            logger.warn(`Usuario bloqueado ${userName}. Por favor comuníquese con el banco.`);
             throw new Error('Usuario bloqueado. Por favor comuníquese con el banco.');
         } else if (await user.matchPassword(password)) {
 
@@ -201,6 +215,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
             if (userSession) {
                 res.status(403);
+                logger.warn(`El usuario ${userName} ya se encuentra logueado.`);
                 throw new Error('El usuario ya se encuentra logueado.');
             }
 
@@ -218,11 +233,14 @@ const loginUser = asyncHandler(async (req, res) => {
                 await user.save();
                 initialUserExpiration(user._id, req.sessionID);
                 generateToken(res, user._id);
+                
+                const userData = (user.lastName === user.firstName) ? user.lastName : user.lastName + ' ' + user.firstName;
 
                 res.status(200).json({
                     message: 'Usuario logueado.',
                     userName: user.userName,
                     role: user.role.name,
+                    userData: userData,
                 });
             }
         } else {
@@ -231,10 +249,12 @@ const loginUser = asyncHandler(async (req, res) => {
             await user.save();
 
             res.status(401);
+            logger.warn('Datos de acceso incorrectos.');
             throw new Error('Usuario y/o contraseña incorrecta.');
         }
     } else {
         res.status(401);
+        logger.warn('Datos de acceso incorrectos.');
         throw new Error('Usuario y/o contraseña incorrecta.');
     }
 });
@@ -243,6 +263,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/logout
 // @access  Public
 const logoutUser = asyncHandler(async (req, res) => {
+    logger.info(`logoutUser por el usuario: ${req.session.userId}`);
 
     endUserExpiration(req.session.userId, req.sessionID);
 
@@ -264,12 +285,14 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/updatePassword
 // @access  Private
 const updateUserPassword = asyncHandler(async (req, res) => {
+    logger.info(`updateUserPassword por el usuario: ${req.user._id}`);
 
     const { userId, password } = req.body;
 
     // Validación
     if (!userId || !password) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -279,6 +302,7 @@ const updateUserPassword = asyncHandler(async (req, res) => {
 
     if (!user) {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Usuario no encontrado.');
     }
 
@@ -293,6 +317,7 @@ const updateUserPassword = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Usuario no encontrado.');
     }
 });
@@ -301,12 +326,14 @@ const updateUserPassword = asyncHandler(async (req, res) => {
 // @route   POST /api/users/forgotPassword
 // @access  Private
 const forgotUserPassword = asyncHandler(async (req, res) => {
+    logger.info(`forgotUserPassword por el usuario: ${req.user._id}`);
 
     const { userName } = req.body;
 
     // Validación
     if (!userName) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -361,12 +388,14 @@ const forgotUserPassword = asyncHandler(async (req, res) => {
 // @route   POST /api/users/clearPassword
 // @access  Private
 const getUserClearPassword = asyncHandler(async (req, res) => {
+    logger.info(`getUserClearPassword por el usuario: ${req.user._id}`);
 
     const { token } = req.query;
 
     // Validación
     if (!token) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -374,8 +403,9 @@ const getUserClearPassword = asyncHandler(async (req, res) => {
 
     if (!user) {
         res.status(404);
+        logger.warn(`Token invalido: ${token}.`);
         throw new Error('Enlace invalido.');
-    }    
+    }
 
     let newUser = user;
 
@@ -396,17 +426,20 @@ const getUserClearPassword = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const userProfile = asyncHandler(async (req, res) => {
+    logger.info(`userProfile por el usuario: ${req.user._id}`);
 
     const { id } = req.query;
 
     // Validación
     if (!id) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
     if (!isAdmin(req.user)) {
         res.status(400);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
@@ -418,6 +451,7 @@ const userProfile = asyncHandler(async (req, res) => {
 
     if (!user) {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Usuario no encontrado.');
     }
 
@@ -437,17 +471,20 @@ const userProfile = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/profile
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
+    logger.info(`updateUserProfile por el usuario: ${req.user._id}`);
 
     const { userId, governmentId, bornDate, lastName, firstName, phoneNumber, userRole } = req.body;
 
     // Validación
     if (!userId || !governmentId || !bornDate || !lastName || !firstName || !phoneNumber || !userRole) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
     if (!isAdmin(req.user)) {
         res.status(400);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
@@ -457,6 +494,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
     if (!user) {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Usuario no encontrado.');
     }
 
@@ -478,6 +516,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Usuario no encontrado.');
     }
 });
@@ -486,6 +525,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profileUser
 // @access  Private
 const profileUser = asyncHandler(async (req, res) => {
+    logger.info(`profileUser por el usuario: ${req.user._id}`);
 
     if (req.user) {
         extendToken(req, res);
@@ -500,6 +540,7 @@ const profileUser = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Usuario no encontrado.');
     }
 });
@@ -508,6 +549,7 @@ const profileUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/profileUser
 // @access  Private
 const updateProfileUser = asyncHandler(async (req, res) => {
+    logger.info(`updateProfileUser por el usuario: ${req.user._id}`);
 
     const user = await User.findById(req.user._id);
 
@@ -530,6 +572,7 @@ const updateProfileUser = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Perfil no encontrado.');
     }
 });
@@ -538,17 +581,20 @@ const updateProfileUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/lock
 // @access  Private
 const lockUser = asyncHandler(async (req, res) => {
+    logger.info(`lockUser por el usuario: ${req.user._id}`);
 
     const { userId } = req.body;
 
     // Validación
     if (!isAdmin(req.user)) {
         res.status(403);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
     if (!userId) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -568,6 +614,7 @@ const lockUser = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Usuario no encontrado.');
     }
 });
@@ -576,17 +623,20 @@ const lockUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/unlock
 // @access  Private
 const unlockUser = asyncHandler(async (req, res) => {
+    logger.info(`unlockUser por el usuario: ${req.user._id}`);
 
     const { userId } = req.body;
 
     // Validación
     if (!isAdmin(req.user)) {
         res.status(403);
+        logger.warn(`Usuario no autorizado: ${req.user._id}`);
         throw new Error('Sin autorización.');
     }
 
     if (!userId) {
         res.status(400);
+        logger.warn('Campos sin completar.');
         throw new Error('Por favor, complete todos los campos.');
     }
 
@@ -606,6 +656,7 @@ const unlockUser = asyncHandler(async (req, res) => {
         });
     } else {
         res.status(404);
+        logger.error(`Usuario no encontrado: ${dencryptedId}`);
         throw new Error('Usuario no encontrado.');
     }
 });
