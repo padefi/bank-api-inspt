@@ -285,7 +285,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/updatePassword
 // @access  Private
 const updateUserPassword = asyncHandler(async (req, res) => {
-    logger.info(`updateUserPassword por el usuario: ${req.user._id}`);
+    logger.info(`updateUserPassword por el usuario: ${req.body.userId}`);
 
     const { userId, password } = req.body;
 
