@@ -557,7 +557,7 @@ const updateProfileUser = asyncHandler(async (req, res) => {
         if (isCustomer(req.user)) {
             user.email = req.body.email || user.email;
         }
-        user.phone = req.body.phone || user.phone;
+        user.phone = req.body.phoneNumber || user.phone;
         user.bornDate = req.body.bornDate || user.bornDate;
 
         if (req.body.password) {

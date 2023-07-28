@@ -22,9 +22,14 @@ const PrivateRouteEmployeeAdmin = ({ children }) => {
     return data?.role === 'empleado' || data?.role === 'admin' ? children : <Outlet />;
 };
 
+const RedirectToLogin = () => {
+    return <Navigate to='/login' replace />
+};
+
 export {
     PrivateRoute,
     PrivateRouteCustomer,
     PrivateRouteAdmin,
     PrivateRouteEmployeeAdmin,
+    RedirectToLogin,
 }

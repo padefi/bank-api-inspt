@@ -51,13 +51,21 @@ app.use('/api/users', userRoutes);
 app.use('/api/operations', operationRoutes);
 app.use('/api/accounts', accountRoutes);
 app.use('/api/customers', customerRoutes);
-app.get('/', (req, res) => res.send('API corriendo'));
+app.get('/', (req, res) => res.send('API ejecutandose.'));
+/* if (process.env.NODE_ENV !== 'production') {
+    const __dirname = path.resolve();
+    app.use(express.static(path.join(__dirname, '/frontend/dist')));
+	@@ -63,13 +64,13 @@ if (process.env.NODE_ENV !== 'production') {
+    app.get('/', (req, res) => {
+        res.send('API ejecutandose.');
+    });
+} */
 
 // Middlewares error
 app.use(notFound);
 app.use(errorHandler);
 
 app.listen(port, () => {
-    console.log(`El servidor se encuentra corriendo en el puerto: ${port}`);
-    logger.info(`El servidor se encuentra corriendo en el puerto: ${port}`);
+    console.log(`El servidor se encuentra ejecutandose en el puerto: ${port}`);
+    logger.info(`El servidor se encuentra ejecutandose en el puerto: ${port}`);
 });
