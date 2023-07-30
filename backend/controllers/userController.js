@@ -285,7 +285,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/updatePassword
 // @access  Private
 const updateUserPassword = asyncHandler(async (req, res) => {
-    logger.info(`updateUserPassword por el usuario: ${req.user._id}`);
+    logger.info(`updateUserPassword por el usuario: ${req.body.userId}`);
 
     const { userId, password } = req.body;
 
@@ -557,7 +557,7 @@ const updateProfileUser = asyncHandler(async (req, res) => {
         if (isCustomer(req.user)) {
             user.email = req.body.email || user.email;
         }
-        user.phone = req.body.phone || user.phone;
+        user.phone = req.body.phoneNumber || user.phone;
         user.bornDate = req.body.bornDate || user.bornDate;
 
         if (req.body.password) {

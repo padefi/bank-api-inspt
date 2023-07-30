@@ -87,7 +87,7 @@ const CustomerAccountSumarry = () => {
           <div className='box px-4 d-flex flex-column box-details '>
             <Form.Group className='my-2' controlId='account'>
               <Form.Label className='fw-bold mb-0'>Cuenta:</Form.Label>
-              <Form.Control type='text' className='form-control-edit-input rounded-0' placeholder='Ingrese alias o CBU a transferir' autoComplete='off' minLength={6}
+              <Form.Control type='text' className='form-control-edit-input rounded-0' placeholder='Ingrese alias o CBU' autoComplete='off' minLength={6}
                 maxLength={22} value={account} onChange={(e) => setAccount(e.target.value.toUpperCase())} onBlur={(e) => setAccountData(e.target.value)}></Form.Control>
 
               {accountData && (

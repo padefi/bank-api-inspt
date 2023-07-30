@@ -11,7 +11,7 @@ import Dashboard from './views/bank/Dashboard.jsx';
 import Accounts from './views/customer/Accounts.jsx';
 import AccountOperations from './views/customer/AccountOperations.jsx';
 import AccountSummary from './views/customer/AccountSummary';
-import { PrivateRoute, PrivateRouteAdmin, PrivateRouteCustomer, PrivateRouteEmployeeAdmin } from './components/PrivateRoute.jsx';
+import { PrivateRoute, PrivateRouteAdmin, PrivateRouteCustomer, PrivateRouteEmployeeAdmin, RedirectToLogin } from './components/PrivateRoute.jsx';
 import UserAccount from './views/customer/UserAccount';
 import DepositMoney from './views/bank/Deposit';
 import WithdrawMoney from './views/bank/Withdraw';
@@ -57,16 +57,7 @@ const router = createBrowserRouter(
 
         <Route path="/profile" element={<ProfileUser />} />
 
-        {/* <Route index={true} path='/home' element={<Home />} />
-        <Route path='/' element={<Home />} />
-        <Route path='/accounts' element={<Accounts />} />
-        <Route path='/profile' element={<Profile />} />
-        <Route path='/accountOperations/:id' element={<AccountOperations />} />
-        <Route path='/userAccount/:id' element={<UserAccount />} />
-        <Route path='/accountSummary' element={<AccountSummary />} />
-        <Route path='/deposit' element={<DepositMoney />} />
-        <Route path='/withdraw' element={<WithdrawMoney />} />
-        <Route path='/transfer' element={<TransferMoney />} /> */}
+        <Route path='*' element={<RedirectToLogin />} />
       </Route>
     </Route>
   )
