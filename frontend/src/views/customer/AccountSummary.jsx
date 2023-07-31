@@ -43,7 +43,9 @@ const AccountSumarry = () => {
   const options = UserAccounts({ data, error });
   const [accountId, setAccountId] = useState(null);
   const [dateFrom, setDateFrom] = useState('');
+  const [dateFromMax, setDateFromMax] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [dateToMin, setDateToMin] = useState('');
   const [dataAccountOperations, setDataAccountOperations] = useState(false);
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -63,7 +65,12 @@ const AccountSumarry = () => {
     label: "Seleccione una cuenta",
   });
 
-  const handleDownloadPDF = async () => {    
+  const handleDownloadPDF = async () => {
+    if (new Date(dateTo) < new Date(dateFrom)) {
+      toast.error('La fecha hasta no puede ser menor que la fecha "desde"');
+      return;
+    }
+
     const blob = await pdf(<AccountSummaryPDF
       holder={userInfo.userData}
       dateFrom={dateFrom}
@@ -87,7 +94,7 @@ const AccountSumarry = () => {
           <div className='box'>
             <div className='box mb-2'>
               <div className='box d-flex flex-row bg-dark text-white p-3 px-4 rounded-top-2'>
-                <h3 className='pb-0 mb-0'>Resumen de cuenta</h3>
+                <h3 className='pb-0 mb-0'> de cuenta</h3>
               </div>
             </div>
           </div>
@@ -101,12 +108,12 @@ const AccountSumarry = () => {
             <Form.Group className='my-2' controlId='date'>
               <Col className='mb-2'>
                 <Form.Label className='fw-bold mb-0'>Fecha desde:</Form.Label>
-                <Form.Control type='date' className="form-control-sm" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+                <Form.Control type='date' className="form-control-sm" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setDateToMin(e.target.value); }} max={dateFromMax} />
               </Col>
 
               <Col>
                 <Form.Label className='fw-bold mb-0'>Fecha hasta:</Form.Label>
-                <Form.Control type='date' className="form-control-sm" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+                <Form.Control type='date' className="form-control-sm" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setDateFromMax(e.target.value); }} min={dateToMin} />
               </Col>
             </Form.Group>
 

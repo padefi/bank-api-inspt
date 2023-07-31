@@ -43,7 +43,9 @@ const CustomerAccountSumarry = () => {
   const [dateFromData, setDateFromData] = useState(null);
   const [dateToData, setDateToData] = useState(null);
   const [dateFrom, setDateFrom] = useState('');
+  const [dateFromMax, setDateFromMax] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [dateToMin, setDateToMin] = useState('');
   const [dataAccountOperations, setDataAccountOperations] = useState(false);
 
   const handleData = (data) => {
@@ -98,12 +100,12 @@ const CustomerAccountSumarry = () => {
             <Form.Group className='my-2' controlId='date'>
               <Col className='mb-2'>
                 <Form.Label className='fw-bold mb-0'>Fecha desde:</Form.Label>
-                <Form.Control type='date' className="form-control-sm" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} onBlur={(e) => setDateFromData(e.target.value)} />
+                <Form.Control type='date' className="form-control-sm" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setDateToMin(e.target.value); }} max={dateFromMax} onBlur={(e) => setDateFromData(e.target.value)} />
               </Col>
 
               <Col>
                 <Form.Label className='fw-bold mb-0'>Fecha hasta:</Form.Label>
-                <Form.Control type='date' className="form-control-sm" value={dateTo} onChange={(e) => setDateTo(e.target.value)} onBlur={(e) => setDateToData(e.target.value)} />
+                <Form.Control type='date' className="form-control-sm" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setDateFromMax(e.target.value); }} min={dateToMin} onBlur={(e) => setDateToData(e.target.value)} />
               </Col>
             </Form.Group>
 

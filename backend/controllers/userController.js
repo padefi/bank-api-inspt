@@ -326,7 +326,7 @@ const updateUserPassword = asyncHandler(async (req, res) => {
 // @route   POST /api/users/forgotPassword
 // @access  Private
 const forgotUserPassword = asyncHandler(async (req, res) => {
-    logger.info(`forgotUserPassword por el usuario: ${req.user._id}`);
+    logger.info(`forgotUserPassword por el usuario: ${req.body.userName}`);
 
     const { userName } = req.body;
 
@@ -388,8 +388,6 @@ const forgotUserPassword = asyncHandler(async (req, res) => {
 // @route   POST /api/users/clearPassword
 // @access  Private
 const getUserClearPassword = asyncHandler(async (req, res) => {
-    logger.info(`getUserClearPassword por el usuario: ${req.user._id}`);
-
     const { token } = req.query;
 
     // Validación

@@ -59,7 +59,9 @@ const AccountOperations = () => {
   const { id } = useParams();
   const [checkAccountsCompleted, setCheckAccountsCompleted] = useState(false);
   const [dateFrom, setDateFrom] = useState('');
+  const [dateFromMax, setDateFromMax] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [dateToMin, setDateToMin] = useState('');
   const [operationType, setOperationType] = useState('');
   const [advancedSearch, setAdvancedSearch] = useState(false);
   const { data, error, isLoading, isFetching, refetch } = useShowAccountOperationsQuery({ accountFrom: id, dateFrom, dateTo, operationType }, { refetchOnMountOrArgChange: true });
@@ -146,11 +148,11 @@ const AccountOperations = () => {
                     <div className='box d-flex justify-content-between'>
                       <Form.Group className='mr-2 mb-2'>
                         <Form.Label htmlFor="dateFrom" className='fw-bold detail-text'>Fecha desde:</Form.Label>
-                        <Form.Control id="dateFrom" type="date" className="form-control form-control-sm" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); handleAdvanced; }} />
+                        <Form.Control id="dateFrom" type="date" className="form-control form-control-sm" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setDateToMin(e.target.value); handleAdvanced; }} max={dateFromMax} />
                       </Form.Group>
                       <Form.Group>
                         <Form.Label htmlFor="dateTo" className='fw-bold detail-text'>Fecha hasta:</Form.Label>
-                        <Form.Control id="dateTo" type="date" className="form-control form-control-sm" value={dateTo} onChange={(e) => { setDateTo(e.target.value); handleAdvanced; }} />
+                        <Form.Control id="dateTo" type="date" className="form-control form-control-sm" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setDateFromMax(e.target.value); handleAdvanced; }} min={dateToMin} />
                       </Form.Group>
                     </div>
                     <Form.Group>

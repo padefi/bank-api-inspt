@@ -12,6 +12,7 @@ import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import { extendUserExpiration } from "./middlewares/sessionMiddleware.js";
+import path from 'path';
 
 await figletText();
 
@@ -55,7 +56,11 @@ app.get('/', (req, res) => res.send('API ejecutandose.'));
 /* if (process.env.NODE_ENV !== 'production') {
     const __dirname = path.resolve();
     app.use(express.static(path.join(__dirname, '/frontend/dist')));
-	@@ -63,13 +64,13 @@ if (process.env.NODE_ENV !== 'production') {
+
+    app.get('*', (req, res) =>
+        res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'))
+    );
+} else {
     app.get('/', (req, res) => {
         res.send('API ejecutandose.');
     });

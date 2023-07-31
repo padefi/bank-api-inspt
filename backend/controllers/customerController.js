@@ -238,6 +238,8 @@ const updateCustomerProfile = asyncHandler(async (req, res) => {
     const customer = await Customer.findOne({ user: dencryptedId })
 
     if (user && customer) {
+        
+        user.userName = governmentId || user.userName;
         user.email = email || user.email;
         user.firstName = firstName || user.firstName;
         user.lastName = lastName || user.lastName;

@@ -37,7 +37,7 @@ const UserAccount = () => {
     return null;
   }
 
-  const handleCloseAccount = async (e) => {
+  /* const handleCloseAccount = async (e) => {
     e.preventDefault();
     try {
       const res = await closeAccount({ accountId: id }).unwrap();
@@ -57,7 +57,7 @@ const UserAccount = () => {
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
-  };
+  }; */
 
   const handleEditClick = () => {
     setIsAliasEditable(true)
@@ -111,7 +111,7 @@ const UserAccount = () => {
                     {account.accountId.substring(3, 7)} - {account.accountId.substring(11, 21)}
                   </p>
                 </div>
-                <div className='box d-flex flex-column'>
+                {/* <div className='box d-flex flex-column'>
                   <div className='box d-flex my-2 justify-content-end'>
                     {account.isActive ? (
                       <>
@@ -129,7 +129,7 @@ const UserAccount = () => {
                       </>
                     )}
                   </div>
-                </div>
+                </div> */}
               </div>
               <hr />
               <div className='box d-flex justify-content-between'>
