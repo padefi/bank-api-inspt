@@ -35,7 +35,7 @@ const GetAccount = ({ dataAccount, onData, onError }) => {
         <>
             {isLoading || isFetching && <Loader />}
             <Form.Text className="text-muted">
-                <div className='detail-account'>TITULAR: {account.accountHolder?.lastName?.toUpperCase()} {account.accountHolder?.firsName?.toUpperCase()}</div>
+                <div className='detail-account'>TITULAR: {account.accountHolder?.lastName?.toUpperCase()} {account.accountHolder?.firstName?.toUpperCase()}</div>
                 <div className='detail-account'>{account.accountHolder?.governmentId?.type?.toUpperCase()}: {account.accountHolder?.governmentId?.number}</div>
             </Form.Text>
         </>
