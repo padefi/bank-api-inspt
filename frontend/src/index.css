@@ -1,0 +1,489 @@
+* {
+    font-family: sans-serif;
+}
+
+.container-login {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-icon {
+    font-size: 50px;
+}
+
+#LoginImg {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-login,
+.text-login-title {
+    letter-spacing: 1px;
+}
+
+.text-login-title {
+    font-family: math;
+}
+
+.carousel {
+    width: 100%;
+    height: auto;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel,
+.carousel-inner {
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+@media (max-width: 1440px) {
+    .carousel-inner {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 1366px) {
+    .carousel-inner {
+        max-height: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-inner {
+        max-height: 100px;
+    }
+}
+
+.carousel-item img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+#FirstImg {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -10%);
+}
+
+#SecondImg {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -25%);
+}
+
+#ThirdImg {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -45%);
+}
+
+#CardContainer {
+    top: 0px;
+    left: 0px;
+    width: calc(50% - 12px);
+    max-height: 70vh;
+}
+
+.card-title {
+    margin-bottom: 0;
+    font-size: 20px;
+}
+
+.btn-title {
+    margin-bottom: 0;
+    font-size: 18px;
+}
+
+.button-container {
+    position: relative;
+    z-index: 1;
+}
+
+.center {
+    align-items: center;
+}
+
+.button-container .button-container-child {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.button-container .button-container-child {
+    cursor: pointer;
+    outline: none
+}
+
+.button-container .button-container-child:active,
+.button-container .button-container-child:focus {
+    box-shadow: 0 0 0 .126rem #fafafa, 0 0 0 .282rem #0e22d3
+}
+
+.button-container .button-container-child.load {
+    cursor: wait
+}
+
+.button-container .button-container-child.default {
+    cursor: default
+}
+
+.button-container .button-container-child.focusMouse {
+    box-shadow: none
+}
+
+.button-container .button-container-child.default.cursor-pointer {
+    cursor: pointer
+}
+
+.button-icon-description {
+    width: 2.5rem;
+}
+
+.button-container .button-icon-description {
+    box-shadow: none
+}
+
+.button-container .button-icon-description,
+.button-container .button-icon-description:first-child {
+    transition: all .15s ease-in-out;
+}
+
+.button-container:hover .button-icon-description {
+    fill: black;
+    padding-left: .938rem;
+}
+
+.button-container:hover .button-icon-description:first-child {
+    fill: black;
+}
+
+.form-label {
+    margin-right: 0.5rem !important;
+}
+
+.box-text {
+    line-height: 1.25rem;
+}
+
+.text-cuenta {
+    font-size: 18px;
+}
+
+.border-normal,
+.border-normal.form-control {
+    border-color: transparent transparent #3c3c3b !important
+}
+
+.form-control-edit {
+    margin-right: 10px;
+}
+
+.form-control-edit-input[disabled] {
+    background-color: transparent;
+    cursor: default;
+    pointer-events: none;
+    border: none;
+    box-shadow: none;
+    border-bottom: 0 !important;
+}
+
+.form-control-edit-input:not(:disabled) {
+    border-color: transparent;
+    box-shadow: none;
+    border-bottom: 1px solid black !important;
+}
+
+.custom-button {
+    margin-left: 10px;
+}
+
+.form-control-edit .btn-cancel,
+.form-control-edit .btn-confirm,
+.form-control-edit .btn-edit {
+    position: relative
+}
+
+.form-control-edit .btn-cancel:active,
+.form-control-edit .btn-cancel:focus,
+.form-control-edit .btn-cancel:focus:active,
+.form-control-edit .btn-confirm:active,
+.form-control-edit .btn-confirm:focus,
+.form-control-edit .btn-confirm:focus:active,
+.form-control-edit .btn-edit:active,
+.form-control-edit .btn-edit:focus,
+.form-control-edit .btn-edit:focus:active {
+    box-shadow: none
+}
+
+.form-control-edit .hide.btn-cancel,
+.form-control-edit .hide.btn-confirm,
+.form-control-edit .hide.btn-edit,
+.helpButton {
+    display: none
+}
+
+.form-control-edit input {
+    border: none !important;
+    padding-bottom: 0 !important;
+    padding-left: 0;
+    padding-right: 0
+}
+
+.form-control-edit input,
+.form-control-edit input:active,
+.form-control-edit input:focus,
+.form-control-edit input:hover {
+    background-color: transparent
+}
+
+.form-control-edit input::-moz-placeholder {
+    color: #3c3c3b
+}
+
+.form-control-edit input::placeholder {
+    color: #3c3c3b
+}
+
+.edit.form-control-edit input {
+    box-shadow: 0 .063rem 0 0 #007a2b !important
+}
+
+.edit.form-control-edit .btn-confirm {
+    padding-left: .125rem !important
+}
+
+.bold-text.form-control-edit input {
+    margin-right: 2.5rem
+}
+
+.flex-fill {
+    flex: 1 1 auto !important
+}
+
+.green-icon {
+    color: green;
+}
+
+.red-icon {
+    color: red;
+}
+
+.div-striped {
+    display: flex;
+    align-items: center;
+    height: 41px;
+    margin-bottom: 1.5%;
+    background-color: #f2f2f2;
+}
+
+.div-center {
+    display: flex;
+    justify-content: center;
+}
+
+.h-striped {
+    margin: 0;
+}
+
+.custom-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.custom-link:hover {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.negative-number {
+    color: red !important;
+}
+
+#box-container {
+    margin-top: 3.5rem !important;
+}
+
+#box-details {
+    max-height: 75vh;
+}
+
+.box-details {
+    overflow: auto;
+}
+
+.btn-custom {
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.plus-icon {
+    margin-bottom: 0.15rem;
+    color: #0d6efd;
+}
+
+.btn-custom .plus-icon {
+    transition: color 0.3s ease;
+}
+
+.btn-custom:hover .plus-icon,
+.btn-custom:active .plus-icon,
+.btn-custom:focus-visible .plus-icon {
+    color: white;
+}
+
+.textbox {
+    border: 1px solid #ccc;
+    padding: 5px;
+    background-color: #f7f7f7;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.detail-button {
+    font-size: 12px;
+}
+
+#box-operation {
+    top: 0px;
+    left: 0px;
+    width: calc(70% - 12px);
+    max-height: 70vh;
+}
+
+.modal-header .btn-close {
+    filter: var(--bs-btn-close-white-filter);
+}
+
+.detail-account {
+    font-size: 16px;
+}
+
+.modal-icon {
+    font-size: 40px;
+    color: #007a2b;
+}
+
+.printer-icon {
+    margin-right: 0.5rem;
+}
+
+.advanced-search {
+    flex-wrap: wrap;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .advanced-search .flex-wrap {
+        flex-wrap: nowrap;
+    }
+}
+
+.advanced-search-visible {
+    max-height: 250px;
+}
+
+.advanced-search-hidden {
+    max-height: 0;
+}
+
+.detail-text {
+    font-size: 12px;
+}
+
+.mr-1 {
+    margin-right: 0.25rem;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}
+
+.mr-3 {
+    margin-right: 1rem;
+}
+
+.mr-4 {
+    margin-right: 1.5rem;
+}
+
+.ml-1 {
+    margin-left: 0.25rem;
+}
+
+.ml-2 {
+    margin-left: 0.5rem;
+}
+
+.ml-3 {
+    margin-left: 1rem;
+}
+
+.ml-4 {
+    margin-left: 1.5rem;
+}
+
+#BankCardContainer {
+    top: 10px;
+    left: 0px;
+    width: calc(100% - 12px);
+    max-height: 70vh;
+}
+
+.detail-table tbody td {
+    vertical-align: middle !important;
+}
+
+.customer-number {
+    width: 5rem;
+    text-align: right;
+}
+
+.h6-CardContainer {
+    margin-bottom: 0.75rem;
+}
+
+#button-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+}
+
+.custom-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.custom-grid-container hr {
+    grid-column: 1 / -1;
+    margin: 0.5rem 0;
+}
+
+.two-divs-container {
+    grid-column: span 2;
+}
+
+.three-divs-container {
+    grid-column: span 3;
+}
